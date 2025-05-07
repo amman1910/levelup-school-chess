@@ -572,4 +572,36 @@ body, html {
     flex-direction: column;
     gap: 5px;
   }
+
+  .class-management-container .add-user-section h2:after {
+    background-color: var(--light-purple);
+  }
+  
+  .class-management-container select {
+    background-color: var(--white);
+    padding: 12px;
+    border: 1px solid var(--light-border);
+    border-radius: 6px;
+    width: 100%;
+  }
+  
+  .class-management-container .users-table th {
+    background-color: var(--light-purple);
+  }
+  
+  .class-management-container .users-table td:nth-child(5) {
+    min-width: 150px;
+  }
+  
+  /* תיקון רוחב לעמודות הטבלה */
+  .users-table th,
+  .users-table td {
+    min-width: 120px;
+    padding: 12px 15px;
+  }
+  
+  .users-table th:first-child,
+  .users-table td:first-child {
+    min-width: 80px;
+  }
 }

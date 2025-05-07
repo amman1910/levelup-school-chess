@@ -9,6 +9,7 @@ const AdminArea = () => {
   const [user, setUser] = useState(null);
   const [section, setSection] = useState('dashboard');
   const [users, setUsers] = useState([]);
+  const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -17,43 +18,41 @@ const AdminArea = () => {
   const [newUser, setNewUser] = useState({
     id: '',
     firstName: '',
-    secondName: '',
+    lastName: '',
     email: '',
     age: '',
     role: '',
-    password: '' // Added for user creation in authentication
+    password: ''
   });
-  
+
+  const [newClass, setNewClass] = useState({
+    id: '',
+    className: '',
+    school: '',
+    level: 'beginner',
+    assignedTrainer: ''
+  });
+
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
     if (!loggedInUser) {
       navigate('/login');
       return;
     }
-    
+
     const userData = JSON.parse(loggedInUser);
-    // Verify user is admin
     if (userData.role !== 'admin') {
       navigate('/login');
       return;
     }
-    
+
     setUser(userData);
-    
-    // Fetch users automatically when component mounts
-    if (section === 'manageUsers') {
-      fetchUsers();
-    }
+
+    if (section === 'manageUsers') fetchUsers();
+    if (section === 'manageClasses') fetchClasses();
   }, [navigate, section]);
-  
-  // Effect to fetch users when section changes to manageUsers
-  useEffect(() => {
-    if (section === 'manageUsers') {
-      fetchUsers();
-    }
-  }, [section]);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -67,13 +66,34 @@ const AdminArea = () => {
       setLoading(false);
     } catch (err) {
       console.error("Error fetching users:", err);
-      setError("Failed to load users. Please try again.");
+      setError("Failed to load users");
       setLoading(false);
     }
   };
 
-  const handleChange = (e) => {
+  const fetchClasses = async () => {
+    setLoading(true);
+    try {
+      const classesSnapshot = await getDocs(collection(db, "classes"));
+      const classesList = classesSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setClasses(classesList);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching classes:", err);
+      setError("Failed to load classes");
+      setLoading(false);
+    }
+  };
+
+  const handleUserChange = (e) => {
     setNewUser({ ...newUser, [e.target.name]: e.target.value });
+  };
+
+  const handleClassChange = (e) => {
+    setNewClass({ ...newClass, [e.target.name]: e.target.value });
   };
 
   const handleAddUser = async (e) => {
@@ -83,109 +103,136 @@ const AdminArea = () => {
     setSuccess('');
     
     try {
-      // Validation
-      if (!newUser.id || !newUser.email || !newUser.firstName || !newUser.secondName || !newUser.role) {
+      if (!newUser.id || !newUser.email || !newUser.firstName || !newUser.lastName || !newUser.role) {
         setError('Please fill all required fields');
         setLoading(false);
         return;
       }
-      
+
       if (isEditing) {
-        // Update existing user
         await updateDoc(doc(db, "users", newUser.id), {
           firstName: newUser.firstName,
-          secondName: newUser.secondName,
+          lastName: newUser.lastName,
           email: newUser.email,
           age: Number(newUser.age) || 0,
           role: newUser.role,
           updatedAt: new Date()
         });
-        
         setSuccess('User updated successfully!');
       } else {
-        // For new users, create authentication account if password is provided
-        if (newUser.password) {
-          try {
-            const auth = getAuth();
-            await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);
-          } catch (authError) {
-            console.error("Authentication error:", authError);
-            setError(`Authentication Error: ${authError.message}`);
-            setLoading(false);
-            return;
-          }
-        }
+        const auth = getAuth();
+        await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);
         
-        // Add to Firestore
         await setDoc(doc(db, "users", newUser.id), {
           firstName: newUser.firstName,
-          secondName: newUser.secondName,
+          lastName: newUser.lastName,
           email: newUser.email,
           age: Number(newUser.age) || 0,
           role: newUser.role,
           createdAt: new Date()
         });
-        
         setSuccess('User added successfully!');
       }
-      
-      // Reset form after successful operation
+
       setNewUser({
         id: '',
         firstName: '',
-        secondName: '',
+        lastName: '',
         email: '',
         age: '',
         role: '',
         password: ''
       });
-      
       setIsEditing(false);
-      fetchUsers(); // Refresh the list
+      fetchUsers();
     } catch (error) {
-      console.error("Error with user operation:", error);
-      setError(`Error: ${error.message}`);
+      console.error("Error:", error);
+      setError(error.message);
     }
+    setLoading(false);
+  };
+
+  const handleAddClass = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
     
+    try {
+      if (!newClass.id || !newClass.className) {
+        setError('Please fill required fields');
+        setLoading(false);
+        return;
+      }
+
+      await setDoc(doc(db, "classes", newClass.id), {
+        className: newClass.className,
+        school: newClass.school,
+        level: newClass.level,
+        assignedTrainer: newClass.assignedTrainer,
+        createdAt: new Date()
+      });
+
+      setSuccess('Class added successfully!');
+      setNewClass({
+        id: '',
+        className: '',
+        school: '',
+        level: 'beginner',
+        assignedTrainer: ''
+      });
+      fetchClasses();
+    } catch (error) {
+      console.error("Error:", error);
+      setError(error.message);
+    }
+    setLoading(false);
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    setLoading(true);
+    try {
+      await deleteDoc(doc(db, "users", userId));
+      setSuccess('User deleted successfully');
+      fetchUsers();
+    } catch (err) {
+      setError('Failed to delete user');
+    }
+    setLoading(false);
+  };
+
+  const handleDeleteClass = async (classId) => {
+    if (!window.confirm("Are you sure you want to delete this class?")) return;
+    setLoading(true);
+    try {
+      await deleteDoc(doc(db, "classes", classId));
+      setSuccess('Class deleted successfully');
+      fetchClasses();
+    } catch (err) {
+      setError('Failed to delete class');
+    }
     setLoading(false);
   };
 
   const handleEditUser = (userData) => {
     setNewUser({
       id: userData.id,
-      firstName: userData.firstName || '',
-      secondName: userData.secondName || '',
-      email: userData.email || '',
-      age: userData.age || '',
-      role: userData.role || '',
-      password: '' // Don't populate password for editing
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      age: userData.age,
+      role: userData.role,
+      password: ''
     });
     setIsEditing(true);
-    setSection('manageUsers');
-  };
-
-  const handleDeleteUser = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) {
-      return;
-    }
-    
-    setLoading(true);
-    try {
-      await deleteDoc(doc(db, "users", userId));
-      setSuccess('User deleted successfully');
-      fetchUsers(); // Refresh the list
-    } catch (err) {
-      console.error("Error deleting user:", err);
-      setError('Failed to delete user');
-    }
-    setLoading(false);
   };
 
   const handleCancelEdit = () => {
     setNewUser({
       id: '',
       firstName: '',
-      secondName: '',
+      lastName: '',
       email: '',
       age: '',
       role: '',
@@ -199,9 +246,7 @@ const AdminArea = () => {
     navigate('/login');
   };
 
-  if (!user) {
-    return <div className="loading">Loading...</div>;
-  }
+  if (!user) return <div className="loading">Loading...</div>;
 
   return (
     <div className="admin-area">
@@ -220,11 +265,15 @@ const AdminArea = () => {
           </button>
           <button 
             className={section === 'manageUsers' ? 'active' : ''} 
-            onClick={() => {
-              setSection('manageUsers');
-            }}
+            onClick={() => setSection('manageUsers')}
           >
             Manage Users
+          </button>
+          <button 
+            className={section === 'manageClasses' ? 'active' : ''} 
+            onClick={() => setSection('manageClasses')}
+          >
+            Manage Classes
           </button>
         </nav>
         
@@ -239,7 +288,11 @@ const AdminArea = () => {
       
       <div className="admin-content">
         <div className="admin-header">
-          <h1>{section === 'dashboard' ? 'Admin Dashboard' : 'User Management'}</h1>
+          <h1>
+            {section === 'dashboard' && 'Admin Dashboard'}
+            {section === 'manageUsers' && 'User Management'}
+            {section === 'manageClasses' && 'Class Management'}
+          </h1>
         </div>
         
         <div className="admin-main">
@@ -251,22 +304,22 @@ const AdminArea = () => {
               <div className="welcome-card">
                 <h2>Welcome, Administrator!</h2>
                 <p>This is your control panel for managing the LEVEL UP Chess Club system.</p>
-                <p>Use the sidebar navigation to access different administrative functions.</p>
               </div>
               
               <div className="quick-actions">
                 <h3>Quick Actions</h3>
                 <div className="action-buttons">
-                  <button onClick={() => {
-                    setSection('manageUsers');
-                  }} className="action-button">
+                  <button onClick={() => setSection('manageUsers')} className="action-button">
                     Manage Users
+                  </button>
+                  <button onClick={() => setSection('manageClasses')} className="action-button">
+                    Manage Classes
                   </button>
                 </div>
               </div>
             </div>
           )}
-          
+
           {section === 'manageUsers' && (
             <div className="user-management-container">
               <div className="add-user-section">
@@ -274,97 +327,92 @@ const AdminArea = () => {
                 <form onSubmit={handleAddUser} className="add-user-form">
                   <div className="form-row">
                     <div className="form-group">
-                      <label htmlFor="id">ID Number*</label>
+                      <label>ID Number*</label>
                       <input
                         type="text"
                         name="id"
-                        id="id"
                         value={newUser.id}
-                        onChange={handleChange}
-                        placeholder="ID Number"
+                        onChange={handleUserChange}
+                        placeholder="User ID"
                         required
                         disabled={isEditing}
                       />
                     </div>
                     
                     <div className="form-group">
-                      <label htmlFor="email">Email*</label>
+                      <label>Email*</label>
                       <input
                         type="email"
                         name="email"
-                        id="email"
                         value={newUser.email}
-                        onChange={handleChange}
+                        onChange={handleUserChange}
                         placeholder="Email"
                         required
                       />
                     </div>
                   </div>
-                  
+
                   {!isEditing && (
                     <div className="form-row">
                       <div className="form-group">
-                        <label htmlFor="password">Password</label>
+                        <label>Password</label>
                         <input
                           type="password"
                           name="password"
-                          id="password"
                           value={newUser.password}
-                          onChange={handleChange}
-                          placeholder="Password for authentication"
+                          onChange={handleUserChange}
+                          placeholder="Temporary Password"
                         />
                       </div>
                     </div>
                   )}
-                  
+
                   <div className="form-row">
                     <div className="form-group">
-                      <label htmlFor="firstName">First Name*</label>
+                      <label>First Name*</label>
                       <input
                         type="text"
                         name="firstName"
-                        id="firstName"
                         value={newUser.firstName}
-                        onChange={handleChange}
+                        onChange={handleUserChange}
                         placeholder="First Name"
                         required
                       />
                     </div>
                     
                     <div className="form-group">
-                      <label htmlFor="secondName">Last Name*</label>
+                      <label>Last Name*</label>
                       <input
                         type="text"
-                        name="secondName"
-                        id="secondName"
-                        value={newUser.secondName}
-                        onChange={handleChange}
+                        name="lastName"
+                        value={newUser.lastName}
+                        onChange={handleUserChange}
                         placeholder="Last Name"
                         required
                       />
                     </div>
                   </div>
-                  
+
                   <div className="form-row">
                     <div className="form-group">
-                      <label htmlFor="age">Age</label>
+                      <label>Age</label>
                       <input
                         type="number"
                         name="age"
-                        id="age"
                         value={newUser.age}
-                        onChange={handleChange}
+                        onChange={handleUserChange}
                         placeholder="Age"
+                        min="10"
+                        max="99"
                       />
                     </div>
                     
                     <div className="form-group">
-                      <label htmlFor="role">Role*</label>
+                      <label>Role*</label>
                       <select
                         name="role"
-                        id="role"
                         value={newUser.role}
-                        onChange={handleChange}
+                        onChange={handleUserChange}
                         required
                       >
                         <option value="">Select Role</option>
@@ -373,19 +421,31 @@ const AdminArea = () => {
                       </select>
                     </div>
                   </div>
-                  
+
                   <div className="form-actions">
                     {isEditing ? (
                       <>
-                        <button type="submit" className="save-button" disabled={loading}>
+                        <button 
+                          type="submit" 
+                          className="save-button"
+                          disabled={loading}
+                        >
                           {loading ? 'Saving...' : 'Save Changes'}
                         </button>
-                        <button type="button" className="cancel-button" onClick={handleCancelEdit}>
+                        <button
+                          type="button"
+                          className="cancel-button"
+                          onClick={handleCancelEdit}
+                        >
                           Cancel
                         </button>
                       </>
                     ) : (
-                      <button type="submit" className="add-button" disabled={loading}>
+                      <button 
+                        type="submit" 
+                        className="add-button"
+                        disabled={loading}
+                      >
                         {loading ? 'Adding...' : 'Add User'}
                       </button>
                     )}
@@ -395,9 +455,13 @@ const AdminArea = () => {
               
               <div className="user-list-section">
                 <div className="users-list-header">
-                  <h3>User List</h3>
-                  <button onClick={fetchUsers} className="refresh-button" disabled={loading}>
-                    {loading ? 'Loading...' : 'Refresh List'}
+                  <h3>Registered Users</h3>
+                  <button 
+                    onClick={fetchUsers} 
+                    className="refresh-button"
+                    disabled={loading}
+                  >
+                    {loading ? 'Refreshing...' : '↻ Refresh List'}
                   </button>
                 </div>
                 
@@ -418,10 +482,10 @@ const AdminArea = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {users.map((user) => (
+                          {users.map(user => (
                             <tr key={user.id}>
                               <td>{user.id}</td>
-                              <td>{`${user.firstName || ''} ${user.secondName || ''}`}</td>
+                              <td>{`${user.firstName} ${user.lastName}`}</td>
                               <td>{user.email}</td>
                               <td>{user.age || '-'}</td>
                               <td>
@@ -431,10 +495,16 @@ const AdminArea = () => {
                               </td>
                               <td>
                                 <div className="table-actions">
-                                  <button onClick={() => handleEditUser(user)} className="edit-button">
+                                  <button
+                                    className="edit-button"
+                                    onClick={() => handleEditUser(user)}
+                                  >
                                     Edit
                                   </button>
-                                  <button onClick={() => handleDeleteUser(user.id)} className="delete-button">
+                                  <button
+                                    className="delete-button"
+                                    onClick={() => handleDeleteUser(user.id)}
+                                  >
                                     Delete
                                   </button>
                                 </div>
@@ -444,7 +514,164 @@ const AdminArea = () => {
                         </tbody>
                       </table>
                     ) : (
-                      <div className="no-users">No users found. Add your first user to get started.</div>
+                      <div className="no-users">
+                        No users found. Start by adding your first user.
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {section === 'manageClasses' && (
+            <div className="class-management-container">
+              <div className="add-user-section">
+                <h2>Add New Class</h2>
+                <form onSubmit={handleAddClass} className="add-user-form">
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Class ID*</label>
+                      <input
+                        type="text"
+                        name="id"
+                        value={newClass.id}
+                        onChange={handleClassChange}
+                        placeholder="Class ID"
+                        required
+                      />
+                    </div>
+                    
+                    <div className="form-group">
+                      <label>Class Name*</label>
+                      <input
+                        type="text"
+                        name="className"
+                        value={newClass.className}
+                        onChange={handleClassChange}
+                        placeholder="Class Name"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>School</label>
+                      <input
+                        type="text"
+                        name="school"
+                        value={newClass.school}
+                        onChange={handleClassChange}
+                        placeholder="School Name"
+                      />
+                    </div>
+                    
+                    <div className="form-group">
+                      <label>Level*</label>
+                      <select
+                        name="level"
+                        value={newClass.level}
+                        onChange={handleClassChange}
+                        required
+                      >
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Assigned Trainer</label>
+                      <select
+                        name="assignedTrainer"
+                        value={newClass.assignedTrainer}
+                        onChange={handleClassChange}
+                      >
+                        <option value="">Select Trainer</option>
+                        {users
+                          .filter(u => u.role === 'trainer')
+                          .map(trainer => (
+                            <option key={trainer.id} value={trainer.id}>
+                              {trainer.firstName} {trainer.lastName}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-actions">
+                    <button 
+                      type="submit" 
+                      className="add-button"
+                      disabled={loading}
+                    >
+                      {loading ? 'Adding...' : 'Add Class'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <div className="user-list-section">
+                <div className="users-list-header">
+                  <h3>Class List</h3>
+                  <button 
+                    onClick={fetchClasses} 
+                    className="refresh-button"
+                    disabled={loading}
+                  >
+                    {loading ? 'Refreshing...' : '↻ Refresh List'}
+                  </button>
+                </div>
+                
+                {loading ? (
+                  <div className="loading-users">Loading classes...</div>
+                ) : (
+                  <div className="users-table-wrapper">
+                    {classes.length > 0 ? (
+                      <table className="users-table">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Class Name</th>
+                            <th>School</th>
+                            <th>Level</th>
+                            <th>Trainer</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {classes.map(cls => (
+                            <tr key={cls.id}>
+                              <td>{cls.id}</td>
+                              <td>{cls.className}</td>
+                              <td>{cls.school || '-'}</td>
+                              <td>{cls.level}</td>
+                              <td>
+                                {cls.assignedTrainer ? 
+                                  users.find(u => u.id === cls.assignedTrainer)?.firstName + ' ' +
+                                  users.find(u => u.id === cls.assignedTrainer)?.lastName : '-'}
+                              </td>
+                              <td>
+                                <div className="table-actions">
+                                  <button 
+                                    className="delete-button"
+                                    onClick={() => handleDeleteClass(cls.id)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div className="no-users">
+                        No classes found. Add your first class.
+                      </div>
                     )}
                   </div>
                 )}
