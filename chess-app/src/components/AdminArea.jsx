@@ -14,6 +14,7 @@ const AdminArea = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [students, setStudents] = useState([]);
   
   const [newUser, setNewUser] = useState({
     id: '',
@@ -31,6 +32,15 @@ const AdminArea = () => {
     school: '',
     level: 'beginner',
     assignedTrainer: ''
+  });
+
+  // Student state
+  const [newStudent, setNewStudent] = useState({
+    id: '',
+    fullName: '',
+    age: '',
+    school: '',
+    classId: ''
   });
 
   const navigate = useNavigate();
@@ -52,6 +62,7 @@ const AdminArea = () => {
 
     if (section === 'manageUsers') fetchUsers();
     if (section === 'manageClasses') fetchClasses();
+    if (section === 'manageStudents') fetchStudents();
   }, [navigate, section]);
 
   const fetchUsers = async () => {
@@ -88,6 +99,24 @@ const AdminArea = () => {
     }
   };
 
+  const fetchStudents = async () => {
+    setLoading(true);
+    try {
+      const studentsSnapshot = await getDocs(collection(db, "students"));
+      const studentsList = studentsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setStudents(studentsList);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching students:", err);
+      setError("Failed to load students");
+      setLoading(false);
+    }
+  };
+
+
   const handleUserChange = (e) => {
     setNewUser({ ...newUser, [e.target.name]: e.target.value });
   };
@@ -95,6 +124,11 @@ const AdminArea = () => {
   const handleClassChange = (e) => {
     setNewClass({ ...newClass, [e.target.name]: e.target.value });
   };
+
+  const handleStudentChange = (e) => {
+    setNewStudent({ ...newStudent, [e.target.name]: e.target.value });
+  };
+
 
   const handleAddUser = async (e) => {
     e.preventDefault();
@@ -189,6 +223,58 @@ const AdminArea = () => {
     setLoading(false);
   };
 
+  const handleAddStudent = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    
+    try {
+      if (!newStudent.id || !newStudent.fullName || !newStudent.school || !newStudent.classId) {
+        setError('Please fill all required fields');
+        setLoading(false);
+        return;
+      }
+
+      await setDoc(doc(db, "students", newStudent.id), {
+        fullName: newStudent.fullName,
+        age: Number(newStudent.age) || 0,
+        school: newStudent.school,
+        classId: newStudent.classId,
+        createdAt: new Date()
+      });
+
+      setSuccess('Student added successfully!');
+      setNewStudent({
+        id: '',
+        fullName: '',
+        age: '',
+        school: '',
+        classId: ''
+      });
+      fetchStudents();
+    } catch (error) {
+      console.error("Error:", error);
+      setError(error.message);
+    }
+    setLoading(false);
+  };
+
+  const handleDeleteStudent = async (studentId) => {
+    if (!window.confirm("Are you sure you want to delete this student?")) return;
+    setLoading(true);
+    try {
+      await deleteDoc(doc(db, "students", studentId));
+      setSuccess('Student deleted successfully');
+      fetchStudents();
+    } catch (err) {
+      setError('Failed to delete student');
+    }
+    setLoading(false);
+  };
+
+
+
   const handleDeleteUser = async (userId) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     setLoading(true);
@@ -275,7 +361,11 @@ const AdminArea = () => {
           >
             Manage Classes
           </button>
+          
+          
+          <button onClick={() => setSection('manageStudents')}>Manage Students</button>
         </nav>
+        
         
         <div className="admin-footer">
           <div className="user-info">
@@ -292,6 +382,7 @@ const AdminArea = () => {
             {section === 'dashboard' && 'Admin Dashboard'}
             {section === 'manageUsers' && 'User Management'}
             {section === 'manageClasses' && 'Class Management'}
+            {section === 'manageStudents' && 'Student Management'}
           </h1>
         </div>
         
@@ -302,8 +393,13 @@ const AdminArea = () => {
           {section === 'dashboard' && (
             <div className="dashboard-content">
               <div className="welcome-card">
-                <h2>Welcome, Administrator!</h2>
+                <h2>Welcome!</h2>
                 <p>This is your control panel for managing the LEVEL UP Chess Club system.</p>
+                <p>_______________________________________________________________________</p>
+                <p>Total Users: {users.length}</p>
+                <p>Total Classes: {classes.length}</p>
+                <p>Total Students: {students.length}</p>
+
               </div>
               
               <div className="quick-actions">
@@ -315,6 +411,10 @@ const AdminArea = () => {
                   <button onClick={() => setSection('manageClasses')} className="action-button">
                     Manage Classes
                   </button>
+                  <button onClick={() => setSection('manageStudents')} className="action-button">
+                    Manage Students
+                  </button>
+                  
                 </div>
               </div>
             </div>
@@ -679,9 +779,149 @@ const AdminArea = () => {
             </div>
           )}
         </div>
+        {section === 'manageStudents' && (
+          <div className="student-management-container">
+            <div className="add-user-section">
+              <h2>Add New Student</h2>
+              <form onSubmit={handleAddStudent} className="add-user-form">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Student ID*</label>
+                    <input
+                      type="text"
+                      name="id"
+                      value={newStudent.id}
+                      onChange={handleStudentChange}
+                      placeholder="Student ID"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Full Name*</label>
+                    <input
+                      type="text"
+                      name="fullName"
+                      value={newStudent.fullName}
+                      onChange={handleStudentChange}
+                      placeholder="Full Name"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Age</label>
+                    <input
+                      type="number"
+                      name="age"
+                      value={newStudent.age}
+                      onChange={handleStudentChange}
+                      placeholder="Age"
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>School*</label>
+                    <input
+                      type="text"
+                      name="school"
+                      value={newStudent.school}
+                      onChange={handleStudentChange}
+                      placeholder="School Name"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Class*</label>
+                    <select
+                      name="classId"
+                      value={newStudent.classId}
+                      onChange={handleStudentChange}
+                      required
+                    >
+                      <option value="">Select Class</option>
+                      {classes.map(cls => (
+                        <option key={cls.id} value={cls.id}>
+                          {cls.className} ({cls.school})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-actions">
+                  <button type="submit" className="add-button" disabled={loading}>
+                    {loading ? 'Adding...' : 'Add Student'}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div className="user-list-section">
+              <div className="users-list-header">
+                <h3>Students List</h3>
+                <button onClick={fetchStudents} className="refresh-button" disabled={loading}>
+                  {loading ? 'Refreshing...' : '↻ Refresh List'}
+                </button>
+              </div>
+
+              {loading ? (
+                <div className="loading-users">Loading students...</div>
+              ) : (
+                <div className="users-table-wrapper">
+                  {students.length > 0 ? (
+                    <table className="users-table">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Name</th>
+                          <th>Age</th>
+                          <th>School</th>
+                          <th>Class</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {students.map(student => (
+                          <tr key={student.id}>
+                            <td>{student.id}</td>
+                            <td>{student.fullName}</td>
+                            <td>{student.age || '-'}</td>
+                            <td>{student.school}</td>
+                            <td>
+                              {classes.find(c => c.id === student.classId)?.className || 'Unknown'}
+                            </td>
+                            <td>
+                              <div className="table-actions">
+                                <button
+                                  className="delete-button"
+                                  onClick={() => handleDeleteStudent(student.id)}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className="no-users">No students found</div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+      
 
 export default AdminArea;
