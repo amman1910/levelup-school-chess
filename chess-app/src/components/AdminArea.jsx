@@ -394,7 +394,7 @@ const AdminArea = () => {
           {section === 'dashboard' && (
             <div className="dashboard-content">
               <div className="welcome-card">
-                <h2>Welcome, Ahmad AbuGosh!</h2>
+                <h2>Welcome !</h2>
                 <p>This is your control panel for managing the LEVEL UP Chess Club system.</p>
                 <p>_______________________________________________________________________</p>
                 <p>Total Users: {users.length}</p>
