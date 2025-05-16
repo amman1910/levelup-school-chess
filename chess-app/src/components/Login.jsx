@@ -5,7 +5,6 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 // Import the logo - add the correct path to your logo file
-// For example: import chessLogo from '../assets/chess-logo.png';
 import chessLogo from './chessLogo.png'; // Update this path as necessary
 
 const Login = () => {
@@ -46,18 +45,31 @@ const Login = () => {
           const userDoc = querySnapshot.docs[0];
           const userData = userDoc.data();
           
-          // Save user details in local storage
+          // Save complete user data
           localStorage.setItem('user', JSON.stringify({
-            uid: user.uid,
+            uid: userDoc.id, // Use document ID from Firestore
             email: user.email,
-            role: userData.role
+            role: userData.role,
+            firstLogin: userData.firstLogin
           }));
           
-          // Navigate based on role
+          console.log("User data saved:", {
+            uid: userDoc.id,
+            email: user.email,
+            role: userData.role,
+            firstLogin: userData.firstLogin
+          });
+          
+          // Navigate based on role and firstLogin status
           if (userData.role === "admin") {
             navigate('/admin-area');
           } else if (userData.role === "trainer") {
-            navigate('/trainer-area');
+            // Check if this is the first login
+            if (userData.firstLogin === true) {
+              navigate('/change-initial-password');
+            } else {
+              navigate('/trainer-area');
+            }
           } else {
             // If role is not recognized
             setError('Unrecognized user role');
