@@ -163,7 +163,9 @@ const AdminArea = () => {
           email: newUser.email,
           age: Number(newUser.age) || 0,
           role: newUser.role,
-          createdAt: new Date()
+          createdAt: new Date(),
+          firstLogin: true
+
         });
         setSuccess('User added successfully!');
       }
