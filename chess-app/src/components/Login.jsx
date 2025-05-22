@@ -4,8 +4,7 @@ import { db } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
-// Import the logo - add the correct path to your logo file
-import chessLogo from './chessLogo.png'; // Update this path as necessary
+import chessLogo from './chessLogo.png';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -33,21 +32,17 @@ const Login = () => {
       
       console.log("User logged in:", user);
 
-      // Check user role from database
       try {
-        // Search by email in users collection
         const usersRef = collection(db, "users");
         const q = query(usersRef, where("email", "==", email));
         const querySnapshot = await getDocs(q);
         
         if (!querySnapshot.empty) {
-          // If a user with this email is found
           const userDoc = querySnapshot.docs[0];
           const userData = userDoc.data();
           
-          // Save complete user data
           localStorage.setItem('user', JSON.stringify({
-            uid: userDoc.id, // Use document ID from Firestore
+            uid: userDoc.id,
             email: user.email,
             role: userData.role,
             firstLogin: userData.firstLogin
@@ -60,23 +55,19 @@ const Login = () => {
             firstLogin: userData.firstLogin
           });
           
-          // Navigate based on role and firstLogin status
           if (userData.role === "admin") {
             navigate('/admin-area');
           } else if (userData.role === "trainer") {
-            // Check if this is the first login
             if (userData.firstLogin === true) {
               navigate('/change-initial-password');
             } else {
               navigate('/trainer-area');
             }
           } else {
-            // If role is not recognized
             setError('Unrecognized user role');
             setLoading(false);
           }
         } else {
-          // If no user with this email is found
           setError('User does not exist in the system');
           setLoading(false);
         }
@@ -96,13 +87,10 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-form-wrapper">
-        {/* Decorative elements */}
         <div className="chess-decoration decoration-1"></div>
         <div className="chess-decoration decoration-2"></div>
         
-        {/* Logo area */}
         <div className="logo-area">
-          {/* Add the logo here */}
           <img src={chessLogo} alt="Chess Logo" />
           <h1>Chess Club Management System</h1>
         </div>
