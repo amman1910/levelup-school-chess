@@ -34,7 +34,7 @@ body, html {
 .admin-area {
   display: flex;
   height: 100vh;
-  width: 100%;
+  width: 220vh;
   background-color: var(--background-light);
 }
 
