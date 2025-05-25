@@ -605,3 +605,80 @@ body, html {
     min-width: 80px;
   }
 } 
+/* Status badges */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.planned {
+  background-color: #e9c44c;
+  color: #333;
+}
+
+.status-badge.completed {
+  background-color: #27ae60;
+  color: white;
+}
+
+.status-badge.cancelled {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* Lesson table specific styles */
+.users-table th:nth-child(1),
+.users-table td:nth-child(1) {
+  min-width: 100px;
+}
+
+.users-table th:nth-child(3),
+.users-table td:nth-child(3) {
+  min-width: 150px;
+}
+/* Add these styles to your existing AdminArea.css */
+.loading-message {
+  padding: 2rem;
+  text-align: center;
+  color: var(--primary-purple);
+  font-size: 1.2rem;
+}
+
+.error-container {
+  padding: 2rem;
+  text-align: center;
+}
+
+.no-lessons-message {
+  padding: 2rem;
+  text-align: center;
+  font-style: italic;
+  color: var(--text-color);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.planned {
+  background-color: var(--secondary-gold);
+  color: var(--dark-purple);
+}
+
+.status-badge.completed {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.status-badge.cancelled {
+  background-color: var(--error-color);
+  color: white;
+}

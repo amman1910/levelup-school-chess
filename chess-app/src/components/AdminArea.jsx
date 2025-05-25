@@ -6,6 +6,7 @@ import Dashboard from './Dashboard';
 import ManageUsers from './ManageUsers';
 import ManageClasses from './ManageClasses';
 import ManageStudents from './ManageStudents';
+import ManageLessons from './ManageLessons';
 import './AdminArea.css';
 
 const AdminArea = () => {
@@ -19,6 +20,7 @@ const AdminArea = () => {
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
+  // Fetch all data based on current section
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
     if (!loggedInUser) {
@@ -34,68 +36,74 @@ const AdminArea = () => {
 
     setUser(userData);
 
-    if (section === 'manageUsers') fetchUsers();
-    if (section === 'manageClasses') fetchClasses();
-    if (section === 'manageStudents') fetchStudents();
+    // Fetch data based on current section
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        switch(section) {
+          case 'manageUsers':
+            const usersSnapshot = await getDocs(collection(db, "users"));
+            setUsers(usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            break;
+          case 'manageClasses':
+            const classesSnapshot = await getDocs(collection(db, "classes"));
+            setClasses(classesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            break;
+          case 'manageStudents':
+            const studentsSnapshot = await getDocs(collection(db, "students"));
+            setStudents(studentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            break;
+          default:
+            // For dashboard, fetch all data
+            const [usersRes, classesRes, studentsRes] = await Promise.all([
+              getDocs(collection(db, "users")),
+              getDocs(collection(db, "classes")),
+              getDocs(collection(db, "students"))
+            ]);
+            setUsers(usersRes.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            setClasses(classesRes.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            setStudents(studentsRes.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        }
+      } catch (err) {
+        console.error(`Error fetching ${section} data:`, err);
+        setError(`Failed to load ${section} data`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [navigate, section]);
-
-  const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const usersSnapshot = await getDocs(collection(db, "users"));
-      const usersList = usersSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setUsers(usersList);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching users:", err);
-      setError("Failed to load users");
-      setLoading(false);
-    }
-  };
-
-  const fetchClasses = async () => {
-    setLoading(true);
-    try {
-      const classesSnapshot = await getDocs(collection(db, "classes"));
-      const classesList = classesSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setClasses(classesList);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching classes:", err);
-      setError("Failed to load classes");
-      setLoading(false);
-    }
-  };
-
-  const fetchStudents = async () => {
-    setLoading(true);
-    try {
-      const studentsSnapshot = await getDocs(collection(db, "students"));
-      const studentsList = studentsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setStudents(studentsList);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching students:", err);
-      setError("Failed to load students");
-      setLoading(false);
-    }
-  };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     navigate('/login');
   };
 
-  if (!user) return <div className="loading">Loading...</div>;
+  const handleRefresh = async () => {
+    setError('');
+    setSuccess('');
+    setLoading(true);
+    try {
+      const [usersRes, classesRes, studentsRes] = await Promise.all([
+        getDocs(collection(db, "users")),
+        getDocs(collection(db, "classes")),
+        getDocs(collection(db, "students"))
+      ]);
+      setUsers(usersRes.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setClasses(classesRes.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setStudents(studentsRes.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setSuccess('Data refreshed successfully');
+    } catch (err) {
+      setError('Failed to refresh data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!user) {
+    return <div className="loading">Loading...</div>;
+  }
 
   return (
     <div className="admin-area">
@@ -130,6 +138,12 @@ const AdminArea = () => {
           >
             Manage Students
           </button>
+          <button 
+            className={section === 'manageLessons' ? 'active' : ''} 
+            onClick={() => setSection('manageLessons')}
+          >
+            Manage Lessons
+          </button>
         </nav>
         
         <div className="admin-footer">
@@ -137,7 +151,13 @@ const AdminArea = () => {
             <div className="user-email">{user.email}</div>
             <div className="user-role">Administrator</div>
           </div>
-          <button onClick={handleLogout} className="logout-button">Logout</button>
+          <button 
+            onClick={handleLogout} 
+            className="logout-button"
+            disabled={loading}
+          >
+            Logout
+          </button>
         </div>
       </div>
       
@@ -148,7 +168,15 @@ const AdminArea = () => {
             {section === 'manageUsers' && 'User Management'}
             {section === 'manageClasses' && 'Class Management'}
             {section === 'manageStudents' && 'Student Management'}
+            {section === 'manageLessons' && 'Lesson Management'}
           </h1>
+          <button 
+            onClick={handleRefresh} 
+            className="refresh-button"
+            disabled={loading}
+          >
+            {loading ? 'Refreshing...' : '↻ Refresh Data'}
+          </button>
         </div>
         
         <div className="admin-main">
@@ -159,21 +187,24 @@ const AdminArea = () => {
             <Dashboard 
               users={users} 
               classes={classes} 
-              students={students} 
-              setSection={setSection} 
+              students={students}
+              setSection={setSection}
             />
           )}
+          
           {section === 'manageUsers' && (
             <ManageUsers 
               users={users}
               setUsers={setUsers}
               loading={loading}
               setLoading={setLoading}
-              error={setError}
-              success={setSuccess}
-              fetchUsers={fetchUsers}
+              error={error}
+              setError={setError}
+              success={success}
+              setSuccess={setSuccess}
             />
           )}
+          
           {section === 'manageClasses' && (
             <ManageClasses 
               classes={classes}
@@ -181,11 +212,13 @@ const AdminArea = () => {
               setClasses={setClasses}
               loading={loading}
               setLoading={setLoading}
-              error={setError}
-              success={setSuccess}
-              fetchClasses={fetchClasses}
+              error={error}
+              setError={setError}
+              success={success}
+              setSuccess={setSuccess}
             />
           )}
+          
           {section === 'manageStudents' && (
             <ManageStudents 
               students={students}
@@ -193,9 +226,20 @@ const AdminArea = () => {
               setStudents={setStudents}
               loading={loading}
               setLoading={setLoading}
-              error={setError}
-              success={setSuccess}
-              fetchStudents={fetchStudents}
+              error={error}
+              setSuccess={setSuccess}
+            />
+          )}
+          
+          {section === 'manageLessons' && (
+            <ManageLessons 
+              classes={classes}
+              loading={loading}
+              setLoading={setLoading}
+              error={error}
+              setError={setError}
+              success={success}
+              setSuccess={setSuccess}
             />
           )}
         </div>
