@@ -1,0 +1,161 @@
+/* TrainerSchools.css */
+
+.schools-page {
+  padding: 2rem;
+  background-color: var(--background-light);
+  min-height: 75vh;
+}
+
+.school-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  align-items: start; /* 🟣 مهم حتى الكروت ما تتأثر */
+}
+
+.school-card {
+  background-color: var(--white);
+  border: 1px solid var(--light-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.3s;
+
+  display: flex;
+  flex-direction: column;
+  position: relative; /* 🟣 ضروري لتثبيت التفاصيل */
+  overflow: visible;  /* يسمح للتفاصيل بالظهور خارج الحدود */
+}
+
+.school-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.school-card:hover {
+  transform: scale(1.02);
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.card-header h3 {
+  color: var(--primary-purple);
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-header p {
+  margin: 0;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+}
+
+.progress-circle {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+}
+
+.school-details {
+  position: absolute; /* 🟣 تفصيل مهم */
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: var(--white);
+  border: 1px solid var(--light-border);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  animation: fadeSlideIn 0.3s ease-in-out;
+}
+
+.class-info {
+  margin-bottom: 1rem;
+  background-color: var(--light-gray);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  position: relative;
+}
+
+.class-info h4 {
+  margin-bottom: 0.3rem;
+  color: var(--dark-purple);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.class-info p {
+  color: var(--text-color);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.class-info .progress-circle {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.view-sessions-btn {
+  margin-top: 0.75rem;
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.view-sessions-btn:hover {
+  background-color: var(--dark-purple);
+  transform: scale(1.05);
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
