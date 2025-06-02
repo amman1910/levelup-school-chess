@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import './TrainerDashboard.css';
 import {
@@ -19,46 +19,82 @@ const TrainerDashboard = () => {
 
   const [upcoming, setUpcoming] = useState([]);
   const [classProgress, setClassProgress] = useState([]);
+  const [trainerName, setTrainerName] = useState('Trainer');
 
   useEffect(() => {
     const fetchData = async () => {
       const user = JSON.parse(localStorage.getItem('user'));
       if (!user?.uid) return;
 
-      const q = query(collection(db, 'classes'), where('assignedTrainer', '==', user.uid));
-      const snapshot = await getDocs(q);
-      const classList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Fetch trainer name
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          const fullName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+          setTrainerName(fullName || 'Trainer');
+        }
+      } catch (error) {
+        console.error('Error fetching trainer name:', error);
+      }
 
+      // Fetch classes
+      const classQuery = query(collection(db, 'classes'), where('assignedTrainer', '==', user.uid));
+      const classSnapshot = await getDocs(classQuery);
+      const classList = classSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      // Calculate total students
       const totalStudents = classList.reduce((acc, cls) => acc + (cls.studentsId?.length || 0), 0);
 
+      // Fetch sessions
       const sessionQuery = query(collection(db, 'sessions'), where('trainerId', '==', user.uid));
       const sessionSnapshot = await getDocs(sessionQuery);
-      const now = new Date();
       const sessions = sessionSnapshot.docs.map(doc => {
         const data = doc.data();
         const date = data.date?.seconds ? new Date(data.date.seconds * 1000) : new Date(data.date);
         return { ...data, date };
       });
 
-      const upcoming = sessions.filter(s => s.date >= now).sort((a, b) => a.date - b.date);
-      const recorded = sessions.filter(s => s.date < now);
+      // Print all class IDs
+      console.log('All Class IDs:');
+      classList.forEach(cls => {
+        console.log(`Class: ${cls.className} - ID: ${cls.id}`);
+      });
 
+      // Filter sessions by status field instead of date
+      const upcomingSessions = sessions.filter(s => s.status === false || s.status === undefined);
+      const recordedSessions = sessions.filter(s => s.status === true);
+
+      // Sort upcoming sessions by date (earliest first)
+      const sortedUpcoming = upcomingSessions.sort((a, b) => a.date - b.date);
+
+      // Calculate RECORDED sessions per class for chart (only status=true)
       const progressData = classList.map(cls => {
-        const count = sessions.filter(s => s.classesId === cls.id).length;
+        // Filter sessions for this specific class AND only recorded ones (status=true)
+        const classRecordedSessions = sessions.filter(s => {
+          const classMatch = String(s.classId) === String(cls.id);
+          const isRecorded = s.status === true;
+          const shouldCount = classMatch && isRecorded;
+          
+          return shouldCount;
+        });
+        
         return {
           name: cls.className || 'Unnamed',
-          sessions: count
+          sessions: classRecordedSessions.length
         };
       });
 
+      // Update stats
       setStats({
         classes: classList.length,
         students: totalStudents,
-        upcomingSessions: upcoming.length,
-        recordedSessions: recorded.length
+        upcomingSessions: upcomingSessions.length,
+        recordedSessions: recordedSessions.length
       });
 
-      setUpcoming(upcoming.slice(0, 5));
+      // Set upcoming sessions (limit to 5 for display)
+      setUpcoming(sortedUpcoming.slice(0, 5));
       setClassProgress(progressData);
     };
 
@@ -67,7 +103,7 @@ const TrainerDashboard = () => {
 
   return (
     <div className="dashboard-page">
-      <h2>Welcome Back, Trainer</h2>
+      <h2>Welcome Back, {trainerName}</h2>
 
       <div className="stats-grid">
         <div className="stat-card">
@@ -105,12 +141,15 @@ const TrainerDashboard = () => {
 
       <div className="upcoming-section">
         <h3>Next Sessions</h3>
-        {upcoming.length === 0 ? <p>No upcoming sessions.</p> : (
+        {upcoming.length === 0 ? (
+          <p>No upcoming sessions.</p>
+        ) : (
           <ul className="session-list">
-            {upcoming.map((s, idx) => (
+            {upcoming.map((session, idx) => (
               <li key={idx}>
-                <span>{s.date.toLocaleString()}</span>
-                <span>{s.topic || 'No topic'}</span>
+                <span>{session.date.toLocaleString()}</span>
+                <span>{session.topic || 'No topic'}</span>
+                <span className="status-indicator upcoming">Upcoming</span>
               </li>
             ))}
           </ul>
@@ -118,7 +157,7 @@ const TrainerDashboard = () => {
       </div>
 
       <div className="chart-section">
-        <h3>Sessions per Class</h3>
+        <h3>Recorded Sessions per Class</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={classProgress}>
             <XAxis dataKey="name" stroke="#5e3c8f" />
