@@ -2,55 +2,55 @@
 
 .meeting-form {
   margin: 0;
-  padding: 40px;
+  padding: 30px;
   max-width: 1000px;
   width: 100%;
   background-color: var(--white);
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
-  border-left: 6px solid var(--primary-purple);
+  border-left: 5px solid var(--primary-purple);
   animation: fadeIn 0.4s ease-in-out;
 }
 
 .meeting-form h2 {
   color: var(--primary-purple);
   text-align: center;
-  font-size: 26px;
-  margin-bottom: 30px;
+  font-size: 20px;
+  margin-bottom: 24px;
 }
 
 .meeting-form section {
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .meeting-form section h3 {
   color: var(--dark-purple);
-  font-size: 18px;
-  margin-bottom: 16px;
-  border-left: 4px solid var(--secondary-gold);
-  padding-left: 10px;
+  font-size: 16px;
+  margin-bottom: 12px;
+  border-left: 3px solid var(--secondary-gold);
+  padding-left: 8px;
 }
 
 .meeting-form label {
   display: flex;
   flex-direction: column;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-color);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   font-weight: 500;
 }
 
 .meeting-form input,
 .meeting-form select,
 .meeting-form textarea {
-  padding: 10px 14px;
-  font-size: 14px;
+  padding: 8px 12px;
+  font-size: 13px;
   border: 1px solid var(--light-border);
-  border-radius: 6px;
+  border-radius: 5px;
   background-color: #f0f0f0;
   color: #333;
-  margin-top: 6px;
+  margin-top: 5px;
   transition: box-shadow 0.2s ease;
 }
 
@@ -59,45 +59,45 @@
 .meeting-form textarea:focus {
   border-color: var(--secondary-gold);
   outline: none;
-  box-shadow: 0 0 4px rgba(233, 196, 76, 0.4);
+  box-shadow: 0 0 3px rgba(233, 196, 76, 0.4);
 }
 
 .meeting-form select {
   appearance: none;
   background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='5'><path fill='%236c3fa2' d='M0 0l5 5 5-5z'/></svg>");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 10px;
+  background-position: right 10px center;
+  background-size: 9px;
 }
 
 .meeting-form textarea {
   resize: vertical;
-  min-height: 90px;
+  min-height: 75px;
 }
 
 .student-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
 }
 
 .student-grid label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 6px;
+  font-size: 13px;
 }
 
 .meeting-form input[type="checkbox"] {
-  transform: scale(1.2);
+  transform: scale(1.1);
   accent-color: var(--secondary-gold);
 }
 
 .star-rating {
   display: flex;
-  gap: 6px;
-  font-size: 22px;
-  margin-top: 6px;
+  gap: 5px;
+  font-size: 18px;
+  margin-top: 5px;
   cursor: pointer;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .meeting-form input[type="file"] {
-  padding: 4px;
+  padding: 3px;
   background-color: var(--light-gray);
   border-radius: 4px;
 }
@@ -119,13 +119,13 @@
   background-color: var(--secondary-gold);
   color: var(--dark-purple);
   font-weight: 600;
-  font-size: 16px;
+  font-size: 15px;
   border: none;
-  padding: 14px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 7px;
   width: 100%;
   transition: background-color 0.3s;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .meeting-form button[type="submit"]:hover {
@@ -134,7 +134,7 @@
 }
 
 .meeting-page {
-  padding-top: 120px;
+  padding-top: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -151,7 +151,3 @@
     transform: translateY(0);
   }
 }
-
-
-
-

@@ -1,7 +1,7 @@
 /* TrainerDashboard.css */
 
 .dashboard-page {
-  padding: 2rem;
+  padding: 1.5rem;
   background-color: var(--background-light);
   min-height: 40vh;
   color: var(--text-color);
@@ -9,35 +9,35 @@
 
 .dashboard-page h2 {
   color: var(--primary-purple);
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  margin-bottom: 1.2rem;
 }
 
 .stats-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
   justify-content: space-between;
 }
 
 .stat-card {
   background-color: var(--white);
   border: 1px solid var(--light-border);
-  border-radius: 16px;
-  padding: 1.5rem;
-  flex: 1 1 calc(25% - 1.5rem);
-  min-width: 220px;
+  border-radius: 12px;
+  padding: 1.2rem;
+  flex: 1 1 calc(25% - 1rem);
+  min-width: 200px;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  gap: 0.8rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.1);
 }
 
 .stat-card svg {
@@ -47,31 +47,31 @@
 
 .stat-card h3 {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   color: var(--primary-purple);
 }
 
 .stat-card p {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-color);
 }
 
 .upcoming-section,
 .chart-section {
   background-color: var(--white);
-  border-radius: 16px;
-  padding: 1.5rem;
+  border-radius: 12px;
+  padding: 1.2rem;
   border: 1px solid var(--light-border);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
-  margin-bottom: 2rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 1.5rem;
   color: var(--text-color);
 }
 
 .upcoming-section h3,
 .chart-section h3 {
-  margin-bottom: 1rem;
-  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
+  font-size: 1.2rem;
   color: var(--primary-purple);
 }
 
@@ -84,9 +84,9 @@
 .session-list li {
   display: flex;
   justify-content: space-between;
-  padding: 0.75rem 0;
+  padding: 0.6rem 0;
   border-bottom: 1px solid var(--light-border);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-color);
 }
 
@@ -104,8 +104,3 @@
     transform: translateY(0);
   }
 }
-
-
-
-
-
