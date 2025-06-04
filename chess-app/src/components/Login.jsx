@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { db } from '../firebase';
@@ -84,6 +85,11 @@ const Login = () => {
     }
   };
 
+  // Function to navigate to ForgotPassword route
+  const handleForgotPassword = () => {
+    navigate('/forgot-password');
+  };
+
   return (
     <div className="login-container">
       <div className="login-form-wrapper">
@@ -129,6 +135,16 @@ const Login = () => {
               {loading ? 'Connecting...' : 'Login'}
             </button>
           </form>
+
+          {/* Forgot Password Button */}
+          <button 
+            type="button" 
+            className="forgot-password-button" 
+            onClick={handleForgotPassword}
+            disabled={loading}
+          >
+            Forgot Password?
+          </button>
         </div>
       </div>
     </div>

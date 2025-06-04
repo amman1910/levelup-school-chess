@@ -4,6 +4,7 @@ import Login from './components/Login';
 import AdminArea from './components/AdminArea';
 import TrainerArea from './components/TrainerArea';
 import ChangeInitialPassword from './components/ChangeInitialPassword';
+import ForgotPassword from './components/ForgotPassword'; // Added ForgotPassword import
 
 function App() {
   return (
@@ -15,6 +16,9 @@ function App() {
         {/* صفحة تسجيل الدخول */}
         <Route path="/login" element={<Login />} />
         
+        {/* صفحة نسيان كلمة السر */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        
         {/* صفحة المدير */}
         <Route path="/admin-area" element={<AdminArea />} />
         
@@ -24,14 +28,11 @@ function App() {
         {/* صفحة تغيير كلمة السر الأولية */}
         <Route path="/change-initial-password" element={<ChangeInitialPassword />} />
         
-        
         {/* أي رابط غير معروف يذهب لتسجيل الدخول */}
         <Route path="*" element={<Navigate to="/login" />} />
-
       </Routes>
     </Router>
   );
 }
 
 export default App;
-
