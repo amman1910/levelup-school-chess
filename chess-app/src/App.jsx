@@ -20,7 +20,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         
         {/* صفحة المدير */}
-        <Route path="/admin-area" element={<AdminArea />} />
+        <Route path="/admin-area/*" element={<AdminArea />} />
         
         {/* صفحة المدرب - تشمل كل الأقسام */}
         <Route path="/trainer-area/*" element={<TrainerArea />} />
