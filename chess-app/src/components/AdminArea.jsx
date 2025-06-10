@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import Dashboard from './Dashboard';
 import ManageUsers from './ManageUsers';
+import AdminTrainerMonitoring from './AdminTrainerMonitoring';
 import ManageClasses from './ManageClasses';
 import ManageStudents from './ManageStudents';
 import ManageLessons from './ManageLessons';
+import AdminNewsEvents from './AdminNewsEvents';
+import AdminGallery from './AdminGallery';
+import AdminNotifications from './AdminNotifications';
+import AdminRegistrationForms from './AdminRegistrationForms';
 import './AdminArea.css';
 
 const AdminArea = () => {
   const [user, setUser] = useState(null);
-  const [section, setSection] = useState('dashboard');
   const [users, setUsers] = useState([]);
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
@@ -19,8 +23,8 @@ const AdminArea = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Fetch all data based on current section
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
     if (!loggedInUser) {
@@ -35,70 +39,82 @@ const AdminArea = () => {
     }
 
     setUser(userData);
+  }, [navigate]);
 
-    // Fetch data based on current section
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        switch(section) {
-          case 'manageUsers':
-            const usersSnapshot = await getDocs(collection(db, "users"));
-            setUsers(usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-            break;
-          case 'manageClasses':
-            const classesSnapshot = await getDocs(collection(db, "classes"));
-            setClasses(classesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-            break;
-          case 'manageStudents':
-            const studentsSnapshot = await getDocs(collection(db, "students"));
-            setStudents(studentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-            break;
-          default:
-            // For dashboard, fetch all data
-            const [usersRes, classesRes, studentsRes] = await Promise.all([
-              getDocs(collection(db, "users")),
-              getDocs(collection(db, "classes")),
-              getDocs(collection(db, "students"))
-            ]);
-            setUsers(usersRes.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-            setClasses(classesRes.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-            setStudents(studentsRes.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        }
-      } catch (err) {
-        console.error(`Error fetching ${section} data:`, err);
-        setError(`Failed to load ${section} data`);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Fetch data function
+  const fetchUsers = async () => {
+    try {
+      const usersSnapshot = await getDocs(collection(db, "users"));
+      setUsers(usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      setError('Failed to load users data');
+    }
+  };
 
-    fetchData();
-  }, [navigate, section]);
+  const fetchClasses = async () => {
+    try {
+      const classesSnapshot = await getDocs(collection(db, "classes"));
+      setClasses(classesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    } catch (err) {
+      console.error('Error fetching classes:', err);
+      setError('Failed to load classes data');
+    }
+  };
+
+  const fetchStudents = async () => {
+    try {
+      const studentsSnapshot = await getDocs(collection(db, "students"));
+      setStudents(studentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    } catch (err) {
+      console.error('Error fetching students:', err);
+      setError('Failed to load students data');
+    }
+  };
+
+  const fetchAllData = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([fetchUsers(), fetchClasses(), fetchStudents()]);
+    } catch (err) {
+      setError('Failed to load data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial data fetch
+  useEffect(() => {
+    if (user) {
+      fetchAllData();
+    }
+  }, [user]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     navigate('/login');
   };
 
+  const getPageTitle = () => {
+    if (location.pathname.includes('dashboard')) return 'Admin Dashboard';
+    if (location.pathname.includes('manage-users')) return 'User Management';
+    if (location.pathname.includes('trainer-monitoring')) return 'Trainer Monitoring';
+    if (location.pathname.includes('manage-classes')) return 'Class Management';
+    if (location.pathname.includes('manage-students')) return 'Student Management';
+    if (location.pathname.includes('manage-lessons')) return 'Lesson Management';
+    if (location.pathname.includes('news-events')) return 'News and Events';
+    if (location.pathname.includes('edit-gallery')) return 'Edit Gallery';
+    if (location.pathname.includes('notifications')) return 'Notifications';
+    if (location.pathname.includes('registration-requests')) return 'Registration Requests';
+    return 'Admin Area';
+  };
+
   const handleRefresh = async () => {
     setError('');
     setSuccess('');
-    setLoading(true);
-    try {
-      const [usersRes, classesRes, studentsRes] = await Promise.all([
-        getDocs(collection(db, "users")),
-        getDocs(collection(db, "classes")),
-        getDocs(collection(db, "students"))
-      ]);
-      setUsers(usersRes.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setClasses(classesRes.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setStudents(studentsRes.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setSuccess('Data refreshed successfully');
-    } catch (err) {
-      setError('Failed to refresh data');
-    } finally {
-      setLoading(false);
-    }
+    await fetchAllData();
+    setSuccess('Data refreshed successfully');
+    setTimeout(() => setSuccess(''), 3000);
   };
 
   if (!user) {
@@ -114,36 +130,37 @@ const AdminArea = () => {
         </div>
         
         <nav className="admin-nav">
-          <button 
-            className={section === 'dashboard' ? 'active' : ''} 
-            onClick={() => setSection('dashboard')}
-          >
+          <NavLink to="/admin-area/dashboard" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
             Dashboard
-          </button>
-          <button 
-            className={section === 'manageUsers' ? 'active' : ''} 
-            onClick={() => setSection('manageUsers')}
-          >
+          </NavLink>
+          <NavLink to="/admin-area/manage-users" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
             Manage Users
-          </button>
-          <button 
-            className={section === 'manageClasses' ? 'active' : ''} 
-            onClick={() => setSection('manageClasses')}
-          >
+          </NavLink>
+       
+          <NavLink to="/admin-area/manage-classes" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
             Manage Classes
-          </button>
-          <button 
-            className={section === 'manageStudents' ? 'active' : ''} 
-            onClick={() => setSection('manageStudents')}
-          >
+          </NavLink>
+          <NavLink to="/admin-area/manage-students" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
             Manage Students
-          </button>
-          <button 
-            className={section === 'manageLessons' ? 'active' : ''} 
-            onClick={() => setSection('manageLessons')}
-          >
+          </NavLink>
+          <NavLink to="/admin-area/manage-lessons" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
             Manage Lessons
-          </button>
+          </NavLink>
+                <NavLink to="/admin-area/trainer-monitoring" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
+            Trainer Monitoring
+          </NavLink>
+          <NavLink to="/admin-area/news-events" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
+            News and Event
+          </NavLink>
+          <NavLink to="/admin-area/edit-gallery" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
+            Edit Gallery
+          </NavLink>
+          <NavLink to="/admin-area/notifications" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
+            Notifications
+          </NavLink>
+          <NavLink to="/admin-area/registration-requests" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
+            Registration Requests
+          </NavLink>
         </nav>
         
         <div className="admin-footer">
@@ -163,13 +180,7 @@ const AdminArea = () => {
       
       <div className="admin-content">
         <div className="admin-header">
-          <h1>
-            {section === 'dashboard' && 'Admin Dashboard'}
-            {section === 'manageUsers' && 'User Management'}
-            {section === 'manageClasses' && 'Class Management'}
-            {section === 'manageStudents' && 'Student Management'}
-            {section === 'manageLessons' && 'Lesson Management'}
-          </h1>
+          <h1 className="page-title">{getPageTitle()}</h1>
           <button 
             onClick={handleRefresh} 
             className="refresh-button"
@@ -183,65 +194,139 @@ const AdminArea = () => {
           {error && <div className="error-message">{error}</div>}
           {success && <div className="success-message">{success}</div>}
           
-          {section === 'dashboard' && (
-            <Dashboard 
-              users={users} 
-              classes={classes} 
-              students={students}
-              setSection={setSection}
+          <Routes>
+            <Route index element={<Navigate to="dashboard" />} />
+            <Route 
+              path="dashboard" 
+              element={
+                <Dashboard 
+                  users={users} 
+                  classes={classes} 
+                  students={students}
+                />
+              } 
             />
-          )}
-          
-          {section === 'manageUsers' && (
-            <ManageUsers 
-              users={users}
-              setUsers={setUsers}
-              loading={loading}
-              setLoading={setLoading}
-              error={error}
-              setError={setError}
-              success={success}
-              setSuccess={setSuccess}
+            <Route 
+              path="manage-users" 
+              element={
+                <ManageUsers 
+                  users={users}
+                  setUsers={setUsers}
+                  loading={loading}
+                  setLoading={setLoading}
+                  error={setError}
+                  success={setSuccess}
+                  fetchUsers={fetchUsers}
+                />
+              } 
             />
-          )}
-          
-          {section === 'manageClasses' && (
-            <ManageClasses 
-              classes={classes}
-              users={users}
-              setClasses={setClasses}
-              loading={loading}
-              setLoading={setLoading}
-              error={error}
-              setError={setError}
-              success={success}
-              setSuccess={setSuccess}
+            <Route 
+              path="trainer-monitoring" 
+              element={
+                <AdminTrainerMonitoring 
+                  users={users}
+                  classes={classes}
+                  students={students}
+                  loading={loading}
+                  setLoading={setLoading}
+                  error={setError}
+                  success={setSuccess}
+                  fetchUsers={fetchUsers}
+                  fetchClasses={fetchClasses}
+                  fetchStudents={fetchStudents}
+                />
+              } 
             />
-          )}
-          
-          {section === 'manageStudents' && (
-            <ManageStudents 
-              students={students}
-              classes={classes}
-              setStudents={setStudents}
-              loading={loading}
-              setLoading={setLoading}
-              error={error}
-              setSuccess={setSuccess}
+            <Route 
+              path="manage-classes" 
+              element={
+                <ManageClasses 
+                  classes={classes}
+                  users={users}
+                  setClasses={setClasses}
+                  loading={loading}
+                  setLoading={setLoading}
+                  error={setError}
+                  setError={setError}
+                  success={setSuccess}
+                  setSuccess={setSuccess}
+                />
+              } 
             />
-          )}
-          
-          {section === 'manageLessons' && (
-            <ManageLessons 
-              classes={classes}
-              loading={loading}
-              setLoading={setLoading}
-              error={error}
-              setError={setError}
-              success={success}
-              setSuccess={setSuccess}
+            <Route 
+              path="manage-students" 
+              element={
+                <ManageStudents 
+                  students={students}
+                  classes={classes}
+                  setStudents={setStudents}
+                  loading={loading}
+                  setLoading={setLoading}
+                  error={setError}
+                  setSuccess={setSuccess}
+                />
+              } 
             />
-          )}
+            <Route 
+              path="manage-lessons" 
+              element={
+                <ManageLessons 
+                  classes={classes}
+                  loading={loading}
+                  setLoading={setLoading}
+                  error={error}
+                  setError={setError}
+                  success={success}
+                  setSuccess={setSuccess}
+                />
+              } 
+            />
+            <Route 
+              path="news-events" 
+              element={
+                <AdminNewsEvents 
+                  loading={loading}
+                  setLoading={setLoading}
+                  error={setError}
+                  success={setSuccess}
+                />
+              } 
+            />
+            <Route 
+              path="edit-gallery" 
+              element={
+                <AdminGallery 
+                  loading={loading}
+                  setLoading={setLoading}
+                  error={setError}
+                  success={setSuccess}
+                />
+              } 
+            />
+            <Route 
+              path="notifications" 
+              element={
+                <AdminNotifications 
+                  loading={loading}
+                  setLoading={setLoading}
+                  error={setError}
+                  success={setSuccess}
+                />
+              } 
+            />
+            <Route 
+              path="registration-requests" 
+              element={
+                <AdminRegistrationForms 
+                  loading={loading}
+                  setLoading={setLoading}
+                  error={setError}
+                  success={setSuccess}
+                />
+              } 
+            />
+            <Route path="*" element={<Navigate to="dashboard" />} />
+          </Routes>
         </div>
       </div>
     </div>
