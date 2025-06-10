@@ -1,5 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth"; // הוספה חדשה
+import { getFunctions } from "firebase/functions"; // הוספה חדשה
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -13,5 +15,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app); // הוספה חדשה
+const functions = getFunctions(app); // הוספה חדשה
 
-export { db };
+export { db, auth, functions }; // עדכון ה-export
