@@ -47,6 +47,22 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
         });
         success('User updated successfully!');
       } else {
+        // בדיקה אם יוזר עם ID זה כבר קיים
+        const existingUser = (users || []).find(user => user.id === newUser.id);
+        if (existingUser) {
+          error(`A user with ID "${newUser.id}" already exists. Please choose a different ID.`);
+          setLoading(false);
+          return;
+        }
+
+        // בדיקה אם יוזר עם אימייל זה כבר קיים
+        const existingEmailUser = (users || []).find(user => user.email === newUser.email);
+        if (existingEmailUser) {
+          error(`A user with email "${newUser.email}" already exists. Please choose a different email.`);
+          setLoading(false);
+          return;
+        }
+
         // יצירת משתמש ב-Authentication
         const userCredential = await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);
         const uid = userCredential.user.uid; // שמירת ה-UID
@@ -227,6 +243,20 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
       password: ''
     });
     setIsEditing(true);
+
+    // גלילה חלקה לראש הדף - פתרון מקיף
+    setTimeout(() => {
+      // נסה כל הדרכים הפופולריות לגלילה לראש
+      document.body.scrollTop = 0; // Safari
+      document.documentElement.scrollTop = 0; // Chrome, Firefox, IE, Opera
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      
+      // גם זה לכל מקרה
+      const container = document.querySelector('.admin-content') || document.querySelector('.user-management-container');
+      if (container) {
+        container.scrollTop = 0;
+      }
+    }, 50);
   };
 
   const handleCancelEdit = () => {
