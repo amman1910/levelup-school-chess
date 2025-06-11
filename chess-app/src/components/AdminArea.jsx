@@ -8,8 +8,7 @@ import AdminTrainerMonitoring from './AdminTrainerMonitoring';
 import ManageClasses from './ManageClasses';
 import ManageStudents from './ManageStudents';
 import ManageLessons from './ManageLessons';
-import AdminNewsEvents from './AdminNewsEvents';
-import AdminGallery from './AdminGallery';
+import AdminHomepageEditor from './AdminHomepageEditor';
 import AdminNotifications from './AdminNotifications';
 import AdminRegistrationForms from './AdminRegistrationForms';
 import './AdminArea.css';
@@ -24,6 +23,12 @@ const AdminArea = () => {
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+
+  // ניקוי הודעות כשמשנים route - הפתרון העיקרי!
+  useEffect(() => {
+    setError('');
+    setSuccess('');
+  }, [location.pathname]);
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
@@ -102,8 +107,7 @@ const AdminArea = () => {
     if (location.pathname.includes('manage-classes')) return 'Class Management';
     if (location.pathname.includes('manage-students')) return 'Student Management';
     if (location.pathname.includes('manage-lessons')) return 'Lesson Management';
-    if (location.pathname.includes('news-events')) return 'News and Events';
-    if (location.pathname.includes('edit-gallery')) return 'Edit Gallery';
+    if (location.pathname.includes('edit-homepage')) return 'Homepage Editor';
     if (location.pathname.includes('notifications')) return 'Notifications';
     if (location.pathname.includes('registration-requests')) return 'Registration Requests';
     return 'Admin Area';
@@ -116,6 +120,8 @@ const AdminArea = () => {
     setSuccess('Data refreshed successfully');
     setTimeout(() => setSuccess(''), 3000);
   };
+
+
 
   if (!user) {
     return <div className="loading">Loading...</div>;
@@ -144,16 +150,13 @@ const AdminArea = () => {
             Manage Students
           </NavLink>
           <NavLink to="/admin-area/manage-lessons" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Manage Lessons
+            Manage Sessions
           </NavLink>
-                <NavLink to="/admin-area/trainer-monitoring" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
+          <NavLink to="/admin-area/trainer-monitoring" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
             Trainer Monitoring
           </NavLink>
-          <NavLink to="/admin-area/news-events" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            News and Event
-          </NavLink>
-          <NavLink to="/admin-area/edit-gallery" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Edit Gallery
+          <NavLink to="/admin-area/edit-homepage" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
+            Edit Homepage
           </NavLink>
           <NavLink to="/admin-area/notifications" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
             Notifications
@@ -247,9 +250,8 @@ const AdminArea = () => {
                   loading={loading}
                   setLoading={setLoading}
                   error={setError}
-                  setError={setError}
                   success={setSuccess}
-                  setSuccess={setSuccess}
+                  fetchClasses={fetchClasses}
                 />
               } 
             />
@@ -263,7 +265,7 @@ const AdminArea = () => {
                   loading={loading}
                   setLoading={setLoading}
                   error={setError}
-                  setSuccess={setSuccess}
+                  success={setSuccess}
                 />
               } 
             />
@@ -274,28 +276,15 @@ const AdminArea = () => {
                   classes={classes}
                   loading={loading}
                   setLoading={setLoading}
-                  error={error}
-                  setError={setError}
-                  success={success}
-                  setSuccess={setSuccess}
-                />
-              } 
-            />
-            <Route 
-              path="news-events" 
-              element={
-                <AdminNewsEvents 
-                  loading={loading}
-                  setLoading={setLoading}
                   error={setError}
                   success={setSuccess}
                 />
               } 
             />
             <Route 
-              path="edit-gallery" 
+              path="edit-homepage" 
               element={
-                <AdminGallery 
+                <AdminHomepageEditor 
                   loading={loading}
                   setLoading={setLoading}
                   error={setError}
