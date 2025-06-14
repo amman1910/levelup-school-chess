@@ -166,10 +166,12 @@ const AdminArea = () => {
             Manage Students
           </NavLink>
           <NavLink to="/admin-area/manage-lessons" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Manage Lessons
+            Manage Sessions
           </NavLink>
           <NavLink to="/admin-area/trainer-monitoring" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
+
             Performance & Analytics
+
           </NavLink>
           <NavLink to="/admin-area/edit-homepage" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
             Edit Homepage
@@ -267,9 +269,8 @@ const AdminArea = () => {
                   loading={loading}
                   setLoading={setLoading}
                   error={setError}
-                  setError={setError}
                   success={setSuccess}
-                  setSuccess={setSuccess}
+                  fetchClasses={fetchClasses}
                 />
               } 
             />
@@ -283,7 +284,7 @@ const AdminArea = () => {
                   loading={loading}
                   setLoading={setLoading}
                   error={setError}
-                  setSuccess={setSuccess}
+                  success={setSuccess}
                 />
               } 
             />
@@ -294,10 +295,10 @@ const AdminArea = () => {
                   classes={classes}
                   loading={loading}
                   setLoading={setLoading}
-                  error={error}
-                  setError={setError}
-                  success={success}
-                  setSuccess={setSuccess}
+
+                  error={setError}
+                  success={setSuccess}
+
                 />
               } 
             />

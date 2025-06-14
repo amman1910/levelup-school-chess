@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { db } from '../../firebase';
 import { collection, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { logAdminAction } from '../utils/adminLogger';
+
 
 const ManageMaterials = ({ users, loading, setLoading, error, success, fetchMaterials }) => {
   const [newMaterial, setNewMaterial] = useState({
@@ -64,6 +66,15 @@ const ManageMaterials = ({ users, loading, setLoading, error, success, fetchMate
         trainerId: newMaterial.trainerId,
         createdAt: new Date()
       });
+      const admin = JSON.parse(localStorage.getItem('user'));
+await logAdminAction({
+  admin,
+  actionType: 'add_material',
+  targetType: 'material',
+  targetId: fileId,
+  description: `Added material "${newMaterial.title}" for trainer ${newMaterial.trainerId}`
+});
+
 
       success('Material added successfully!');
       setNewMaterial({
@@ -92,6 +103,15 @@ const ManageMaterials = ({ users, loading, setLoading, error, success, fetchMate
 
       // Delete metadata from Firestore
       await deleteDoc(doc(db, 'materials', materialId));
+      const admin = JSON.parse(localStorage.getItem('user'));
+await logAdminAction({
+  admin,
+  actionType: 'delete_material',
+  targetType: 'material',
+  targetId: materialId,
+  description: `Deleted material "${material.title}" for trainer ${material.trainerId}`
+});
+
 
       success('Material deleted successfully');
       fetchMaterials();

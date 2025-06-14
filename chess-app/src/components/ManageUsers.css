@@ -16,6 +16,7 @@
   --medium-gray: #cccccc;
 }
 
+
 /* User management */
 .user-management-container {
   display: flex;
@@ -433,6 +434,7 @@
   transition: all 0.2s ease;
 }
 
+/* Role badges for users */
 .role-badge.admin {
   background: var(--primary-purple); /* סגול */
   color: #ffffff !important; /* לבן */
@@ -443,6 +445,44 @@
   background: var(--dark-gold); /* זהב */
   color: #ffffff !important; /* לבן */
   border: 1px solid #d4b43c;
+}
+
+/* Level badges for classes */
+.role-badge.beginner {
+  background: var(--dark-gold); /* ירוק */
+  color: #ffffff !important;
+  border: 1px solid var(--dark-gold);
+}
+
+.role-badge.intermediate {
+  background: linear-gradient(135deg, #3498db, #2980b9); 
+  color: #ffffff !important;
+  border: 1px solid #3498db;
+}
+
+.role-badge.advanced {
+  background: var(--primary-purple); /* אדום */
+  color: #ffffff !important;
+  border: 1px solid var(--primary-purple);
+}
+
+/* Status badges for sessions */
+.role-badge.planned {
+  background: var(--dark-gold); 
+  color: #ffffff !important;
+  border: 1px solid var(--dark-gold);
+}
+
+.role-badge.completed {
+  background: linear-gradient(135deg, #27ae60, #229954); 
+  color: #ffffff !important;
+  border: 1px solid #27ae60;
+}
+
+.role-badge.cancelled {
+  background: linear-gradient(135deg, #e74c3c, #c0392b); 
+  color: #ffffff !important;
+  border: 1px solid #e74c3c;
 }
 
 .table-actions {
@@ -878,4 +918,89 @@
     padding: 6px !important;
     font-size: 9px !important;
   }
+  /* Syllabus File Input Styles - Add these to your ManageUsers.css */
+
+/* Syllabus file input styling - Specific class to avoid conflicts */
+.form-group .syllabus-file-input {
+  width: 100% !important;
+  padding: 10px 12px !important;
+  border: 2px dashed var(--light-border) !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  background-color: var(--background-light) !important;
+  color: var(--text-color) !important;
+  box-sizing: border-box !important;
+  height: 42px !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  line-height: 1.2 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.form-group .syllabus-file-input:hover {
+  border-color: var(--primary-purple) !important;
+  background-color: var(--light-gold) !important;
+}
+
+.form-group .syllabus-file-input:focus {
+  outline: none !important;
+  border-color: var(--primary-purple) !important;
+  box-shadow: 0 0 0 3px rgba(94, 60, 143, 0.1) !important;
+  background-color: var(--white) !important;
+}
+
+/* File info styles for syllabus */
+.current-file-info,
+.selected-file-info {
+  margin-top: 4px !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  background-color: var(--light-gold) !important;
+  border-left: 3px solid var(--secondary-gold) !important;
+}
+
+.current-file-info a {
+  color: var(--primary-purple) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+}
+
+.current-file-info a:hover {
+  text-decoration: underline !important;
+  color: var(--dark-purple) !important;
+}
+
+.selected-file-info {
+  background-color: #e8f5e8 !important;
+  border-left-color: #28a745 !important;
+}
+
+/* Responsive adjustments for syllabus file input */
+@media (max-width: 768px) {
+  .form-group .syllabus-file-input {
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+    height: 38px !important;
+  }
+  
+  .current-file-info,
+  .selected-file-info {
+    margin-top: 3px !important;
+    padding: 3px 6px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-group .syllabus-file-input {
+    padding: 6px 8px !important;
+    font-size: 11px !important;
+    height: 36px !important;
+  }
+  
+  .current-file-info small,
+  .selected-file-info small {
+    font-size: 10px !important;
+  }
+}
 }
