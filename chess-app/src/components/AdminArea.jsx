@@ -16,6 +16,8 @@ import AdminTrainerSessions from './AdminTrainerSessions';
 import AdminGroupAnalytics from './AdminGroupAnalytics';
 import AdminAttendanceTrends from './AdminAttendanceTrends';
 import AdminActivityLog from './AdminActivityLog';
+import chessLogo from './chessLogo.png';
+
 import './AdminArea.css';
 
 const AdminArea = () => {
