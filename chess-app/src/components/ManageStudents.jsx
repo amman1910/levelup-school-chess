@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { db } from '../firebase';
 import { doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { logAdminAction } from '../utils/adminLogger';
+
 
 const ManageStudents = ({ students, classes, setStudents, loading, setLoading, error, success, fetchStudents }) => {
   const [newStudent, setNewStudent] = useState({
@@ -36,6 +38,14 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
         classId: newStudent.classId,
         createdAt: new Date()
       });
+      const currentAdmin = JSON.parse(localStorage.getItem('user'));
+      await logAdminAction({
+         admin: currentAdmin,
+         actionType: 'add-student',
+         targetType: 'student',
+         targetId: newStudent.id,
+         description: `Added student ${newStudent.fullName} to class ${newStudent.classId}`
+});
 
       success('Student added successfully!');
       setNewStudent({
@@ -58,6 +68,15 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
     setLoading(true);
     try {
       await deleteDoc(doc(db, "students", studentId));
+      const currentAdmin = JSON.parse(localStorage.getItem('user'));
+      await logAdminAction({
+          admin: currentAdmin,
+          actionType: 'delete-student',
+          targetType: 'student',
+          targetId: studentId,
+          description: `Deleted student with ID ${studentId}`
+});
+
       success('Student deleted successfully');
       fetchStudents();
     } catch (err) {

@@ -4,6 +4,8 @@ import { doc, setDoc, updateDoc, deleteDoc, collection, query, where, getDocs, a
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
 import './ManageUsers.css';
+import { logAdminAction } from '../utils/adminLogger';
+
 
 const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fetchUsers }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -35,6 +37,7 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
         setLoading(false);
         return;
       }
+       const currentAdmin = JSON.parse(localStorage.getItem('user'));
 
       if (isEditing) {
         await updateDoc(doc(db, "users", newUser.id), {
@@ -45,6 +48,13 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
           role: newUser.role,
           updatedAt: new Date()
         });
+        await logAdminAction({
+          admin: currentAdmin,
+          actionType: 'update-user',
+          targetType: 'user',
+          targetId: newUser.id,
+          description: `Updated user ${newUser.firstName} ${newUser.lastName} (${newUser.email})`
+      });
         success('User updated successfully!');
       } else {
         // יצירת משתמש ב-Authentication
@@ -62,6 +72,14 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
           createdAt: new Date(),
           firstLogin: true
         });
+              
+      await logAdminAction({
+        admin: currentAdmin,
+        actionType: 'add-user',
+        targetType: 'user',
+        targetId: newUser.id,
+        description: `Added user ${newUser.firstName} ${newUser.lastName} (${newUser.email})`
+      });
         success('User added successfully!');
       }
 
@@ -175,6 +193,8 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
   const handleDeleteUser = async (userId) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     setLoading(true);
+    const currentAdmin = JSON.parse(localStorage.getItem('user'));
+
     
     try {
       // מציאת המשתמש במטרה לקבל את האימייל והרול שלו
@@ -207,6 +227,14 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
       await deleteDoc(doc(db, "users", userId));
       
       // הודעת הצלחה פשוטה
+      await logAdminAction({
+  admin: currentAdmin,
+  actionType: 'delete-user',
+  targetType: 'user',
+  targetId: userId,
+  description: `Deleted user ${userToDelete.firstName} ${userToDelete.lastName} (${userToDelete.email})`
+});
+
       success('User deleted successfully');
       fetchUsers();
     } catch (err) {

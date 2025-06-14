@@ -4,14 +4,18 @@ import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import Dashboard from './Dashboard';
 import ManageUsers from './ManageUsers';
-import AdminTrainerMonitoring from './AdminTrainerMonitoring';
+import AdminAnalyticsOverview from './AdminAnalyticsOverview';
 import ManageClasses from './ManageClasses';
 import ManageStudents from './ManageStudents';
 import ManageLessons from './ManageLessons';
-import AdminNewsEvents from './AdminNewsEvents';
-import AdminGallery from './AdminGallery';
+import AdminHomepageEditor from './AdminHomepageEditor';
 import AdminNotifications from './AdminNotifications';
 import AdminRegistrationForms from './AdminRegistrationForms';
+import AdminTrainerAnalytics from './AdminTrainerAnalytics';
+import AdminTrainerSessions from './AdminTrainerSessions';
+import AdminGroupAnalytics from './AdminGroupAnalytics';
+import AdminAttendanceTrends from './AdminAttendanceTrends';
+import AdminActivityLog from './AdminActivityLog';
 import './AdminArea.css';
 
 const AdminArea = () => {
@@ -19,11 +23,18 @@ const AdminArea = () => {
   const [users, setUsers] = useState([]);
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+
+  // ניקוי הודעות כשמשנים route - הפתרון העיקרי!
+  useEffect(() => {
+    setError('');
+    setSuccess('');
+  }, [location.pathname]);
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
@@ -72,10 +83,20 @@ const AdminArea = () => {
     }
   };
 
+  const fetchSessions = async () => {
+  try {
+    const snapshot = await getDocs(collection(db, "sessions"));
+    setSessions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  } catch (err) {
+    console.error('Error fetching sessions:', err);
+    setError('Failed to load sessions data');
+  }
+};
+
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      await Promise.all([fetchUsers(), fetchClasses(), fetchStudents()]);
+      await Promise.all([fetchUsers(), fetchClasses(), fetchStudents(), fetchSessions()]);
     } catch (err) {
       setError('Failed to load data');
     } finally {
@@ -98,12 +119,11 @@ const AdminArea = () => {
   const getPageTitle = () => {
     if (location.pathname.includes('dashboard')) return 'Admin Dashboard';
     if (location.pathname.includes('manage-users')) return 'User Management';
-    if (location.pathname.includes('trainer-monitoring')) return 'Trainer Monitoring';
+    if (location.pathname.includes('trainer-monitoring')) return 'Performance & Analytics';
     if (location.pathname.includes('manage-classes')) return 'Class Management';
     if (location.pathname.includes('manage-students')) return 'Student Management';
     if (location.pathname.includes('manage-lessons')) return 'Lesson Management';
-    if (location.pathname.includes('news-events')) return 'News and Events';
-    if (location.pathname.includes('edit-gallery')) return 'Edit Gallery';
+    if (location.pathname.includes('edit-homepage')) return 'Homepage Editor';
     if (location.pathname.includes('notifications')) return 'Notifications';
     if (location.pathname.includes('registration-requests')) return 'Registration Requests';
     return 'Admin Area';
@@ -116,6 +136,8 @@ const AdminArea = () => {
     setSuccess('Data refreshed successfully');
     setTimeout(() => setSuccess(''), 3000);
   };
+
+
 
   if (!user) {
     return <div className="loading">Loading...</div>;
@@ -146,14 +168,11 @@ const AdminArea = () => {
           <NavLink to="/admin-area/manage-lessons" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
             Manage Lessons
           </NavLink>
-                <NavLink to="/admin-area/trainer-monitoring" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Trainer Monitoring
+          <NavLink to="/admin-area/trainer-monitoring" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
+            Performance & Analytics
           </NavLink>
-          <NavLink to="/admin-area/news-events" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            News and Event
-          </NavLink>
-          <NavLink to="/admin-area/edit-gallery" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Edit Gallery
+          <NavLink to="/admin-area/edit-homepage" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
+            Edit Homepage
           </NavLink>
           <NavLink to="/admin-area/notifications" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
             Notifications
@@ -223,10 +242,11 @@ const AdminArea = () => {
             <Route 
               path="trainer-monitoring" 
               element={
-                <AdminTrainerMonitoring 
+                <AdminAnalyticsOverview
                   users={users}
                   classes={classes}
                   students={students}
+                  sessions={sessions}
                   loading={loading}
                   setLoading={setLoading}
                   error={setError}
@@ -282,20 +302,9 @@ const AdminArea = () => {
               } 
             />
             <Route 
-              path="news-events" 
+              path="edit-homepage" 
               element={
-                <AdminNewsEvents 
-                  loading={loading}
-                  setLoading={setLoading}
-                  error={setError}
-                  success={setSuccess}
-                />
-              } 
-            />
-            <Route 
-              path="edit-gallery" 
-              element={
-                <AdminGallery 
+                <AdminHomepageEditor 
                   loading={loading}
                   setLoading={setLoading}
                   error={setError}
@@ -325,6 +334,44 @@ const AdminArea = () => {
                 />
               } 
             />
+            <Route
+  path="analytics/trainers/:trainerId/sessions"
+  element={
+    <AdminTrainerSessions
+      sessions={sessions}
+      classes={classes}
+    />
+  }
+/>
+<Route 
+  path="analytics/groups" 
+  element={<AdminGroupAnalytics />} 
+/>
+            <Route
+            
+  path="analytics/trainers"
+  element={
+    <AdminTrainerAnalytics
+      users={users}
+      sessions={sessions}
+    />
+  }
+/>
+<Route 
+  path="analytics/attendance" 
+  element={
+    <AdminAttendanceTrends 
+      sessions={sessions}
+      classes={classes}
+    />
+  } 
+/>
+<Route
+  path="analytics/activity-log"
+  element={<AdminActivityLog />}
+/>
+
+
             <Route path="*" element={<Navigate to="dashboard" />} />
           </Routes>
         </div>

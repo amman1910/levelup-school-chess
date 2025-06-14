@@ -1,0 +1,473 @@
+.analytics-overview-page {
+  padding: 2rem;
+  background-color: var(--background-light);
+}
+
+.analytics-overview-page h2 {
+  color: var(--primary-purple);
+}
+
+.subtitle {
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  color: var(--dark-purple); /* وضوح أكثر من #555 */
+  font-weight: 500;
+}
+
+.analytics-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.analytics-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--light-border);
+  cursor: pointer;
+  transition: 0.25s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  color: var(--text-color); /* يضمن وضوح النص */
+}
+
+.analytics-card h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--primary-purple); /* عنوان البطاقة */
+  font-weight: 600;
+}
+
+.analytics-card p {
+  font-size: 0.95rem;
+  color: #333; /* وضوح النص الأساسي */
+}
+
+.analytics-card:hover {
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
+
+.analytics-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.analytics-card.disabled h3,
+.analytics-card.disabled p {
+  color: #999;
+}
+
+.analytics-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.analytics-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid var(--light-border);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  min-height: 180px;
+}
+
+.analytics-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(94, 60, 143, 0.15);
+  border-color: var(--primary-purple);
+}
+
+.analytics-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.analytics-card h4 {
+  font-size: 1.2rem;
+  color: var(--primary-purple);
+  font-weight: 600;
+}
+
+.analytics-card p {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+.icon-wrapper {
+  font-size: 1.6rem;
+  color: var(--primary-purple);
+}
+
+.icon-wrapper {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--primary-purple); /* أو أي لون */
+}
+
+/* AdminTrainerAnalytics section style */
+.trainer-analytics-page {
+  padding: 2rem;
+  background-color: var(--background-light);
+}
+
+.trainer-analytics-page h2 {
+  color: var(--primary-purple);
+  margin-bottom: 0.25rem;
+}
+
+.trainer-analytics-page .subtitle {
+  margin-bottom: 1.5rem;
+  color: #666;
+}
+
+.trainer-analytics-page .filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.trainer-analytics-page .filters label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.trainer-analytics-page .filters select,
+.trainer-analytics-page .filters input[type="date"] {
+  padding: 0.5rem;
+  border: 1px solid var(--light-border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.trainer-analytics-page .filters button {
+  background-color: var(--primary-purple);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.trainer-analytics-page .filters button:hover {
+  background-color: var(--dark-purple);
+}
+
+.trainer-analytics-page .trainer-table-wrapper {
+  overflow-x: auto;
+}
+
+.trainer-analytics-page .trainer-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.trainer-analytics-page .trainer-table th,
+.trainer-analytics-page .trainer-table td {
+  padding: 0.75rem 1rem;
+  color: #333333;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.trainer-analytics-page .trainer-table th {
+  background-color: var(--light-gray);
+  color: var(--primary-purple);
+  font-weight: 600;
+}
+
+/* ===== التعديل على شكل المدخلات (select و input) ===== */
+.trainer-analytics-page select,
+.trainer-analytics-page input[type="date"] {
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--light-border);
+  background-color: #fff;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.trainer-analytics-page select:focus,
+.trainer-analytics-page input[type="date"]:focus {
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 2px rgba(94, 60, 143, 0.2);
+}
+
+/* ===== تعديل زر التصدير PDF ===== */
+.trainer-analytics-page .filters button {
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 0.3rem;
+}
+
+.trainer-analytics-page .filters button:hover {
+  background-color: var(--dark-purple);
+}
+
+
+
+.analytics-overview-page,
+.trainer-analytics-page {
+  padding: 2rem;
+  background-color: var(--background-light);
+  color: var(--text-color);
+}
+
+.analytics-overview-page h2,
+.trainer-analytics-page h2 {
+  color: var(--primary-purple);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  color: var(--medium-gray);
+}
+
+.analytics-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.analytics-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--light-border);
+  cursor: pointer;
+  transition: 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.analytics-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.analytics-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* KPI Section */
+.analytics-kpi-grid {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.kpi-card {
+  background-color: white;
+  border: 1px solid var(--light-border);
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  min-width: 180px;
+}
+
+.kpi-title {
+  font-size: 0.9rem;
+  color: var(--text-color); /* أو جربي #444 */
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.kpi-value {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--primary-purple);
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: end;
+}
+
+.filters label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.filters input,
+.filters select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--medium-gray);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: white;
+  color: var(--text-color);
+}
+
+.filters button {
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.2s ease;
+}
+
+.filters button:hover {
+  opacity: 0.9;
+}
+
+/* Table */
+.trainer-table-wrapper {
+  overflow-x: auto;
+}
+
+.trainer-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.trainer-table th {
+  background-color: var(--light-purple);
+  color: white;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.trainer-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--light-border);
+  color: var(--text-color);
+}
+
+.trainer-table td button {
+  background-color: var(--primary-purple); /* بنفسجي متناسق */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 1rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.trainer-table td button:hover {
+  background-color: var(--dark-purple);
+  transform: scale(1.03);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.session-modal-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  position: relative;
+  color: var(--text-color);
+}
+
+.session-modal-card h3 {
+  margin-bottom: 1rem;
+  color: var(--primary-purple);
+  font-size: 1.3rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.session-details-grid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 12px 18px;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: var(--text-color);
+}
+
+.session-details-grid div:nth-of-type(2n-1) {
+  font-weight: 600;
+  color: var(--primary-purple);
+}
+
+
+.session-details-grid ul {
+  padding-left: 0;
+  margin: 0;
+  list-style: none;
+  line-height: 1.6;
+}
+
+.session-details-grid li {
+  margin-bottom: 4px;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.close-btn {
+  background: var(--primary-purple);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.close-btn:hover {
+  background-color: var(--dark-purple);
+}
+
+
+
+
+
+
+
+
+

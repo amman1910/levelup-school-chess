@@ -46,7 +46,9 @@ const Login = () => {
             uid: userDoc.id,
             email: user.email,
             role: userData.role,
-            firstLogin: userData.firstLogin
+            firstLogin: userData.firstLogin,
+            firstName: userData.firstName,   
+            lastName: userData.lastName 
           }));
           
           console.log("User data saved:", {
