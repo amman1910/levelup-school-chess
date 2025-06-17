@@ -206,6 +206,35 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
     }
   };
 
+  // פונקציה למחיקת adminLogs כשמוחקים יוזר
+  const deleteAdminLogsOnUserDelete = async (userName) => {
+    try {
+      console.log(`Deleting adminLogs for user deletion: ${userName}`);
+      
+      // שליפת כל המסמכים מ-adminLogs שיש להם את שם היוזר ב-adminName
+      const adminLogsQuery = query(collection(db, 'adminLogs'), where('adminName', '==', userName));
+      const adminLogsSnapshot = await getDocs(adminLogsQuery);
+      
+      // מחיקת כל המסמכים
+      const deletePromises = adminLogsSnapshot.docs.map(docRef => 
+        deleteDoc(docRef.ref)
+      );
+      
+      if (deletePromises.length > 0) {
+        await Promise.all(deletePromises);
+        console.log(`Deleted ${deletePromises.length} admin logs with adminName = ${userName}`);
+        return deletePromises.length;
+      } else {
+        console.log("No admin logs found with this user name");
+        return 0;
+      }
+      
+    } catch (error) {
+      console.error("Error deleting admin logs:", error);
+      throw error;
+    }
+  };
+
   const handleDeleteUser = async (userId) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     setLoading(true);
@@ -220,6 +249,12 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
         setLoading(false);
         return;
       }
+
+      // בניית השם המלא של היוזר
+      const userFullName = `${userToDelete.firstName} ${userToDelete.lastName}`.trim();
+
+      // מחיקת כל הlogs של היוזר מקולקשן adminLogs
+      await deleteAdminLogsOnUserDelete(userFullName);
 
       // אם זה trainer, עדכן את כל ה-collections קודם
       if (userToDelete.role === 'trainer') {
