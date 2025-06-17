@@ -202,15 +202,21 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
       };
 
       await setDoc(doc(db, "sessions", randomId), sessionData);
+      
+      // מציאת שם הכיתה לרישום האדמין
+      const classInfo = classes && Array.isArray(classes)
+        ? classes.find(c => c.id === newSession.classId)
+        : null;
+      const className = classInfo ? classInfo.className : 'Unknown Class';
+      
       const admin = JSON.parse(localStorage.getItem('user'));
-await logAdminAction({
-  admin,
-  actionType: 'add_session',
-  targetType: 'session',
-  targetId: randomId,
-  description: `Added session for class ${newSession.classId} on ${newSession.date}`
-});
-
+      await logAdminAction({
+        admin,
+        actionType: 'add_session',
+        targetType: 'session',
+        targetId: randomId,
+        description: `Added session for class "${className}" on ${newSession.date}`
+      });
 
       if (typeof success === 'function') success('Session added successfully!');
       
@@ -236,6 +242,19 @@ await logAdminAction({
   };
 
   const handleDeleteSession = async (sessionId) => {
+    // מציאת השיעור לפני המחיקה כדי לקחת את פרטיו לרישום
+    const sessionToDelete = sessions.find(session => session.id === sessionId);
+    let sessionDescription = `Deleted session with ID ${sessionId}`;
+    
+    if (sessionToDelete) {
+      const classInfo = classes && Array.isArray(classes)
+        ? classes.find(c => c.id === sessionToDelete.classId)
+        : null;
+      const className = classInfo ? classInfo.className : 'Unknown Class';
+      const sessionDate = formatDate(sessionToDelete.date);
+      sessionDescription = `Deleted session for class "${className}" on ${sessionDate}`;
+    }
+    
     if (!window.confirm("Are you sure you want to delete this session?")) return;
     setLoading(true);
     if (typeof error === 'function') error('');
@@ -244,14 +263,13 @@ await logAdminAction({
     try {
       await deleteDoc(doc(db, "sessions", sessionId));
       const admin = JSON.parse(localStorage.getItem('user'));
-await logAdminAction({
-  admin,
-  actionType: 'delete_session',
-  targetType: 'session',
-  targetId: sessionId,
-  description: `Deleted session with ID ${sessionId}`
-});
-
+      await logAdminAction({
+        admin,
+        actionType: 'delete_session',
+        targetType: 'session',
+        targetId: sessionId,
+        description: sessionDescription
+      });
       
       if (typeof success === 'function') success('Session deleted successfully');
       
@@ -369,14 +387,21 @@ await logAdminAction({
       };
 
       await updateDoc(doc(db, "sessions", editingSession), updatedData);
+      
+      // מציאת שם הכיתה לרישום האדמין
+      const classInfo = classes && Array.isArray(classes)
+        ? classes.find(c => c.id === newSession.classId)
+        : null;
+      const className = classInfo ? classInfo.className : 'Unknown Class';
+      
       const admin = JSON.parse(localStorage.getItem('user'));
-await logAdminAction({
-  admin,
-  actionType: 'update_session',
-  targetType: 'session',
-  targetId: editingSession,
-  description: `Updated session for class ${newSession.classId} on ${newSession.date}`
-});
+      await logAdminAction({
+        admin,
+        actionType: 'update_session',
+        targetType: 'session',
+        targetId: editingSession,
+        description: `Updated session for class "${className}" on ${newSession.date}`
+      });
 
       if (typeof success === 'function') success('Session updated successfully!');
       
