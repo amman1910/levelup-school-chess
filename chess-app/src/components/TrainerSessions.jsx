@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, getDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, query, where, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './TrainerSessions.css';
@@ -17,6 +17,55 @@ const TrainerSessions = () => {
   const [autoSearchClass, setAutoSearchClass] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+
+  // פונקציה לרישום פעולות ב-adminLogs
+  const logTrainerAction = async (actionType, description, targetId = null) => {
+    try {
+      // קבלת פרטי המשתמש הנוכחי
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const trainerName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'Unknown Trainer';
+
+      const logEntry = {
+        actionType,
+        adminName: trainerName, // משתמשים באותו שדה כמו באדמין
+        description,
+        targetType: 'session',
+        timestamp: new Date(),
+        targetId: targetId || null,
+        adminId: currentUser.uid || currentUser.id || null
+      };
+
+      await addDoc(collection(db, 'adminLogs'), logEntry);
+      console.log('Trainer action logged:', logEntry);
+    } catch (err) {
+      console.error('Error logging trainer action:', err);
+      // אל תעצור את הפעולה אם הלוג נכשל
+    }
+  };
+
+  // Helper function to format Timestamp to D/M/Y
+  const formatTimestampToDisplay = (timestamp) => {
+    if (!timestamp) return 'No Date';
+    
+    let dateObj;
+    if (timestamp.seconds) {
+      // Firestore Timestamp
+      dateObj = new Date(timestamp.seconds * 1000);
+    } else if (timestamp instanceof Date) {
+      dateObj = timestamp;
+    } else if (typeof timestamp === 'string') {
+      dateObj = new Date(timestamp);
+    } else {
+      return 'Invalid Date';
+    }
+    
+    // Format as D/M/Y
+    const day = dateObj.getDate();
+    const month = dateObj.getMonth() + 1;
+    const year = dateObj.getFullYear();
+    
+    return `${day}/${month}/${year}`;
+  };
 
   // Helper function to parse date for sorting
   const parseDateForSorting = (date, startTime) => {
@@ -81,27 +130,12 @@ const TrainerSessions = () => {
           // Get school name directly from schoolId (which contains the school name)
           const schoolName = data.schoolId || '[No School]';
 
-          // Handle date - check if it's a Timestamp object or string
-          let displayDate = 'No Date';
+          // Format date for display
+          let displayDate = formatTimestampToDisplay(data.date);
           
-          if (data.date) {
-            // Check if it's a Firestore Timestamp object
-            if (typeof data.date === 'object' && data.date.seconds) {
-              // Convert Timestamp to readable date
-              const dateObj = new Date(data.date.seconds * 1000);
-              displayDate = dateObj.toLocaleDateString('en-US');
-            } else if (typeof data.date === 'string') {
-              // It's already a string, use it directly
-              displayDate = data.date;
-            } else {
-              // Unknown format, convert to string safely
-              displayDate = String(data.date);
-            }
-            
-            // Add start time if available
-            if (data.startTime) {
-              displayDate = `${displayDate} ${data.startTime}`;
-            }
+          // Add start time if available
+          if (data.startTime) {
+            displayDate = `${displayDate} ${data.startTime}`;
           }
           
           console.log('Final display date:', displayDate);
@@ -201,9 +235,16 @@ const TrainerSessions = () => {
     navigate('/trainer-area/sessions', { replace: true });
   };
 
-  const handleRecordSession = (session, event) => {
+  const handleRecordSession = async (session, event) => {
     // Prevent row click when record button is clicked
     event.stopPropagation();
+    
+    // רישום פעולה ב-adminLogs
+    await logTrainerAction(
+      'start-record-session',
+      `Started recording a session for class "${session.className}" at ${session.school}`,
+      session.id
+    );
     
     navigate('/trainer-area/record-session', {
       state: {
@@ -212,14 +253,24 @@ const TrainerSessions = () => {
         className: session.className,
         // Make sure the session ID is passed
         id: session.id,
-        isRecording: true // Flag to indicate this is recording an upcoming session
+        isRecording: true, // Flag to indicate this is recording an upcoming session
+        // Pass the original Timestamp for proper handling in the form
+        originalDate: session.fullData.date,
+        originalStartTime: session.fullData.startTime
       }
     });
   };
 
-  const handleEditSession = (session, event) => {
+  const handleEditSession = async (session, event) => {
     // Prevent row click when edit button is clicked
     event.stopPropagation();
+    
+    // רישום פעולה ב-adminLogs
+    await logTrainerAction(
+      'start-edit-session',
+      `Started editing a session for class "${session.className}" from ${session.date}`,
+      session.id
+    );
     
     navigate('/trainer-area/record-session', {
       state: {
@@ -227,7 +278,10 @@ const TrainerSessions = () => {
         classId: session.fullData.classId,
         className: session.className,
         // Make sure the session ID is passed
-        id: session.id
+        id: session.id,
+        // Pass the original Timestamp for proper handling in the form
+        originalDate: session.fullData.date,
+        originalStartTime: session.fullData.startTime
       }
     });
   };
@@ -235,6 +289,13 @@ const TrainerSessions = () => {
   const handleShowSession = async (session, event) => {
     // Prevent row click when show button is clicked
     event.stopPropagation();
+    
+    // רישום פעולה ב-adminLogs
+    await logTrainerAction(
+      'view-session',
+      `Viewed session details for class "${session.className}" from ${session.date}`,
+      session.id
+    );
     
     setSelectedSession(session);
     
@@ -362,52 +423,38 @@ const TrainerSessions = () => {
 
   return (
     <div className="sessions-page">
-      {/* Search Section */}
-      <div className="search-section">
-        <div className="search-container">
-          {autoSearchClass && (
-            <div className="auto-search-info">
-              <span>🔍 Showing sessions for class: <strong>{autoSearchClass}</strong></span>
-              <button onClick={clearSearch} className="clear-auto-search-btn">
-                Show All Sessions
-              </button>
-            </div>
-          )}
-          <div className="search-input-wrapper">
-            <input
-              type="text"
-              placeholder="Search by school, class, date, or topic..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="search-input"
-            />
-            {searchTerm && (
-              <button onClick={clearSearch} className="clear-search-btn">
-                ×
-              </button>
-            )}
-          </div>
-          {searchTerm && (
-            <div className="search-results-info">
-              Found {filteredPast.length + filteredUpcoming.length} session(s) matching "{searchTerm}"
-            </div>
-          )}
+      {/* Search Section - Simplified */}
+      {autoSearchClass && (
+        <div className="auto-search-info">
+          <span>🔍 Showing sessions for class: <strong>{autoSearchClass}</strong></span>
+          <button onClick={clearSearch} className="clear-auto-search-btn">
+            Show All Sessions
+          </button>
         </div>
-      </div>
-
-      {/* Past Sessions appear first */}
-      <section className="session-section">
-        <h2 className="section-title">Past Sessions</h2>
-        {filteredPast.length === 0 ? (
-          <p className="empty">
-            {searchTerm ? `No past sessions found matching "${searchTerm}".` : 'No past sessions.'}
-          </p>
-        ) : (
-          renderPastTable(filteredPast)
+      )}
+      
+      <div className="search-input-wrapper">
+        <input
+          type="text"
+          placeholder="Search by school, class, date, or topic..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="search-input"
+        />
+        {searchTerm && (
+          <button onClick={clearSearch} className="clear-search-btn">
+            ×
+          </button>
         )}
-      </section>
+      </div>
+      
+      {searchTerm && (
+        <div className="search-results-info">
+          Found {filteredPast.length + filteredUpcoming.length} session(s) matching "{searchTerm}"
+        </div>
+      )}
 
-      {/* Upcoming Sessions appear second */}
+      {/* Upcoming Sessions appear first */}
       <section className="session-section">
         <h2 className="section-title">Upcoming Sessions</h2>
         {filteredUpcoming.length === 0 ? (
@@ -416,6 +463,18 @@ const TrainerSessions = () => {
           </p>
         ) : (
           renderUpcomingTable(filteredUpcoming)
+        )}
+      </section>
+
+      {/* Past Sessions appear second */}
+      <section className="session-section">
+        <h2 className="section-title">Past Sessions</h2>
+        {filteredPast.length === 0 ? (
+          <p className="empty">
+            {searchTerm ? `No past sessions found matching "${searchTerm}".` : 'No past sessions.'}
+          </p>
+        ) : (
+          renderPastTable(filteredPast)
         )}
       </section>
 
