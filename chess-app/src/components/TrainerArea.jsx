@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { NavLink, Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { db } from '../firebase';
@@ -5,11 +6,10 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import TrainerSessions from './TrainerSessions';
 import TrainerMeetingForm from './TrainerMeetingForm';
 import TrainerSchools from './TrainerSchools';
-import NotificationsMessages from './TrainerNotificationsMessages'; // השתמש בקובץ שלנו
+import NotificationsMessages from './TrainerNotifications'; // השתמש בקובץ שלנו
 import TrainerDashboard from './TrainerDashboard';
 import TrainerMaterialsLibary from './TrainerMaterialsLibary';
 import TrainerProfile from './TrainerProfile'; // הוספת הקומפננטה החדשה
-
 import './TrainerArea.css';
 import chessLogo from './chessLogo.png'; // ייבוא התמונה החדשה
 import chessLogo3 from './chessLogo3.png'; // ייבוא התמונה הקיימת
