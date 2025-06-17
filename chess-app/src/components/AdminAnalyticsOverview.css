@@ -7,10 +7,10 @@
   color: var(--primary-purple);
 }
 
-.subtitle {
+.subtitle-overview {
   margin-bottom: 2rem;
   font-size: 1rem;
-  color: var(--dark-purple); /* وضوح أكثر من #555 */
+  color: var(--primary-purple);   /* وضوح أكثر من #555 */
   font-weight: 500;
 }
 

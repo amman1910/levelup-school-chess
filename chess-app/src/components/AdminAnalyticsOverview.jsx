@@ -20,7 +20,7 @@ const AdminAnalyticsOverview = ({
   return (
     <div className="analytics-overview-page">
       <h2>Admin Analytics Overview</h2>
-      <p className="subtitle">Monitor and analyze platform activity</p>
+      <p className="subtitle-overview">Monitor and analyze platform activity</p>
 
       <div className="analytics-cards-grid">
         <div
@@ -63,8 +63,8 @@ const AdminAnalyticsOverview = ({
           <div className="icon-wrapper">
             <i className="fas fa-clipboard-list"></i>
           </div>
-          <h3>Admin Activity Log</h3>
-          <p>View logs of all admin actions and changes</p>
+          <h3>Users Activity Log</h3>
+          <p>View logs of all users actions and changes</p>
         </div>
       </div>
     </div>
