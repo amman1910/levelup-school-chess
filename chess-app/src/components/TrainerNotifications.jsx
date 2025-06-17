@@ -12,19 +12,35 @@ import {
   serverTimestamp,
   getDoc
 } from 'firebase/firestore';
-import { db } from '../firebase'; // Import from your existing firebase.js file
-import './TrainerNotificationsMessages.css'; // Import the separate CSS file
+import { 
+  ref, 
+  uploadBytes, 
+  getDownloadURL, 
+  deleteObject 
+} from 'firebase/storage';
+import { db, storage } from '../firebase';
+import './TrainerNotifications.css';
 
-const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
+const NotificationsMessages = ({ currentUser }) => {
   const [conversations, setConversations] = useState([]);
+  const [filteredConversations, setFilteredConversations] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [showNewMessageForm, setShowNewMessageForm] = useState(false);
   const [admins, setAdmins] = useState([]);
+  const [filteredAdmins, setFilteredAdmins] = useState([]);
+  const [adminSearchQuery, setAdminSearchQuery] = useState('');
   const [selectedAdmins, setSelectedAdmins] = useState([]);
   const [newMessageText, setNewMessageText] = useState('');
   const [loading, setLoading] = useState(true);
+  
+  // File handling states
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedNewMessageFile, setSelectedNewMessageFile] = useState(null);
+  const [fileUploading, setFileUploading] = useState(false);
+  
   const messagesEndRef = React.useRef(null);
 
   // Auto scroll to bottom when new messages arrive
@@ -36,6 +52,86 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
     scrollToBottom();
   }, [messages]);
 
+  // Filter conversations based on search query
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredConversations(conversations);
+    } else {
+      const filtered = conversations.filter(conversation => {
+        const adminDisplayName = getAdminDisplayName(conversation.admin).toLowerCase();
+        return adminDisplayName.includes(searchQuery.toLowerCase());
+      });
+      setFilteredConversations(filtered);
+    }
+  }, [conversations, searchQuery]);
+
+  // Filter admins for new message modal based on search query
+  useEffect(() => {
+    if (!adminSearchQuery.trim()) {
+      setFilteredAdmins(admins);
+    } else {
+      const filtered = admins.filter(admin => {
+        const adminDisplayName = getAdminDisplayName(admin).toLowerCase();
+        return adminDisplayName.includes(adminSearchQuery.toLowerCase());
+      });
+      setFilteredAdmins(filtered);
+    }
+  }, [admins, adminSearchQuery]);
+
+  // Get admin display name
+  const getAdminDisplayName = (admin) => {
+    return `${admin.firstName || ''} ${admin.lastName || ''}`.trim() || admin.email;
+  };
+
+  // Upload file to Firebase Storage
+  const uploadMessageFile = async (file, messageId) => {
+    if (!file) return null;
+    
+    try {
+      setFileUploading(true);
+      const timestamp = Date.now();
+      const fileName = `${messageId}_${timestamp}_${file.name}`;
+      const storageRef = ref(storage, `message-files/${fileName}`);
+      
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      
+      return downloadURL;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      return null;
+    } finally {
+      setFileUploading(false);
+    }
+  };
+
+  // Get file name from URL
+  const getFileNameFromUrl = (url) => {
+    try {
+      const urlParts = url.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      const decodedFileName = decodeURIComponent(fileName);
+      // Remove the timestamp and messageId prefix
+      const parts = decodedFileName.split('_');
+      if (parts.length >= 3) {
+        return parts.slice(2).join('_').split('?')[0];
+      }
+      return decodedFileName.split('?')[0];
+    } catch (error) {
+      console.error('Error parsing file name:', error);
+      return 'Download File';
+    }
+  };
+
+  // Clear search functions
+  const clearSearch = () => {
+    setSearchQuery('');
+  };
+
+  const clearAdminSearch = () => {
+    setAdminSearchQuery('');
+  };
+
   // Fetch all admins
   useEffect(() => {
     const fetchAdmins = async () => {
@@ -45,6 +141,12 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
         const adminsList = [];
         querySnapshot.forEach((doc) => {
           adminsList.push({ id: doc.id, ...doc.data() });
+        });
+        // Sort admins by name
+        adminsList.sort((a, b) => {
+          const nameA = getAdminDisplayName(a);
+          const nameB = getAdminDisplayName(b);
+          return nameA.localeCompare(nameB);
         });
         setAdmins(adminsList);
       } catch (error) {
@@ -186,14 +288,6 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
       console.log('Final conversations with sent and received:', conversationsList.length);
       setConversations(conversationsList);
       setLoading(false);
-
-      // Calculate total unread count and send to parent
-      if (onUnreadCountChange) {
-        const totalUnreadCount = conversationsList.reduce((total, conversation) => {
-          return total + conversation.unreadCount;
-        }, 0);
-        onUnreadCountChange(totalUnreadCount);
-      }
     };
 
     // Listen to received messages
@@ -327,40 +421,103 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
   };
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || !selectedConversation) return;
+    if ((!newMessage.trim() && !selectedFile) || !selectedConversation) return;
 
     try {
-      await addDoc(collection(db, 'notifications'), {
-        message: newMessage,
+      let fileUrl = null;
+      
+      // Generate message ID for file naming
+      const tempMessageId = doc(collection(db, "notifications")).id;
+      
+      // Upload file if selected
+      if (selectedFile) {
+        fileUrl = await uploadMessageFile(selectedFile, tempMessageId);
+        if (!fileUrl) {
+          console.error('Failed to upload file');
+          return;
+        }
+      }
+
+      const messageData = {
         senderId: currentUser.id,
         receiverId: selectedConversation.admin.id,
         sentAt: serverTimestamp(),
         read: false
-      });
+      };
+
+      // Add message text if provided
+      if (newMessage.trim()) {
+        messageData.message = newMessage;
+      }
+
+      // Add file URL if uploaded
+      if (fileUrl) {
+        messageData.fileUrl = fileUrl;
+        messageData.fileName = selectedFile.name;
+      }
+
+      await addDoc(collection(db, 'notifications'), messageData);
+      
       setNewMessage('');
+      setSelectedFile(null);
+      
+      // Reset file input
+      const fileInput = document.querySelector('.chat-file-input');
+      if (fileInput) fileInput.value = '';
     } catch (error) {
       console.error('Error sending message:', error);
     }
   };
 
   const sendNewMessage = async () => {
-    if (!newMessageText.trim() || selectedAdmins.length === 0) return;
+    if ((!newMessageText.trim() && !selectedNewMessageFile) || selectedAdmins.length === 0) return;
 
     try {
-      const promises = selectedAdmins.map(adminId => 
-        addDoc(collection(db, 'notifications'), {
-          message: newMessageText,
+      let fileUrl = null;
+      
+      // Generate message ID for file naming
+      const tempMessageId = doc(collection(db, "notifications")).id;
+      
+      // Upload file if selected
+      if (selectedNewMessageFile) {
+        fileUrl = await uploadMessageFile(selectedNewMessageFile, tempMessageId);
+        if (!fileUrl) {
+          console.error('Failed to upload file');
+          return;
+        }
+      }
+
+      const promises = selectedAdmins.map(adminId => {
+        const messageData = {
           senderId: currentUser.id,
           receiverId: adminId,
           sentAt: serverTimestamp(),
           read: false
-        })
-      );
+        };
+
+        // Add message text if provided
+        if (newMessageText.trim()) {
+          messageData.message = newMessageText;
+        }
+
+        // Add file URL if uploaded
+        if (fileUrl) {
+          messageData.fileUrl = fileUrl;
+          messageData.fileName = selectedNewMessageFile.name;
+        }
+
+        return addDoc(collection(db, 'notifications'), messageData);
+      });
 
       await Promise.all(promises);
       setNewMessageText('');
       setSelectedAdmins([]);
+      setSelectedNewMessageFile(null);
       setShowNewMessageForm(false);
+      
+      // Reset file input
+      const fileInput = document.querySelector('.new-message-file-input');
+      if (fileInput) fileInput.value = '';
     } catch (error) {
       console.error('Error sending new message:', error);
     }
@@ -394,13 +551,51 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
             </button>
           </div>
 
+          {/* Search Bar */}
+          <div className="search-container">
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Search conversations by admin name..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+              {searchQuery && (
+                <button 
+                  className="search-clear"
+                  onClick={clearSearch}
+                  title="Clear search"
+                >
+                  ×
+                </button>
+              )}
+              <div className="search-icon">🔍</div>
+            </div>
+            {searchQuery && (
+              <div className="search-results-info">
+                {filteredConversations.length === 0 
+                  ? "No conversations found matching your search" 
+                  : `Found ${filteredConversations.length} conversation${filteredConversations.length === 1 ? '' : 's'}`
+                }
+              </div>
+            )}
+          </div>
+
           {conversations.length === 0 ? (
             <div className="no-conversations">
               <p>No messages yet. Click "New Message" to start a conversation with an admin.</p>
             </div>
+          ) : filteredConversations.length === 0 && searchQuery ? (
+            <div className="no-conversations">
+              <p>No conversations found matching "{searchQuery}"</p>
+              <button onClick={clearSearch} className="clear-search-btn">
+                Clear search
+              </button>
+            </div>
           ) : (
             <div className="conversations-list">
-              {conversations.map((conversation) => (
+              {filteredConversations.map((conversation) => (
                 <div 
                   key={conversation.admin.id}
                   className={`conversation-item ${conversation.unreadCount > 0 ? 'unread' : ''}`}
@@ -408,7 +603,7 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
                 >
                   <div className="conversation-header">
                     <div className="admin-info">
-                      <h3>{conversation.admin.firstName} {conversation.admin.lastName}</h3>
+                      <h3>{getAdminDisplayName(conversation.admin)}</h3>
                       <span className="admin-role">Admin</span>
                     </div>
                     {conversation.unreadCount > 0 && (
@@ -416,7 +611,13 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
                     )}
                   </div>
                   <div className="last-message">
-                    <p>{conversation.lastMessage?.message}</p>
+                    <p>
+                      {conversation.lastMessage?.fileUrl && !conversation.lastMessage?.message 
+                        ? '📎 File attachment'
+                        : conversation.lastMessage?.fileUrl && conversation.lastMessage?.message
+                        ? `${conversation.lastMessage.message} 📎`
+                        : conversation.lastMessage?.message}
+                    </p>
                     <span className="message-time">
                       {conversation.lastMessage?.sentAt?.toDate().toLocaleDateString()}
                     </span>
@@ -434,7 +635,13 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
                   <h3>New Message</h3>
                   <button 
                     className="close-btn"
-                    onClick={() => setShowNewMessageForm(false)}
+                    onClick={() => {
+                      setShowNewMessageForm(false);
+                      setSelectedNewMessageFile(null);
+                      setAdminSearchQuery('');
+                      const fileInput = document.querySelector('.new-message-file-input');
+                      if (fileInput) fileInput.value = '';
+                    }}
                   >
                     ×
                   </button>
@@ -442,23 +649,69 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
                 <div className="modal-body">
                   <div className="admin-selection">
                     <label>Select Admin(s):</label>
+                    
+                    {/* Admin Search Bar */}
+                    <div className="admin-search-container">
+                      <div className="admin-search-bar">
+                        <input
+                          type="text"
+                          placeholder="Search admins by name..."
+                          value={adminSearchQuery}
+                          onChange={(e) => setAdminSearchQuery(e.target.value)}
+                          className="admin-search-input"
+                        />
+                        {adminSearchQuery && (
+                          <button 
+                            className="admin-search-clear"
+                            onClick={clearAdminSearch}
+                            title="Clear search"
+                          >
+                            ×
+                          </button>
+                        )}
+                        <div className="admin-search-icon">🔍</div>
+                      </div>
+                      {adminSearchQuery && (
+                        <div className="admin-search-results-info">
+                          {filteredAdmins.length === 0 
+                            ? "No admins found matching your search" 
+                            : `Found ${filteredAdmins.length} admin${filteredAdmins.length === 1 ? '' : 's'}`
+                          }
+                        </div>
+                      )}
+                    </div>
+                    
                     <div className="admin-checkboxes">
-                      {admins.map((admin) => (
-                        <label key={admin.id} className="checkbox-label">
-                          <input
-                            type="checkbox"
-                            checked={selectedAdmins.includes(admin.id)}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setSelectedAdmins([...selectedAdmins, admin.id]);
-                              } else {
-                                setSelectedAdmins(selectedAdmins.filter(id => id !== admin.id));
-                              }
-                            }}
-                          />
-                          {admin.firstName} {admin.lastName}
-                        </label>
-                      ))}
+                      {filteredAdmins.length === 0 && adminSearchQuery ? (
+                        <div className="no-admins-found">
+                          <p>No admins found matching "{adminSearchQuery}"</p>
+                          <button onClick={clearAdminSearch} className="clear-admin-search-btn">
+                            Clear search
+                          </button>
+                        </div>
+                      ) : (
+                        filteredAdmins.map((admin) => (
+                          <label key={admin.id} className="checkbox-label">
+                            <input
+                              type="checkbox"
+                              checked={selectedAdmins.includes(admin.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedAdmins([...selectedAdmins, admin.id]);
+                                } else {
+                                  setSelectedAdmins(selectedAdmins.filter(id => id !== admin.id));
+                                }
+                              }}
+                            />
+                            <span className="admin-details">
+                              <span className="admin-name">{getAdminDisplayName(admin)}</span>
+                              <span className="admin-role-small">
+                                (Administrator)
+                              </span>
+                            </span>
+                          </label>
+                        ))
+                      )}
                     </div>
                   </div>
                   <div className="message-input">
@@ -470,20 +723,44 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
                       rows="4"
                     />
                   </div>
+                  <div className="file-input">
+                    <label>Attach File (optional):</label>
+                    <input
+                      type="file"
+                      onChange={(e) => setSelectedNewMessageFile(e.target.files[0])}
+                      className="new-message-file-input"
+                    />
+                    {selectedNewMessageFile && (
+                      <div className="selected-file-preview">
+                        <span>📄 {selectedNewMessageFile.name}</span>
+                        <button 
+                          onClick={() => setSelectedNewMessageFile(null)} 
+                          className="remove-file-button"
+                          type="button"
+                        >×</button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="modal-footer">
                   <button 
                     className="cancel-btn"
-                    onClick={() => setShowNewMessageForm(false)}
+                    onClick={() => {
+                      setShowNewMessageForm(false);
+                      setSelectedNewMessageFile(null);
+                      setAdminSearchQuery('');
+                      const fileInput = document.querySelector('.new-message-file-input');
+                      if (fileInput) fileInput.value = '';
+                    }}
                   >
                     Cancel
                   </button>
                   <button 
                     className="send-btn"
                     onClick={sendNewMessage}
-                    disabled={!newMessageText.trim() || selectedAdmins.length === 0}
+                    disabled={(!newMessageText.trim() && !selectedNewMessageFile) || selectedAdmins.length === 0 || fileUploading}
                   >
-                    Send Message
+                    {fileUploading ? 'Uploading...' : 'Send Message'}
                   </button>
                 </div>
               </div>
@@ -500,7 +777,7 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
               ← Back
             </button>
             <div className="chat-admin-info">
-              <h3>{selectedConversation.admin.firstName} {selectedConversation.admin.lastName}</h3>
+              <h3>{getAdminDisplayName(selectedConversation.admin)}</h3>
               <span>Admin</span>
             </div>
           </div>
@@ -516,7 +793,19 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
                   className={`message ${isSentByCurrentUser ? 'sent' : 'received'} ${!message.read && !isSentByCurrentUser ? 'unread-message' : ''}`}
                 >
                   <div className="message-content">
-                    <p>{message.message}</p>
+                    {message.message && <p>{message.message}</p>}
+                    {message.fileUrl && (
+                      <div className="message-file">
+                        <a 
+                          href={message.fileUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="file-link"
+                        >
+                          📎 {message.fileName || getFileNameFromUrl(message.fileUrl)}
+                        </a>
+                      </div>
+                    )}
                     <span className="message-timestamp">
                       {message.sentAt?.toDate().toLocaleString()}
                     </span>
@@ -528,15 +817,38 @@ const NotificationsMessages = ({ currentUser, onUnreadCountChange }) => {
           </div>
 
           <div className="message-input-container">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
-              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            />
-            <button onClick={sendMessage} disabled={!newMessage.trim()}>
-              Send
+            <div className="message-input-with-file">
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                className="message-text-input"
+              />
+              <input
+                type="file"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+                className="chat-file-input"
+                style={{ display: 'none' }}
+                id="chatFileInput"
+              />
+              <label htmlFor="chatFileInput" className="file-select-button" title="Attach file">
+                📎
+              </label>
+            </div>
+            {selectedFile && (
+              <div className="selected-file-preview">
+                <span>📄 {selectedFile.name}</span>
+                <button onClick={() => setSelectedFile(null)} className="remove-file-button">×</button>
+              </div>
+            )}
+            <button 
+              onClick={sendMessage} 
+              disabled={(!newMessage.trim() && !selectedFile) || fileUploading}
+              className="send-message-button"
+            >
+              {fileUploading ? 'Uploading...' : 'Send'}
             </button>
           </div>
         </div>

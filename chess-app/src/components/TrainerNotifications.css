@@ -67,6 +67,100 @@
   transform: translateY(-2px);
 }
 
+/* Search Container */
+.search-container {
+  padding: 15px 20px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e6e6e6;
+  flex-shrink: 0;
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 45px 12px 15px;
+  border: 2px solid #e6e6e6;
+  border-radius: 25px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+  color: #333333;
+}
+
+.search-input:focus {
+  border-color: #e9c44c;
+  background-color: #fefdf8;
+  box-shadow: 0 0 0 3px rgba(233, 196, 76, 0.1);
+}
+
+.search-input::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+.search-icon {
+  position: absolute;
+  right: 35px;
+  color: #adb5bd;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.search-clear {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 20px;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.search-clear:hover {
+  background-color: #e9c44c;
+  color: #432c64;
+}
+
+.search-results-info {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #6c757d;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Clear Search Button */
+.clear-search-btn {
+  background-color: #e9c44c;
+  color: #432c64;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.clear-search-btn:hover {
+  background-color: #d4b43c;
+  transform: translateY(-1px);
+}
+
 /* Conversations List - Scrollable */
 .conversations-list {
   flex: 1;
@@ -77,12 +171,17 @@
 
 .no-conversations {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 300px;
   color: #333333;
   font-size: 16px;
   text-align: center;
+}
+
+.no-conversations p {
+  margin-bottom: 15px;
 }
 
 /* Conversation Items */
@@ -256,9 +355,40 @@
   opacity: 0.7;
 }
 
+/* Message file display */
+.message-file {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+}
+
+.message.sent .message-file {
+  background-color: rgba(67, 44, 100, 0.2);
+  border-color: rgba(67, 44, 100, 0.3);
+}
+
+.message.received .message-file {
+  background-color: rgba(51, 51, 51, 0.1);
+  border-color: rgba(51, 51, 51, 0.2);
+}
+
+.file-link {
+  color: inherit;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.file-link:hover {
+  text-decoration: underline;
+}
+
 /* Message Input */
 .message-input-container {
   display: flex;
+  flex-direction: column;
   padding: 20px 30px;
   border-top: 2px solid #e6e6e6;
   background-color: #ffffff;
@@ -266,7 +396,13 @@
   flex-shrink: 0;
 }
 
-.message-input-container input {
+.message-input-with-file {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.message-text-input {
   flex: 1;
   padding: 12px 16px;
   border: 2px solid #e6e6e6;
@@ -276,11 +412,30 @@
   transition: border-color 0.3s;
 }
 
-.message-input-container input:focus {
+.message-text-input:focus {
   border-color: #e9c44c;
 }
 
-.message-input-container button {
+.file-select-button {
+  background-color: #f0f0f0;
+  border: 2px solid #e6e6e6;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.file-select-button:hover {
+  background-color: #e9c44c;
+  border-color: #d4b43c;
+}
+
+.send-message-button {
   background-color: #e9c44c;
   color: #432c64;
   border: none;
@@ -292,13 +447,45 @@
   transition: all 0.3s;
 }
 
-.message-input-container button:hover:not(:disabled) {
+.send-message-button:hover:not(:disabled) {
   background-color: #d4b43c;
 }
 
-.message-input-container button:disabled {
+.send-message-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.selected-file-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: #f7eac5;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #432c64;
+}
+
+.remove-file-button {
+  background: none;
+  border: none;
+  color: #432c64;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-file-button:hover {
+  background-color: #d4b43c;
+  color: white;
 }
 
 /* Modal Styles */
@@ -368,17 +555,125 @@
   margin-bottom: 20px;
 }
 
-.admin-selection label {
+.admin-selection > label {
   display: block;
   color: #5e3c8f;
   font-weight: 600;
   margin-bottom: 10px;
 }
 
+/* Admin Search in Modal */
+.admin-search-container {
+  margin-bottom: 15px;
+}
+
+.admin-search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.admin-search-input {
+  width: 100%;
+  padding: 10px 40px 10px 12px;
+  border: 2px solid #e6e6e6;
+  border-radius: 20px;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+  color: #333333;
+}
+
+.admin-search-input:focus {
+  border-color: #e9c44c;
+  background-color: #fefdf8;
+  box-shadow: 0 0 0 3px rgba(233, 196, 76, 0.1);
+}
+
+.admin-search-input::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+.admin-search-icon {
+  position: absolute;
+  right: 30px;
+  color: #adb5bd;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.admin-search-clear {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 18px;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.admin-search-clear:hover {
+  background-color: #e9c44c;
+  color: #432c64;
+}
+
+.admin-search-results-info {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #6c757d;
+  text-align: center;
+  font-style: italic;
+}
+
+.no-admins-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+}
+
+.no-admins-found p {
+  margin-bottom: 10px;
+}
+
+.clear-admin-search-btn {
+  background-color: #e9c44c;
+  color: #432c64;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-admin-search-btn:hover {
+  background-color: #d4b43c;
+  transform: translateY(-1px);
+}
+
 .admin-checkboxes {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 2px solid #e6e6e6;
+  border-radius: 8px;
+  padding: 8px;
 }
 
 .checkbox-label {
@@ -408,6 +703,7 @@
   cursor: pointer;
   position: relative;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .checkbox-label input[type="checkbox"]:checked {
@@ -429,6 +725,26 @@
 .checkbox-label input[type="checkbox"]:hover {
   border-color: #e9c44c;
   box-shadow: 0 0 0 2px rgba(233, 196, 76, 0.2);
+}
+
+.admin-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-name {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.admin-role-small {
+  font-size: 11px;
+  color: #8260b3;
+}
+
+.message-input {
+  margin-bottom: 20px;
 }
 
 .message-input label {
@@ -459,6 +775,29 @@
 
 .message-input textarea::placeholder {
   color: #cccccc;
+}
+
+/* File input in new message modal */
+.file-input {
+  margin-bottom: 20px;
+}
+
+.file-input label {
+  display: block;
+  color: #5e3c8f;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.new-message-file-input {
+  width: 100%;
+  padding: 8px;
+  border: 2px dashed #e6e6e6;
+  border-radius: 6px;
+  font-size: 13px;
+  background-color: #faf8f1;
+  color: #333333;
+  cursor: pointer;
 }
 
 .modal-footer {
@@ -527,6 +866,10 @@
     padding: 15px 20px;
   }
 
+  .search-container {
+    padding: 12px 16px;
+  }
+
   .conversation-item {
     padding: 15px;
   }
@@ -542,6 +885,23 @@
   .new-message-modal {
     width: 95%;
     margin: 10px;
+  }
+
+  .admin-search-input {
+    padding: 8px 35px 8px 10px;
+    font-size: 12px;
+  }
+
+  .admin-search-icon {
+    right: 25px;
+    font-size: 12px;
+  }
+
+  .admin-search-clear {
+    right: 6px;
+    width: 18px;
+    height: 18px;
+    font-size: 16px;
   }
 }
 
@@ -560,5 +920,9 @@
 
   .modal-footer {
     padding: 15px 20px;
+  }
+
+  .search-input {
+    padding: 10px 40px 10px 12px;
   }
 }
