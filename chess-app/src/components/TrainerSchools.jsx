@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, query, where, doc, getDoc, setDoc, updateDoc, arrayUnion, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, getDoc, setDoc, updateDoc, arrayUnion, serverTimestamp, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
 import './TrainerSchools.css';
@@ -33,6 +33,31 @@ const TrainerSchools = () => {
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [loadingSyllabus, setLoadingSyllabus] = useState(false);
   const navigate = useNavigate();
+
+  // פונקציה לרישום פעולות ב-adminLogs
+  const logTrainerAction = async (actionType, description, targetId = null) => {
+    try {
+      // קבלת פרטי המשתמש הנוכחי
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const trainerName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'Unknown Trainer';
+
+      const logEntry = {
+        actionType,
+        adminName: trainerName, // משתמשים באותו שדה כמו באדמין
+        description,
+        targetType: 'student', // עבור הוספת תלמיד
+        timestamp: new Date(),
+        targetId: targetId || null,
+        adminId: currentUser.uid || currentUser.id || null
+      };
+
+      await addDoc(collection(db, 'adminLogs'), logEntry);
+      console.log('Trainer action logged:', logEntry);
+    } catch (err) {
+      console.error('Error logging trainer action:', err);
+      // אל תעצור את הפעולה אם הלוג נכשל
+    }
+  };
 
   useEffect(() => {
     const fetchSchoolsData = async () => {
@@ -191,6 +216,13 @@ const TrainerSchools = () => {
           studentsId: arrayUnion(newStudent.id)
         });
       }
+
+      // רישום פעולה ב-adminLogs
+      await logTrainerAction(
+        'add-student',
+        `added student ${newStudent.fullName} to class ${selectedClass.className}`,
+        newStudent.id
+      );
 
       // Add the new student to the local state
       const newStudentData = {
