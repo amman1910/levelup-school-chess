@@ -41,7 +41,7 @@ body, html {
 
 /* Sidebar styling */
 .admin-sidebar {
-  width: 260px;
+ width: 260px; 
   background: linear-gradient(to bottom, var(--primary-purple), var(--dark-purple));
   color: var(--white);
   display: flex;
@@ -72,28 +72,60 @@ body, html {
   color: var(--light-gold);
   font-size: 14px;
   opacity: 0.9;
+  margin-bottom: 15px;
+}
+
+/* Logo Container and Chess Logo in Header */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.header-chess-logo {
+  width: 90px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.header-chess-logo:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .admin-nav {
-  padding: 20px 10px;
+  padding: 15px 8px;
   flex-grow: 1;
 }
 
 /* Updated NavLink styling */
 .admin-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
   text-align: left;
-  padding: 12px 20px;
-  margin-bottom: 10px;
+  padding: 10px 15px;
+  margin-bottom: 8px;
   border: none;
   border-radius: 8px;
   background: transparent;
   color: var(--white);
-  font-size: 16px;
+  font-size: 14px;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  
+
+  
 }
 
 .admin-link:hover {
@@ -106,6 +138,69 @@ body, html {
   background-color: var(--secondary-gold);
   color: var(--dark-purple);
   font-weight: 500;
+}
+
+/* Notification Badge Styling */
+.notification-badge {
+  background-color: var(--error-color);
+  color: var(--white);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-left: auto;
+  animation: pulse 2s infinite;
+}
+
+/* אנימציה עדינה לbadge */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ווידוא שה-notifications link מציג את ה-badge נכון */
+.admin-nav .notifications-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Navigation Logo Container */
+.nav-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding: 15px;
+}
+
+.nav-chess-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-chess-logo:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .admin-footer {
@@ -152,7 +247,8 @@ body, html {
 /* Main content area */
 .admin-content {
   flex: 1; /* זה יגרום לו לתפוס את כל המקום הנותר */
-  margin-left: 260px;
+  margin-left: 260px; /* עודכן מ-220px ל-260px */
+
   padding: 0;
   height: 100vh;
   overflow-y: auto;
@@ -354,6 +450,11 @@ body, html {
   .admin-main {
     padding: 20px;
   }
+  
+  .nav-chess-logo {
+    width: 100px;
+    height: 100px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -374,12 +475,28 @@ body, html {
     display: none;
   }
   
+  /* הסתר את הלוגו במובייל */
+  .logo-container {
+    display: none;
+  }
+  
   .admin-link {
     padding: 15px 5px;
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
     font-size: 12px;
+    justify-content: center;
+  }
+  
+  /* הסתר את ה-badge במובייל */
+  .notification-badge {
+    display: none;
+  }
+  
+  /* הסתר את הלוגו בניווט במובייל */
+  .nav-logo-container {
+    display: none;
   }
   
   .user-info {
