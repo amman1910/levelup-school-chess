@@ -270,14 +270,13 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       await setDoc(doc(db, "classes", randomId), classData);
 
       const currentAdmin = JSON.parse(localStorage.getItem('user'));
-await logAdminAction({
-  admin: currentAdmin,
-  actionType: 'add-class',
-  targetType: 'class',
-  targetId: randomId,
-  description: `Added class "${classData.className}" at ${classData.school}`
-});
-
+      await logAdminAction({
+        admin: currentAdmin,
+        actionType: 'add-class',
+        targetType: 'class',
+        targetId: randomId,
+        description: `Added class "${classData.className}" at ${classData.school}`
+      });
 
       if (typeof success === 'function') success('Class added successfully!');
       
@@ -314,6 +313,14 @@ await logAdminAction({
   };
 
   const handleDeleteClass = async (classId) => {
+    // מציאת הכיתה לפני המחיקה כדי לקחת את שמה לרישום
+    const classToDelete = (classes || []).find(cls => cls.id === classId);
+    let classDescription = `Deleted class with ID ${classId}`;
+    
+    if (classToDelete) {
+      classDescription = `Deleted class "${classToDelete.className}" from ${classToDelete.school}`;
+    }
+    
     if (!window.confirm("Are you sure you want to delete this class? This will also delete all related sessions.")) return;
     setLoading(true);
     if (typeof error === 'function') error('');
@@ -328,14 +335,13 @@ await logAdminAction({
       await deleteDoc(doc(db, "classes", classId));
 
       const currentAdmin = JSON.parse(localStorage.getItem('user'));
-await logAdminAction({
-  admin: currentAdmin,
-  actionType: 'delete-class',
-  targetType: 'class',
-  targetId: classId,
-  description: `Deleted class with ID ${classId}`
-});
-
+      await logAdminAction({
+        admin: currentAdmin,
+        actionType: 'delete-class',
+        targetType: 'class',
+        targetId: classId,
+        description: classDescription
+      });
       
       if (typeof success === 'function') success('Class deleted successfully');
       
@@ -446,14 +452,13 @@ await logAdminAction({
 
       await updateDoc(doc(db, "classes", editingClass), updatedData);
       const currentAdmin = JSON.parse(localStorage.getItem('user'));
-await logAdminAction({
-  admin: currentAdmin,
-  actionType: 'update-class',
-  targetType: 'class',
-  targetId: editingClass,
-  description: `Updated class "${updatedData.className}" at ${updatedData.school}`
-});
-
+      await logAdminAction({
+        admin: currentAdmin,
+        actionType: 'update-class',
+        targetType: 'class',
+        targetId: editingClass,
+        description: `Updated class "${updatedData.className}" at ${updatedData.school}`
+      });
 
       if (typeof success === 'function') success('Class updated successfully!');
       
