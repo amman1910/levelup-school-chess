@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import { collection, addDoc, getDoc, doc, query, where, getDocs, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, getDoc, doc, query, where, getDocs, updateDoc, Timestamp } from 'firebase/firestore';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './TrainerMeetingForm.css';
 
@@ -35,6 +35,51 @@ const TrainerMeetingForm = () => {
   const isRecording = sessionData?.isRecording || false;
   const sessionId = sessionData?.id || null;
 
+  // פונקציה לרישום פעולות ב-adminLogs
+  const logTrainerAction = async (actionType, description, targetId = null) => {
+    try {
+      // קבלת פרטי המשתמש הנוכחי
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const trainerName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'Unknown Trainer';
+
+      const logEntry = {
+        actionType,
+        adminName: trainerName, // משתמש באותו שדה כמו אדמין
+        description,
+        targetType: 'session',
+        timestamp: new Date(),
+        targetId: targetId || null,
+        adminId: currentUser.uid || currentUser.id || null
+      };
+
+      await addDoc(collection(db, 'adminLogs'), logEntry);
+      console.log('Trainer action logged:', logEntry);
+    } catch (err) {
+      console.error('Error logging trainer action:', err);
+      // אל תעצור את הפעולה אם הלוג נכשל
+    }
+  };
+
+  // Helper function to convert Timestamp to date input format (YYYY-MM-DD)
+  const timestampToDateInput = (timestamp) => {
+    if (!timestamp) return '';
+    
+    let dateObj;
+    if (timestamp.seconds) {
+      // Firestore Timestamp
+      dateObj = new Date(timestamp.seconds * 1000);
+    } else if (timestamp instanceof Date) {
+      dateObj = timestamp;
+    } else if (typeof timestamp === 'string') {
+      dateObj = new Date(timestamp);
+    } else {
+      return '';
+    }
+    
+    // Format as YYYY-MM-DD for date input
+    return dateObj.toISOString().split('T')[0];
+  };
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -52,24 +97,19 @@ const TrainerMeetingForm = () => {
     console.log('sessionId:', sessionId);
     
     if (sessionData) {
-      // If editing existing session, populate all fields
-      // If recording, populate only basic fields (date, school, duration, topic if exists)
-      if (sessionData.date) {
-        // Handle date whether it's string or object
-        let dateValue = '';
-        if (typeof sessionData.date === 'string') {
-          // If it's a string, check if it contains time and extract just the date part
-          if (sessionData.date.includes(' ')) {
-            dateValue = sessionData.date.split(' ')[0];
-          } else {
-            dateValue = sessionData.date;
-          }
-        } else if (sessionData.date && sessionData.date.seconds) {
-          // Timestamp object
-          const d = new Date(sessionData.date.seconds * 1000);
-          dateValue = d.toISOString().split('T')[0];
-        }
+      // Handle date using originalDate (Timestamp) when available, fallback to date
+      const dateToUse = sessionData.originalDate || sessionData.fullData?.date;
+      if (dateToUse) {
+        const dateValue = timestampToDateInput(dateToUse);
         setDate(dateValue);
+        console.log('Setting date to:', dateValue);
+      }
+      
+      // Handle start time using originalStartTime when available
+      const startTimeToUse = sessionData.originalStartTime || sessionData.fullData?.startTime || sessionData.startTime;
+      if (startTimeToUse) {
+        setStartTime(startTimeToUse);
+        console.log('Setting start time to:', startTimeToUse);
       }
       
       // Always populate these basic fields
@@ -82,8 +122,8 @@ const TrainerMeetingForm = () => {
       // For recording mode, only populate topic if it exists, leave other fields empty for user input
       if (isRecording) {
         setTopic(sessionData.topic || sessionData.fullData?.topic || '');
-        // Leave other fields empty for the trainer to fill
-        setStartTime('');
+        // For recording, we keep the date and startTime from the original session
+        // but allow editing of other fields
         setMethod('In-Person');
         setSessionCount('1');
         setMaterialRating(0);
@@ -92,7 +132,6 @@ const TrainerMeetingForm = () => {
         setAttendance({});
       } else if (isEditing) {
         // For editing mode, populate all existing fields
-        setStartTime(sessionData.startTime || '');
         setTopic(sessionData.topic || sessionData.fullData?.topic || '');
         setMethod(sessionData.method || sessionData.fullData?.method || 'In-Person');
         setSessionCount(sessionData.fullData?.sessionCount || '1');
@@ -248,9 +287,12 @@ const TrainerMeetingForm = () => {
       return;
     }
 
+    // Convert date string to Timestamp for Firestore
+    const dateTimestamp = Timestamp.fromDate(new Date(date));
+
     const sessionDataToSave = {
       trainerId,
-      date: date, // Save the selected date as string
+      date: dateTimestamp, // Save as Timestamp
       startTime,
       topic,
       method: method.toLowerCase(),
@@ -266,18 +308,43 @@ const TrainerMeetingForm = () => {
     };
 
     try {
+      let actionDescription = '';
+      let actionType = '';
+      let targetSessionId = sessionId;
+
       if ((isEditing || isRecording) && sessionId) {
         // Update existing session
         console.log('Updating session with ID:', sessionId);
         const sessionRef = doc(db, 'sessions', sessionId);
         await updateDoc(sessionRef, sessionDataToSave);
+        
+        if (isRecording) {
+          actionType = 'record-session';
+          actionDescription = `Recorded a session for class "${group}" at ${school} on ${date}`;
+        } else {
+          actionType = 'edit-session';
+          actionDescription = `Updated a session for class "${group}" at ${school} from ${date}`;
+        }
+        
         setSuccessMessage('Session updated successfully!');
       } else {
         // Create new session
         console.log('Creating new session');
-        await addDoc(collection(db, 'sessions'), sessionDataToSave);
+        const docRef = await addDoc(collection(db, 'sessions'), sessionDataToSave);
+        targetSessionId = docRef.id;
+        
+        actionType = 'add-session';
+        actionDescription = `Recorded a new session for class "${group}" at ${school} on ${date}`;
+        
         setSuccessMessage('Session recorded successfully!');
       }
+
+      // רישום פעולה ב-adminLogs
+      await logTrainerAction(
+        actionType,
+        actionDescription,
+        targetSessionId
+      );
       
       // Navigate after a brief delay to show the success message
       setTimeout(() => {
@@ -312,8 +379,8 @@ const TrainerMeetingForm = () => {
           top: '20px',
           left: '50%',
           transform: 'translateX(-50%)',
-          background: '#27ae60',
-          color: 'white',
+          background: '#d4edda',
+          color: '#155724',
           padding: '15px 25px',
           borderRadius: '8px',
           zIndex: 1000,
