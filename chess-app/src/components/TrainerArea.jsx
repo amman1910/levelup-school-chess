@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
+import { db } from '../firebase';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import TrainerSessions from './TrainerSessions';
 import TrainerMeetingForm from './TrainerMeetingForm';
 import TrainerSchools from './TrainerSchools';
@@ -9,7 +11,8 @@ import TrainerMaterialsLibary from './TrainerMaterialsLibary';
 import TrainerProfile from './TrainerProfile'; // הוספת הקומפננטה החדשה
 
 import './TrainerArea.css';
-import chessLogo from './chessLogo3.png'; // ייבוא התמונה
+import chessLogo from './chessLogo.png'; // ייבוא התמונה החדשה
+import chessLogo3 from './chessLogo3.png'; // ייבוא התמונה הקיימת
 
 const TrainerArea = () => {
   const [user, setUser] = useState(null);
@@ -19,13 +22,19 @@ const TrainerArea = () => {
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
+    console.log('Raw user from localStorage in TrainerArea:', loggedInUser);
+    
     if (!loggedInUser) {
+      console.log('No user in localStorage, redirecting to login');
       navigate('/login');
       return;
     }
 
     const userData = JSON.parse(loggedInUser);
+    console.log('Parsed user data in TrainerArea:', userData);
+    
     if (userData.role !== 'trainer') {
+      console.log('User is not trainer, redirecting to login');
       navigate('/login');
       return;
     }
@@ -35,8 +44,41 @@ const TrainerArea = () => {
       userData.id = userData.uid;
     }
 
+    console.log('Setting user in TrainerArea:', userData);
     setUser(userData);
   }, [navigate]);
+
+  // Fetch unread notifications count in real-time
+  useEffect(() => {
+    if (!user?.uid) {
+      console.log('No user uid found for notifications in TrainerArea:', user);
+      return;
+    }
+
+    // Use uid for the query since that's what's stored in notifications
+    const userId = user.uid;
+    console.log('Setting up unread notifications listener for trainer ID:', userId);
+
+    // Query for unread messages where trainer is RECEIVER
+    const q = query(
+      collection(db, 'notifications'),
+      where('receiverId', '==', userId),
+      where('read', '==', false)
+    );
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const unreadCount = querySnapshot.size;
+      console.log('Trainer unread notifications count:', unreadCount);
+      setUnreadCount(unreadCount);
+    }, (error) => {
+      console.error('Error in trainer unread notifications listener:', error);
+    });
+
+    return () => {
+      console.log('Cleaning up trainer unread notifications listener');
+      unsubscribe();
+    };
+  }, [user]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -67,6 +109,9 @@ const TrainerArea = () => {
         <div className="logo-wrapper">
           <h2>LEVEL UP</h2>
           <div className="subtitle">Chess Club Management</div>
+          <div className="logo-container">
+            <img src={chessLogo} alt="Chess Logo" className="header-chess-logo" />
+          </div>
         </div>
 
         <nav className="trainer-nav">
@@ -85,7 +130,7 @@ const TrainerArea = () => {
           
           {/* הוספת הלוגו מתחת לProfile */}
           <div className="nav-logo-container">
-            <img src={chessLogo} alt="Chess Logo" className="nav-chess-logo" />
+            <img src={chessLogo3} alt="Chess Logo" className="nav-chess-logo" />
           </div>
         </nav>
 
