@@ -1,0 +1,61 @@
+.hero-section {
+  background: linear-gradient(135deg, #3b2064, #7b4bb7);
+  height: calc(100vh - 80px); /* استثناء ارتفاع النافبار */
+  padding-top: 80px;           /* ترك فراغ للنافبار */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  padding-left: 40px;
+  padding-right: 40px;
+  box-sizing: border-box;
+}
+
+.hero-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 700px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-content h1 {
+  font-size: 48px;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.hero-content p {
+  font-size: 20px;
+  color: #e0e0e0;
+  margin-bottom: 30px;
+  line-height: 1.7;
+}
+
+.cta-button {
+  background-color: #3b2064;
+  color: #fff;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #4a2c7a;
+}
+
+
+
+
+
+
