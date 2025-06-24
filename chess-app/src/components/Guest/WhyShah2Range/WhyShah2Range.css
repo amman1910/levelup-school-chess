@@ -1,0 +1,76 @@
+.why-shah2range-section {
+  background-color: #f5f3fa;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.why-shah2range-section h2 {
+  font-size: 36px;
+  margin-bottom: 40px;
+  color: #3b2064;
+}
+
+.features-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.feature-card {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  max-width: 300px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+}
+
+.feature-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.feature-card h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #3b2064;
+}
+
+.feature-card p {
+  font-size: 16px;
+  color: #555;
+}
+
+.cta-container {
+  margin-top: 20px;
+}
+
+.cta-text {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #3b2064;
+}
+
+.cta-button {
+  background-color: #7b4bb7;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #5e3991;
+}
