@@ -1,41 +1,56 @@
 .hero-section {
   background: linear-gradient(135deg, #3b2064, #7b4bb7);
-  height: calc(100vh - 80px); /* استثناء ارتفاع النافبار */
-  padding-top: 80px;           /* ترك فراغ للنافبار */
+min-height: calc(100vh - 40px);
+  padding-bottom: 20px;           /* ترك فراغ للنافبار */
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+align-items: center;
+  position: relative;
   text-align: center;
   color: white;
-  padding-left: 40px;
-  padding-right: 40px;
+  padding: 0 40px;
   box-sizing: border-box;
+overflow: hidden;
+  
+}
+.golden-text {
+  color: #ffde59; /* اللون الذهبي */
 }
 
 .hero-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  z-index: 2;
   max-width: 700px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+transform: translateY(30px);
 }
 
 .hero-content h1 {
-  font-size: 48px;
+  font-size: 44px;
   color: white;
   margin-bottom: 20px;
 }
 
+.hero-content h1 .highlight {
+  color: #ffde59;
+}
+
 .hero-content p {
-  font-size: 20px;
+  font-size: 16px;
   color: #e0e0e0;
   margin-bottom: 30px;
-  line-height: 1.7;
+  line-height: 1.6;
+}
+
+.button-group {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
 }
 
 .cta-button {
@@ -43,16 +58,122 @@
   color: #fff;
   padding: 12px 28px;
   border: none;
-  border-radius: 24px;
+  border-radius: 999px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.cta-button:hover {
-  background-color: #4a2c7a;
+.cta-button.filled {
+  background-color: #ffde59;
+  color: #3b2064;
+  border: none;
 }
+
+.cta-button.outlined {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+/* ====== قطع الشطرنج ====== */
+
+.chess-top-right-group {
+  position: absolute;
+  top: 14%;
+  right: 3%;
+  display: flex;
+  gap: 0.4px;
+  z-index: 0;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.chess-top-piece,
+.chess-bottom-piece {
+  animation: floatAround 20s ease-in-out infinite;
+  filter: grayscale(100%) brightness(0.6);
+}
+
+
+/* القطع العلوية */
+.chess-top-piece.left-tilt {
+  height: 125px;
+  --angle: -8deg;
+}
+
+.chess-top-piece.right-tilt {
+  height: 165px;
+  --angle: 10deg;
+}
+
+/* القطع السفلية */
+.chess-bottom-left-group {
+  position: absolute;
+  bottom: 12%;
+  left: 3%;
+  display: flex;
+  z-index: 0;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.chess-bottom-piece.left-lean {
+  height: 95px;
+  --angle: -7deg;
+  opacity: 0.07;
+  margin-left: -10px;
+}
+
+.chess-bottom-piece.slight-lean {
+  height: 115px;
+  --angle: -4deg;
+  opacity: 0.1;
+  margin-left: -12px;
+}
+
+.chess-bottom-piece.right-lean {
+  height: 170px;
+  --angle: -6deg;
+  opacity: 0.16;
+}
+
+@keyframes floatAround {
+  0%   { transform: translate(0, 0) rotate(var(--angle)); }
+  20%  { transform: translate(4px, -10px) rotate(calc(var(--angle) + 2deg)); }
+  50%  { transform: translate(-5px, 8px) rotate(calc(var(--angle) - 1deg)); }
+  80%  { transform: translate(3px, -12px) rotate(calc(var(--angle) + 1.5deg)); }
+  100% { transform: translate(0, 0) rotate(var(--angle)); }
+}
+
+
+.hero-curve {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 90px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.hero-curve svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
