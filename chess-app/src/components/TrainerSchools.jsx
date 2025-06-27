@@ -26,13 +26,22 @@ const TrainerSchools = () => {
   const [newStudent, setNewStudent] = useState({
     id: '',
     fullName: '',
-    age: '',
+    grade: '',
     contact_number: ''
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [loadingSyllabus, setLoadingSyllabus] = useState(false);
+  const [showSchoolDetails, setShowSchoolDetails] = useState(false);
+  const [selectedSchoolDetails, setSelectedSchoolDetails] = useState(null);
+  const [loadingSchoolDetails, setLoadingSchoolDetails] = useState(false);
   const navigate = useNavigate();
+
+  // Grade options A-L
+  const gradeOptions = [
+    'Grade A', 'Grade B', 'Grade C', 'Grade D', 'Grade E', 'Grade F',
+    'Grade G', 'Grade H', 'Grade I', 'Grade J', 'Grade K', 'Grade L'
+  ];
 
   // פונקציה לרישום פעולות ב-adminLogs
   const logTrainerAction = async (actionType, description, targetId = null) => {
@@ -73,7 +82,7 @@ const TrainerSchools = () => {
         const data = docSnap.data();
         const schoolName = data.school || 'Unknown School';
         const classId = docSnap.id;
-        const studentCount = data.studentsId?.length || 0;
+        const studentCount = Math.max(0, (data.studentsId?.length || 0) - 1);
 
         if (!schoolMap[schoolName]) {
           schoolMap[schoolName] = {
@@ -129,7 +138,7 @@ const TrainerSchools = () => {
     setSelectedClass(null);
     setStudents([]);
     setShowAddStudentForm(false);
-    setNewStudent({ id: '', fullName: '', age: '', contact_number: '' });
+    setNewStudent({ id: '', fullName: '', grade: '', contact_number: '' });
     setSearchTerm('');
     setFilteredStudents([]);
   };
@@ -177,8 +186,8 @@ const TrainerSchools = () => {
   const handleAddNewStudent = async (e) => {
     e.preventDefault();
     
-    if (!newStudent.id || !newStudent.fullName || !newStudent.age || !newStudent.contact_number) {
-      alert('Please fill in all fields');
+    if (!newStudent.id || !newStudent.fullName || !newStudent.contact_number) {
+      alert('Please fill in all required fields (Student ID, Full Name, Contact Number)');
       return;
     }
 
@@ -196,7 +205,7 @@ const TrainerSchools = () => {
       // Create the student document
       const studentData = {
         fullName: newStudent.fullName,
-        age: parseInt(newStudent.age),
+        grade: newStudent.grade,
         contact_number: newStudent.contact_number,
         classId: selectedClass.classId,
         school: selectedSchool.schoolName,
@@ -228,14 +237,13 @@ const TrainerSchools = () => {
       const newStudentData = {
         id: newStudent.id,
         ...studentData,
-        age: parseInt(newStudent.age)
       };
       
       setStudents(prev => [...prev, newStudentData]);
       setFilteredStudents(prev => [...prev, newStudentData]);
 
       // Reset form
-      setNewStudent({ id: '', fullName: '', age: '', contact_number: '' });
+      setNewStudent({ id: '', fullName: '', grade: '', contact_number: '' });
       setShowAddStudentForm(false);
       
       alert('Student added successfully!');
@@ -313,6 +321,51 @@ const TrainerSchools = () => {
     } finally {
       setLoadingSyllabus(false);
     }
+  };
+
+  // פונקציה לטעינת פרטי בית ספר
+  const handleViewSchoolDetails = async (schoolName) => {
+    setLoadingSchoolDetails(true);
+    setShowSchoolDetails(true);
+    
+    try {
+      const schoolQuery = query(collection(db, 'schools'), where('name', '==', schoolName));
+      const schoolSnapshot = await getDocs(schoolQuery);
+      
+      if (!schoolSnapshot.empty) {
+        const schoolDoc = schoolSnapshot.docs[0];
+        const schoolData = schoolDoc.data();
+        setSelectedSchoolDetails({
+          name: schoolName,
+          address: schoolData.address || 'No address available',
+          contact_person: schoolData.contact_person || 'No contact person available',
+          phone: schoolData.phone || 'No phone available'
+        });
+      } else {
+        setSelectedSchoolDetails({
+          name: schoolName,
+          address: 'School details not found',
+          contact_person: 'N/A',
+          phone: 'N/A'
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching school details:', error);
+      setSelectedSchoolDetails({
+        name: schoolName,
+        address: 'Error loading details',
+        contact_person: 'N/A',
+        phone: 'N/A'
+      });
+    } finally {
+      setLoadingSchoolDetails(false);
+    }
+  };
+
+  // פונקציה לסגירת חלונית פרטי בית הספר
+  const handleCloseSchoolDetails = () => {
+    setShowSchoolDetails(false);
+    setSelectedSchoolDetails(null);
   };
 
   // Schools View
@@ -393,12 +446,105 @@ const TrainerSchools = () => {
                     >
                       View Classes Details
                     </button>
+                    <button
+                      className="view-school-details-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewSchoolDetails(school.schoolName);
+                      }}
+                    >
+                      View School Details
+                    </button>
                   </div>
                 </div>
               </div>
             );
           })}
         </div>
+
+        {/* School Details Modal */}
+        {showSchoolDetails && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              backgroundColor: 'white',
+              padding: '30px',
+              borderRadius: '10px',
+              maxWidth: '500px',
+              width: '90%',
+              maxHeight: '80vh',
+              overflowY: 'auto',
+              position: 'relative'
+            }}>
+              <button
+                onClick={handleCloseSchoolDetails}
+                style={{
+                  position: 'absolute',
+                  top: '15px',
+                  right: '15px',
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#666'
+                }}
+              >
+                <X size={24} />
+              </button>
+
+              {loadingSchoolDetails ? (
+                <div style={{ textAlign: 'center', padding: '20px' }}>
+                  <div>Loading school details...</div>
+                </div>
+              ) : selectedSchoolDetails ? (
+                <div>
+                  <h2 style={{ 
+                    color: '#5e3c8f', 
+                    marginBottom: '20px',
+                    marginTop: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px'
+                  }}>
+                    <School size={24} />
+                    {selectedSchoolDetails.name}
+                  </h2>
+                  
+                  <div style={{ marginBottom: '15px' }}>
+                    <strong style={{ color: '#333', display: 'block', marginBottom: '5px' }}>Address:</strong>
+                    <p style={{ margin: 0, color: '#666', fontSize: '16px' }}>
+                      {selectedSchoolDetails.address}
+                    </p>
+                  </div>
+
+                  <div style={{ marginBottom: '15px' }}>
+                    <strong style={{ color: '#333', display: 'block', marginBottom: '5px' }}>Contact Person:</strong>
+                    <p style={{ margin: 0, color: '#666', fontSize: '16px' }}>
+                      {selectedSchoolDetails.contact_person}
+                    </p>
+                  </div>
+
+                  <div style={{ marginBottom: '15px' }}>
+                    <strong style={{ color: '#333', display: 'block', marginBottom: '5px' }}>Phone:</strong>
+                    <p style={{ margin: 0, color: '#666', fontSize: '16px' }}>
+                      {selectedSchoolDetails.phone}
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -414,7 +560,7 @@ const TrainerSchools = () => {
           </button>
           <div className="class-info">
             <h2><BookOpen size={24} /> {selectedClass?.className}</h2>
-            <p>{selectedSchool?.schoolName} • {filteredStudents.length} of {students.length} students</p>
+            <p>{selectedSchool?.schoolName} • {filteredStudents.length} of {Math.max(0, students.length - 1)} students</p>
           </div>
           <button 
             onClick={() => setShowAddStudentForm(true)} 
@@ -435,7 +581,7 @@ const TrainerSchools = () => {
                 <button 
                   onClick={() => {
                     setShowAddStudentForm(false);
-                    setNewStudent({ id: '', fullName: '', age: '', contact_number: '' });
+                    setNewStudent({ id: '', fullName: '', grade: '', contact_number: '' });
                   }}
                   className="close-form-btn"
                 >
@@ -476,20 +622,22 @@ const TrainerSchools = () => {
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="age">
+                    <label htmlFor="grade">
                       <Users size={16} />
-                      Age
+                      Grade
                     </label>
-                    <input
-                      type="number"
-                      id="age"
-                      value={newStudent.age}
-                      onChange={(e) => handleInputChange('age', e.target.value)}
-                      placeholder="Enter age"
-                      min="1"
-                      max="100"
-                      required
-                    />
+                    <select
+                      id="grade"
+                      value={newStudent.grade}
+                      onChange={(e) => handleInputChange('grade', e.target.value)}
+                    >
+                      <option value="">Select Grade</option>
+                      {gradeOptions.map(grade => (
+                        <option key={grade} value={grade}>
+                          {grade}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="form-group">
@@ -513,7 +661,7 @@ const TrainerSchools = () => {
                     type="button" 
                     onClick={() => {
                       setShowAddStudentForm(false);
-                      setNewStudent({ id: '', fullName: '', age: '', contact_number: '' });
+                      setNewStudent({ id: '', fullName: '', grade: '', contact_number: '' });
                     }}
                     className="cancel-btn"
                     disabled={addingStudent}
@@ -589,13 +737,17 @@ const TrainerSchools = () => {
                 <div className="student-info">
                   <div className="student-header">
                     <h3><User size={20} /> {student.fullName || 'No Name'}</h3>
-                    <span className="student-age">Age: {student.age || 'N/A'}</span>
                   </div>
                   <div className="student-details">
                     <div className="detail-item">
                       <Hash size={16} />
                       <span className="detail-label">Student ID:</span>
                       <span className="detail-value">{student.id}</span>
+                    </div>
+                    <div className="detail-item">
+                      <Users size={16} />
+                      <span className="detail-label">Grade:</span>
+                      <span className="detail-value">{student.grade || 'Not specified'}</span>
                     </div>
                     <div className="detail-item">
                       <Phone size={16} />

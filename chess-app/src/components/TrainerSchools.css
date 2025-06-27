@@ -158,20 +158,44 @@
   color: #8260b3;
 }
 
-.form-group input {
+.form-group input, .form-group select {
   padding: 10px 14px;
   border: 2px solid #e6e6e6;
   border-radius: 7px;
   font-size: 13px;
   transition: all 0.3s;
   background: #fafafa;
+  color: #333;
 }
 
-.form-group input:focus {
+.form-group input:focus, .form-group select:focus {
   outline: none;
   border-color: #e9c44c;
   background: white;
   box-shadow: 0 0 0 3px rgba(233, 196, 76, 0.1);
+}
+
+.form-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='5'><path fill='%236c3fa2' d='M0 0l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 9px;
+  cursor: pointer;
+  line-height: 1.2 !important;
+  height: auto !important;
+  min-height: 38px !important;
+  vertical-align: top !important;
+  display: inline-block !important;
+  box-sizing: border-box !important;
+}
+
+.form-group select option {
+  color: #333 !important;
+  background: white !important;
+  padding: 8px !important;
+  line-height: 1.4 !important;
+  height: auto !important;
 }
 
 .form-group input::placeholder {
@@ -407,11 +431,12 @@
   padding: 4px;
 }
 
-/* Card Actions */
+/* Card Actions - Updated to be vertical */
 .card-actions {
   margin-top: 16px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .view-details-btn {
@@ -431,6 +456,25 @@
   background: linear-gradient(135deg, #d4b43c, #c4a338);
   transform: translateY(-2px);
   box-shadow: 0 5px 18px rgba(212, 180, 60, 0.3);
+}
+
+.view-school-details-btn {
+  background: linear-gradient(135deg, #5e3c8f, #432c64);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 22px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+.view-school-details-btn:hover {
+  background: linear-gradient(135deg, #432c64, #5e3c8f);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 18px rgba(94, 60, 143, 0.3);
 }
 
 /* Classes Grid */
