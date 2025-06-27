@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 
-import { doc, setDoc, deleteDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, updateDoc, collection, getDocs, getDoc } from 'firebase/firestore';
 import { logAdminAction } from '../utils/adminLogger';
 
 
@@ -30,7 +30,8 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
   const [newStudent, setNewStudent] = useState({
     id: '',
     fullName: '',
-    age: '',
+    grade: '',
+    contact_number: '',
     school: '',
     classId: ''
   });
@@ -38,6 +39,12 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
   const [searchFilter, setSearchFilter] = useState('all');
   const [editingStudent, setEditingStudent] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+
+  // Grade options A-L
+  const gradeOptions = [
+    'Grade A', 'Grade B', 'Grade C', 'Grade D', 'Grade E', 'Grade F',
+    'Grade G', 'Grade H', 'Grade I', 'Grade J', 'Grade K', 'Grade L'
+  ];
 
   // Fetch schools from database
   const fetchSchools = async () => {
@@ -138,7 +145,8 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
       if (isEditing) {
         await updateDoc(doc(db, "students", newStudent.id), {
           fullName: newStudent.fullName,
-          age: Number(newStudent.age) || 0,
+          grade: newStudent.grade,
+          contact_number: newStudent.contact_number,
           school: newStudent.school,
           classId: newStudent.classId,
           updatedAt: new Date()
@@ -156,11 +164,30 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
       } else {
         await setDoc(doc(db, "students", newStudent.id), {
           fullName: newStudent.fullName,
-          age: Number(newStudent.age) || 0,
+          grade: newStudent.grade,
+          contact_number: newStudent.contact_number,
           school: newStudent.school,
           classId: newStudent.classId,
           createdAt: new Date()
         });
+
+        // Update the class document to add student ID to studentsId array
+        try {
+          const classRef = doc(db, "classes", newStudent.classId);
+          const classDoc = await getDoc(classRef);
+          if (classDoc.exists()) {
+            const currentStudentsId = classDoc.data().studentsId || [];
+            if (!currentStudentsId.includes(newStudent.id)) {
+              await updateDoc(classRef, {
+                studentsId: [...currentStudentsId, newStudent.id]
+              });
+            }
+          }
+        } catch (classUpdateError) {
+          console.error('Error updating class studentsId:', classUpdateError);
+          // Don't fail the entire operation if class update fails
+        }
+
           const currentAdmin = JSON.parse(localStorage.getItem('user'));
   await logAdminAction({
     admin: currentAdmin,
@@ -178,11 +205,11 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
         if (isEditing) {
           setStudents(students.map(std => 
             std.id === newStudent.id 
-              ? { ...std, ...newStudent, age: Number(newStudent.age) || 0, updatedAt: new Date() }
+              ? { ...std, ...newStudent, updatedAt: new Date() }
               : std
           ));
         } else {
-          setStudents([...students, { ...newStudent, age: Number(newStudent.age) || 0, createdAt: new Date() }]);
+          setStudents([...students, { ...newStudent, createdAt: new Date() }]);
         }
       }
 
@@ -190,7 +217,8 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
       setNewStudent({
         id: '',
         fullName: '',
-        age: '',
+        grade: '',
+        contact_number: '',
         school: '',
         classId: ''
       });
@@ -220,7 +248,30 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
     successFunction('');
     
     try {
+      // Get student data first to know which class to update
+      const studentDoc = await getDoc(doc(db, "students", studentId));
+      const studentData = studentDoc.exists() ? studentDoc.data() : null;
+      
       await deleteDoc(doc(db, "students", studentId));
+
+      // Remove student from class studentsId array
+      if (studentData && studentData.classId) {
+        try {
+          const classRef = doc(db, "classes", studentData.classId);
+          const classDoc = await getDoc(classRef);
+          if (classDoc.exists()) {
+            const currentStudentsId = classDoc.data().studentsId || [];
+            const updatedStudentsId = currentStudentsId.filter(id => id !== studentId);
+            await updateDoc(classRef, {
+              studentsId: updatedStudentsId
+            });
+          }
+        } catch (classUpdateError) {
+          console.error('Error updating class studentsId on delete:', classUpdateError);
+          // Don't fail the entire operation if class update fails
+        }
+      }
+
       const currentAdmin = JSON.parse(localStorage.getItem('user'));
 await logAdminAction({
   admin: currentAdmin,
@@ -256,7 +307,8 @@ await logAdminAction({
     setNewStudent({
       id: studentData.id,
       fullName: studentData.fullName,
-      age: studentData.age,
+      grade: studentData.grade,
+      contact_number: studentData.contact_number,
       school: studentData.school,
       classId: studentData.classId
     });
@@ -280,7 +332,8 @@ await logAdminAction({
     setNewStudent({
       id: '',
       fullName: '',
-      age: '',
+      grade: '',
+      contact_number: '',
       school: '',
       classId: ''
     });
@@ -309,8 +362,10 @@ await logAdminAction({
           return (student.id || '').toLowerCase().includes(query);
         case 'name':
           return (student.fullName || '').toLowerCase().includes(query);
-        case 'age':
-          return (student.age || '').toString().includes(query);
+        case 'grade':
+          return (student.grade || '').toLowerCase().includes(query);
+        case 'contact':
+          return (student.contact_number || '').toLowerCase().includes(query);
         case 'school':
           return (student.school || '').toLowerCase().includes(query);
         case 'class':
@@ -331,7 +386,8 @@ await logAdminAction({
           return (
             (student.id || '').toLowerCase().includes(query) ||
             (student.fullName || '').toLowerCase().includes(query) ||
-            (student.age || '').toString().includes(query) ||
+            (student.grade || '').toLowerCase().includes(query) ||
+            (student.contact_number || '').toLowerCase().includes(query) ||
             (student.school || '').toLowerCase().includes(query) ||
             className2.toLowerCase().includes(query) ||
             dateStr2.includes(query)
@@ -411,18 +467,34 @@ await logAdminAction({
 
           <div className="form-row">
             <div className="form-group">
-              <label>Age</label>
-              <input
-                type="number"
-                name="age"
-                value={newStudent.age}
+              <label>Grade</label>
+              <select
+                name="grade"
+                value={newStudent.grade}
                 onChange={handleStudentChange}
-                placeholder="Age"
-                min="5"
-                max="25"
-              />
+              >
+                <option value="">Select Grade</option>
+                {gradeOptions.map(grade => (
+                  <option key={grade} value={grade}>
+                    {grade}
+                  </option>
+                ))}
+              </select>
             </div>
             
+            <div className="form-group">
+              <label>Contact Number</label>
+              <input
+                type="tel"
+                name="contact_number"
+                value={newStudent.contact_number}
+                onChange={handleStudentChange}
+                placeholder="Contact Number"
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
             <div className="form-group">
               <label>School*</label>
               <select
@@ -539,7 +611,8 @@ await logAdminAction({
                 <option value="all">All Fields</option>
                 <option value="id">Student ID</option>
                 <option value="name">Full Name</option>
-                <option value="age">Age</option>
+                <option value="grade">Grade</option>
+                <option value="contact">Contact</option>
                 <option value="school">School</option>
                 <option value="class">Class</option>
                 <option value="added">Added Date</option>
@@ -550,7 +623,8 @@ await logAdminAction({
                 placeholder={`Search ${searchFilter === 'all' ? 'all fields' : 
                   searchFilter === 'id' ? 'student ID' :
                   searchFilter === 'name' ? 'full name' :
-                  searchFilter === 'age' ? 'age' :
+                  searchFilter === 'grade' ? 'grade' :
+                  searchFilter === 'contact' ? 'contact number' :
                   searchFilter === 'school' ? 'school' :
                   searchFilter === 'class' ? 'class' :
                   searchFilter === 'added' ? 'date' : 'students'}...`}
@@ -594,7 +668,8 @@ await logAdminAction({
             {searchFilter !== 'all' && ` in ${
               searchFilter === 'id' ? 'student ID' :
               searchFilter === 'name' ? 'full name' :
-              searchFilter === 'age' ? 'age' :
+              searchFilter === 'grade' ? 'grade' :
+              searchFilter === 'contact' ? 'contact number' :
               searchFilter === 'school' ? 'school' :
               searchFilter === 'class' ? 'class' :
               searchFilter === 'added' ? 'added date' : searchFilter
@@ -612,7 +687,8 @@ await logAdminAction({
                   <tr>
                     <th>Student ID</th>
                     <th>Full Name</th>
-                    <th>Age</th>
+                    <th>Grade</th>
+                    <th>Contact</th>
                     <th>School</th>
                     <th>Class</th>
                     <th>Added</th>
@@ -629,7 +705,8 @@ await logAdminAction({
                       <tr key={student.id}>
                         <td>{student.id}</td>
                         <td>{student.fullName}</td>
-                        <td>{student.age || '-'}</td>
+                        <td>{student.grade || '-'}</td>
+                        <td>{student.contact_number || '-'}</td>
                         <td>{student.school}</td>
                         <td>
                           {studentClass 
