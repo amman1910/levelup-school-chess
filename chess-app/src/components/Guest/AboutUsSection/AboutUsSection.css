@@ -1,0 +1,83 @@
+.about-section {
+  background: radial-gradient(ellipse at center, #4B2C6B 0%, #2B1840 100%);
+  color: #f5ecd7;
+  padding: 100px 60px;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 60px;
+  gap: 50px;
+}
+
+.about-header {
+  max-width: 700px;
+  text-align: left;
+   align-self: flex-start;
+     padding-left: 0;
+}
+
+.about-section-label {
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  color: #d7c4e4;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-family: 'Playfair Display', serif;
+  display: block;
+  margin-left: 0;
+  text-align: left;
+}
+
+
+.about-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: #f5ecd7;
+  line-height: 1.2;
+}
+
+.about-content-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.about-image-side {
+  flex: 1;
+  min-width: 300px;
+}
+
+.about-image-side img {
+  width: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.about-text-side {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: -30px;
+}
+
+.about-paragraph h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #f5ecd7;
+  margin-bottom: 10px;
+}
+
+.about-paragraph p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #e6dfea;
+}
+
+.about-paragraph:not(:last-child) {
+  border-bottom: 1px solid #6a4c83;
+  padding-bottom: 20px;
+}
