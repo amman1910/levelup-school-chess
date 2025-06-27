@@ -77,16 +77,25 @@
 }
 
 .student-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .student-grid label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 13px;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  border: 1px solid #e9ecef;
+  transition: background-color 0.2s ease;
+}
+
+.student-grid label:hover {
+  background-color: #e9ecef;
 }
 
 .meeting-form input[type="checkbox"] {
