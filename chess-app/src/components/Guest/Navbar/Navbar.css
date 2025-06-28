@@ -65,7 +65,7 @@ background-color: #3C255A;
   gap: 12px;
 }
 
-.login-button {
+.admin-access-btn {
   background-color: transparent;
   color: white;
   border: 1.5px solid white;
@@ -82,8 +82,7 @@ background-color: #3C255A;
   flex-shrink: 0;
 }
 
-
-.login-button:hover {
+.admin-access-btn:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
 

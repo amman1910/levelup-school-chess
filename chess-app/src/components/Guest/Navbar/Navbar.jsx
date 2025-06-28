@@ -61,7 +61,9 @@ useEffect(() => {
 
 
         <div className="navbar-right">
-          <button className="login-button" onClick={() => navigate('/login')}>Login</button>
+          <button className="admin-access-btn" onClick={() => navigate('/login')}>
+  Trainer / Admin Login
+</button>
           <button className="language-switch" title="Change Language">
             <FaGlobe />
           </button>
