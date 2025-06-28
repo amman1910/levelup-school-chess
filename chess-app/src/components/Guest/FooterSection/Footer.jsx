@@ -51,9 +51,15 @@ const Footer = () => {
   <h4>Join a Program</h4>
   <p>Want to join a course, tournament, or school program?</p>
   <p>Fill out our registration form and we’ll get back to you soon.</p>
-  <button className="footer-btn" onClick={() => window.location.href = '/join'}>
+  <a
+  href="/join"
+  target="_blank"
+  rel="noopener noreferrer"
+className="footer-btn"
+>
     Register Now →
-  </button>
+  </a>
+
 </div>
 
       </div>
