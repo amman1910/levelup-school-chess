@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import { collection, addDoc, getDoc, doc, query, where, getDocs, updateDoc, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, getDoc, doc, query, where, getDocs, updateDoc, Timestamp, increment } from 'firebase/firestore';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './TrainerMeetingForm.css';
 
@@ -345,6 +345,22 @@ const TrainerMeetingForm = () => {
         actionDescription,
         targetSessionId
       );
+
+      // עדכון sessions_attended לתלמידים שנכחו
+      if (!isEditing) { // רק אם זה לא עריכה של session קיים
+        const attendedStudents = Object.keys(attendance).filter(studentId => attendance[studentId]);
+        for (const studentId of attendedStudents) {
+          try {
+            await updateDoc(doc(db, 'students', studentId), {
+              sessions_attended: increment(1)
+            });
+            console.log(`Updated sessions_attended for student ${studentId}`);
+          } catch (error) {
+            console.error(`Error updating sessions_attended for student ${studentId}:`, error);
+            // לא נעצור את הפעולה אם העדכון נכשל
+          }
+        }
+      }
       
       // Navigate after a brief delay to show the success message
       setTimeout(() => {
