@@ -84,7 +84,49 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
             ))}
           </select>
         </label>
-        <button onClick={() => setSelectedSchool('')}>Clear Filter</button>
+        
+        <label>
+          Min Attendance (%):
+          <input
+            type="number"
+            value={minAttendance}
+            onChange={(e) => setMinAttendance(Number(e.target.value))}
+            placeholder="e.g. 70"
+            min="0"
+            max="100"
+            style={{ width: '80px', marginLeft: '10px' }}
+          />
+        </label>
+
+        <button onClick={() => { setSelectedSchool(''); setMinAttendance(0); }}>Clear Filters</button>
+</div>
+
+      {/* Table */}
+      <div className="trainer-table-wrapper" style={{ marginTop: '2rem' }}>
+        <table className="trainer-table">
+          <thead>
+            <tr>
+              <th>Class</th>
+              <th>School</th>
+              <th>Sessions</th>
+              <th>Students</th>
+              <th>Present</th>
+              <th>Attendance %</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredChartData.map((item, i) => (
+              <tr key={i}>
+                <td>{item.className}</td>
+                <td>{item.school}</td>
+                <td>{item.sessionCount}</td>
+                <td>{item.studentCount}</td>
+                <td>{item.actualAttendance}</td>
+                <td>{item.attendancePercentage}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* Chart */}
