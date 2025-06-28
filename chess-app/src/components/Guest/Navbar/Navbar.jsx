@@ -28,6 +28,21 @@ const Navbar = () => {
         
         <ul className="nav-links">
           <li><a href="#about">About</a></li>
+<li>
+  <a
+    href="/join"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Join Us
+  </a>
+</li>
+
+
+  <li className="dropdown">
+    <span className="dropdown-toggle">More ▾</span>
+    <ul className="dropdown-menu">
+      <li><a href="#success-stories">Success Stories</a></li>
           <li><a href="#gallery">Gallery</a></li>
           <li><a href="#join">Join Us</a></li>
         </ul>
