@@ -125,9 +125,9 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
     successFunction('');
     
     try {
-      if (!newStudent.id || !newStudent.fullName || !newStudent.school || !newStudent.classId) {
+      if (!newStudent.id || !newStudent.fullName) {
         console.log('Validation failed - calling error function');
-        errorFunction('Please fill all required fields: Student ID, Full Name, School, and Class');
+        errorFunction('Please fill all required fields: Student ID and Full Name');
         setLoading(false);
         return;
       }
@@ -168,6 +168,7 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
           contact_number: newStudent.contact_number,
           school: newStudent.school,
           classId: newStudent.classId,
+          sessions_attended: 0,
           createdAt: new Date()
         });
 
@@ -209,7 +210,7 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
               : std
           ));
         } else {
-          setStudents([...students, { ...newStudent, createdAt: new Date() }]);
+          setStudents([...students, { ...newStudent, sessions_attended: 0, createdAt: new Date() }]);
         }
       }
 
@@ -496,12 +497,11 @@ await logAdminAction({
 
           <div className="form-row">
             <div className="form-group">
-              <label>School*</label>
+              <label>School</label>
               <select
                 name="school"
                 value={newStudent.school}
                 onChange={handleStudentChange}
-                required
               >
                 <option value="">
                   {schoolsLoading 
@@ -526,12 +526,11 @@ await logAdminAction({
 
           <div className="form-row">
             <div className="form-group">
-              <label>Class*</label>
+              <label>Class</label>
               <select
                 name="classId"
                 value={newStudent.classId}
                 onChange={handleStudentChange}
-                required
                 disabled={!newStudent.school}
               >
                 <option value="">
