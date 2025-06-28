@@ -1,76 +1,63 @@
-.why-shah2range-section {
-  background-color: #f5f3fa;
-  padding: 80px 20px;
-  text-align: center;
+.why-cards-section {
+  background: linear-gradient(to bottom, #f3efe8 0%, #f7f3ec 100%);
+  padding: 100px 20px;
 }
 
-.why-shah2range-section h2 {
-  font-size: 36px;
-  margin-bottom: 40px;
-  color: #3b2064;
-}
-
-.features-container {
+.why-cards-container {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 30px;
-  margin-bottom: 50px;
+  gap: 0;
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-.feature-card {
-  background: white;
-  padding: 20px;
-  border-radius: 20px;
-  max-width: 300px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+.why-card {
+  flex: 1 1 300px;
+  padding: 40px 24px;
+  text-align: center;
+  min-height: 330px;
 }
 
-.feature-card:hover {
-  transform: translateY(-8px);
+.why-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: #f5ecd7;
+  margin: 16px 0 12px;
 }
 
-.feature-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 15px;
+.why-card p {
+  font-size: 1rem;
+  color: #e3dcd0;
+  line-height: 1.7;
 }
 
-.feature-card h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  color: #3b2064;
+.why-icon {
+  font-size: 2.4rem;
+  color: #D4AF37;
 }
 
-.feature-card p {
-  font-size: 16px;
-  color: #555;
+.why-card.light {
+  background-color: #f8f1e9;
+  color: #2a1740;
 }
 
-.cta-container {
-  margin-top: 20px;
+.why-card.light h3 {
+  color: #2a1740;
 }
 
-.cta-text {
-  font-size: 20px;
-  margin-bottom: 15px;
-  color: #3b2064;
+.why-card.light p {
+  color: #4d3a6d;
 }
 
-.cta-button {
-  background-color: #7b4bb7;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  font-size: 16px;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.why-card.dark {
+  background-color:  radial-gradient(ellipse at center, #5d3a88 0%, #2a1740 100%);
 }
 
-.cta-button:hover {
-  background-color: #5e3991;
-}
+
+
+
+
+
+
+

@@ -5,13 +5,20 @@ import AdminArea from './components/AdminArea';
 import TrainerArea from './components/TrainerArea';
 import ChangeInitialPassword from './components/ChangeInitialPassword';
 import ForgotPassword from './components/ForgotPassword'; // Added ForgotPassword import
+import GuestPage from './components/Guest/GuestPage/GuestPage';
+import InquiryForm from './components/Guest/InquiryForm/InquiryForm'; // مسار الكومبوننت حسب مكانه
+
+
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* إذا تم فتح الصفحة الرئيسية، نوجه المستخدم إلى صفحة تسجيل الدخول */}
-        <Route path="/" element={<Navigate to="/login" />} />
+        
+        <Route path="/" element={<GuestPage />} />
+
+         <Route path="/join" element={<InquiryForm />} />
+
         
         {/* صفحة تسجيل الدخول */}
         <Route path="/login" element={<Login />} />
@@ -30,6 +37,8 @@ function App() {
         
         {/* أي رابط غير معروف يذهب لتسجيل الدخول */}
         <Route path="*" element={<Navigate to="/login" />} />
+       
+
       </Routes>
     </Router>
   );

@@ -1,0 +1,113 @@
+.programs-section {
+ background-color: #f3efe8;  padding: 60px 20px;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  color: #2e1b4f;
+    font-family: 'Playfair Display', serif;
+
+}
+
+.programs-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.programs-label {
+  font-size: 0.85rem;
+  color: #6e4e9e;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.programs-title {
+  font-size: 3rem;
+  line-height: 1.2;
+  font-family: 'Playfair Display', serif;
+  color: #2e1b4f;
+}
+
+
+.programs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* حذف خلفية الكرت */
+.program-card {
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  text-align: left;
+}
+
+/* الصورة بتأثير ظل */
+.program-card-img-wrapper {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.program-card-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.program-card-img-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.15), transparent 60%);
+
+  z-index: 1;
+}
+
+.program-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: white;
+  color: #5E2B97;
+  padding: 5px 14px;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  z-index: 2;
+    border: 1px solid #eee;
+
+  font-weight:600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* النص تحته بدون box */
+.program-card-text {
+  margin-top: 15px;
+}
+
+.program-card-text h3 {
+  font-size: 1.25rem;
+  color: #3d206f;
+  margin: 0 0 10px;
+  font-family: 'Playfair Display', serif;
+
+}
+
+.program-card-text p {
+  font-size: 0.95rem;
+  color: #444;
+  margin: 0;
+}
+

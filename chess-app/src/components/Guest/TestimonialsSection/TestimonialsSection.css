@@ -1,0 +1,265 @@
+.testimonials-section {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  padding: 100px 40px;
+  overflow: hidden;
+    background-attachment: fixed; /* 🔥 هاي السطر هو اللي بعمل التأثير */
+
+}
+
+.testimonials-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(30, 30, 30, 0.55);
+ /* يمكنكِ تعديل الشفافية واللون */
+  z-index: 1;
+}
+
+.testimonials-content {
+  position: relative;
+  z-index: 2;
+}
+
+.testimonials-title {
+  color: white;
+  text-align: center;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 50px;
+}
+
+.testimonials-container {
+  display: flex;
+  justify-content:  flex-start;
+  align-items: stretch;
+  gap: 40px;
+  flex-wrap: nowrap; /* 🟣 هذا السطر هو السر لعدم التفاف البطاقات */
+  overflow-x: auto;   /* اختياري: يسمح بالسكرول إذا الشاشة ضيقة */
+  scroll-behavior: smooth;
+  padding-left: 40px;
+}
+.testimonial-card {
+  background-color: #f8f1e9; /* ✅ لون أفتح زي Chestry */
+  border-radius: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); /* كمان خففي الشادو شوي */
+  padding: 40px 30px;
+  max-width: 320px;
+  min-height: 320px;
+  position: relative;
+  font-family: 'Inter', sans-serif;
+  color: #4b2c6b;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-6px);
+}
+
+.quote-icon {
+  font-size: 40px;
+  color: #d3b07a;
+  position: absolute;
+  top: 20px;
+  left: 25px;
+  font-family: serif;
+}
+
+.testimonial-quote {
+  font-size: 15px;
+  line-height: 1.7;
+  margin-top: 50px;
+  margin-bottom: 25px;
+  color: #3b3b3b;
+  font-style: italic;
+}
+
+.testimonial-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.testimonial-info {
+  text-align: left;
+}
+
+.testimonial-name {
+  font-weight: bold;
+  font-size: 16px;
+  color: #2a2a2a;
+  margin-bottom: 4px;
+}
+
+.testimonial-role {
+  font-size: 14px;
+  color: #888;
+}
+
+.testimonial-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+
+
+
+.testimonial-card h4 {
+  color: #1e1e1e; /* أسود ناعم */
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.testimonial-card p.role {
+  font-size: 14px;
+  color: #999;
+  margin-top: 4px;
+}
+
+
+.testimonials-header {
+  text-align: left;
+  margin-bottom: 40px;
+  width: 100%;
+  max-width: none;
+  padding-left: 40px; /* ✅ نفس الـ padding المستخدم ببداية البطاقات */
+}
+
+
+.testimonials-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+    font-weight: 300;
+
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-align: left; /* ✅ هذا هو الحل */
+}
+
+.testimonials-subtitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  font-weight: 300;
+  color: #ffffff;
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+
+.quote-icon {
+  color: #3b3b3b;              /* رمادي دافئ */
+  
+}
+
+
+
+.success-stories {
+  margin-top: 100px;
+  padding-left: 40px;
+}
+
+.success-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #cccccc;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.success-cards-container {
+  display: flex;
+  gap: 40px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 20px;
+}
+
+.success-card {
+  background-color: #f8f1e9;
+  border-radius: 20px;
+  padding: 30px 24px;
+  max-width: 320px;
+  min-width: 280px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.success-card:hover {
+  transform: translateY(-6px);
+}
+
+.success-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 20px;
+}
+
+.success-quote {
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  color: #333;
+  font-style: italic;
+    margin-bottom: 12px; 
+}
+
+.success-name {
+  font-weight: bold;
+  color: #1e1e1e;
+  font-size: 16px;
+  margin-bottom: 4px;
+    margin-bottom: 12px; 
+}
+
+.success-role {
+    margin-bottom: 12px; 
+  font-size: 14px;
+  color: #777;
+}
+
+
+
+.success-section-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.success-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  font-weight: 300;
+  color: #ffffff;
+  line-height: 1.3;
+  margin-bottom: 20px;
+  text-align: left;
+}
+.success-header {
+  text-align: left;
+  margin-bottom: 40px;
+  padding-left: 40px;
+}
+
+
+

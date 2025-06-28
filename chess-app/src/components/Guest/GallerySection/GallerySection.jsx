@@ -5,9 +5,12 @@ import { getStorage, ref, listAll, getDownloadURL } from 'firebase/storage';
 const GallerySection = () => {
   const [images, setImages] = useState([]);
   const storage = getStorage();
-  const galleryRef = ref(storage, 'gallery/');
+  const [selectedImage, setSelectedImage] = useState(null);
 
+
+  // تحميل الصور من Firebase
   useEffect(() => {
+    const galleryRef = ref(storage, 'gallery/');
     listAll(galleryRef)
       .then((res) => {
         const urlPromises = res.items.map((itemRef) => getDownloadURL(itemRef));
@@ -21,18 +24,84 @@ const GallerySection = () => {
       });
   }, []);
 
+  // تحريك الصفوف مع السكرول بطريقة ذكية مثل موقع Pitch
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight = window.innerHeight;
+      const rows = document.querySelectorAll('.gallery-row');
+
+      rows.forEach((row) => {
+        const direction = row.getAttribute('data-direction');
+        const parent = row.parentElement;
+        const rect = parent.getBoundingClientRect();
+        const scrollAmount = (windowHeight - rect.top) * 0.15 * direction - 50 * direction;
+
+
+        if (rect.top < windowHeight && rect.bottom > 0) {
+          row.style.transform = `translateX(${scrollAmount}px)`;
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // تقسيم الصور إلى صفوف من 6
+  const chunkArray = (arr, size) => {
+    const result = [];
+    for (let i = 0; i < arr.length; i += size) {
+      result.push(arr.slice(i, i + size));
+    }
+    return result.slice(0, 3);
+  };
+
+  const chunkedImages = chunkArray(images, 6);
+
   return (
+  <>
+    {selectedImage && (
+      <div className="image-modal" onClick={() => setSelectedImage(null)}>
+        <span className="close-btn" onClick={() => setSelectedImage(null)}>&times;</span>
+        <img src={selectedImage} alt="Full View" className="modal-image" />
+      </div>
+    )}
+
     <section className="gallery-section" id="gallery">
-      <h2>Gallery</h2>
-      <div className="gallery-grid">
-        {images.map((url, index) => (
-          <div className="gallery-item" key={index}>
-            <img src={url} alt={`Gallery ${index + 1}`} />
+      <div className="gallery-header">
+        <p className="section-label">EVENT MOMENTS</p>
+        <h2 className="gallery-title">Captured Memories</h2>
+      </div>
+
+      <div className="gallery-grid-container">
+        {chunkedImages.map((row, rowIndex) => (
+          <div className="gallery-row-wrapper" key={rowIndex}>
+            <div className="gallery-row" data-direction={rowIndex % 2 === 0 ? 1 : -1}>
+              {row.map((url, index) => (
+                <div className="gallery-item" key={index}>
+                  <img
+                    src={url}
+                    alt={`Gallery ${index + 1}`}
+                    onClick={() => setSelectedImage(url)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
     </section>
-  );
+  </>
+);
+
 };
 
 export default GallerySection;
+
+
+
+
+
+
+

@@ -15,7 +15,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
   
   // Form states
   const [newsForm, setNewsForm] = useState({ title: '', description: '' });
-  const [eventsForm, setEventsForm] = useState({ title: '', description: '', date: '', location: '' });
+  const [eventsForm, setEventsForm] = useState({ title: '', description: '', date: '', location: '',  type: '' });
   const [galleryForm, setGalleryForm] = useState({ title: '' });
   
   // Image states
@@ -230,14 +230,16 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
         imageUrl = await uploadImage(selectedImages.events, `events/${Date.now()}_${selectedImages.events.name}`);
       }
       
-      const docRef = await addDoc(collection(db, 'events'), {
+            const docRef = await addDoc(collection(db, 'events'), {
         title: eventsForm.title.trim(),
         description: eventsForm.description.trim(),
         date: new Date(eventsForm.date),
         location: eventsForm.location.trim(),
-        imageUrl,
+          type: eventsForm.type,
+        imageURL: imageUrl, // ✅ صِرنا نخزّن بالرسمية imageURL
         uploadedAt: new Date(),
       });
+
 
       // רישום פעולה ב-adminLogs
       await logAdminAction(
@@ -258,7 +260,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
       };
 
       setEventsList(prev => [...prev, newItem]);
-      setEventsForm({ title: '', description: '', date: '', location: '' });
+      setEventsForm({ title: '', description: '', date: '', location: '',type: '' });
       setSelectedImages(prev => ({ ...prev, events: null }));
       setImagePreviews(prev => ({ ...prev, events: null }));
       
@@ -732,6 +734,23 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                 required
               />
             </div>
+            <div className="input-group">
+  <label>Event Type (Required):</label>
+  <select
+    value={eventsForm.type}
+    onChange={(e) => setEventsForm({ ...eventsForm, type: e.target.value })}
+    className="form-input"
+    required
+  >
+    <option value="">Select Type</option>
+    <option value="tournament">Tournament</option>
+    <option value="course">Course</option>
+
+    <option value="workshop">Workshop</option>
+    <option value="other">Other</option>
+  </select>
+</div>
+
             <div className="input-group">
               <label>Image (Optional):</label>
               <input

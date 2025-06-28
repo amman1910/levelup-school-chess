@@ -1,0 +1,77 @@
+.inquiry-form-section {
+  background: radial-gradient(ellipse at center, #4B2C6B 0%, #2B1840 100%);
+  color: #f5ecd7;
+  padding: 80px 20px;
+}
+
+.inquiry-form-title {
+  font-size: 2.5rem;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 30px;
+}
+
+.inquiry-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inquiry-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 1rem;
+  color: #f5ecd7;
+}
+
+.inquiry-form input,
+.inquiry-form select,
+.inquiry-form textarea {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  margin-top: 6px;
+  background: #f5ecd7;
+  color: #2B1840;
+}
+
+.inquiry-form button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  background-color: #d7c4e4;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #2B1840;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.inquiry-form button:hover {
+  background-color: #bca6ce;
+}
+
+.form-success {
+  margin-top: 20px;
+  color: #b3ffb3;
+  font-weight: bold;
+  text-align: center;
+}
+
+.join-logo-wrapper {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.join-logo {
+  width: 90px;
+  height: auto;
+}
+
+
+
+
+

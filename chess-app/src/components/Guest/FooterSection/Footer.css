@@ -1,5 +1,5 @@
 .custom-footer {
-  background: linear-gradient(180deg, #1c0e2d, #28153d);
+  background: radial-gradient(ellipse at center, #4B2C6B 0%, #2B1840 100%);
   color: #f5ecd7;
   padding: 50px 20px 20px;
   font-family: 'Open Sans', sans-serif;
@@ -104,6 +104,9 @@
   cursor: pointer;
   margin-top: 12px;
   transition: background-color 0.3s ease;
+    display: inline-block;
+  text-align: center;
+
 }
 
 .footer-btn:hover {

@@ -1,0 +1,22 @@
+/* تنسيق عام للصفحة */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap');
+
+.guest-font {
+  font-family: 'Cairo', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html, body {
+  height: auto !important;
+  overflow-y: auto !important;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+
+

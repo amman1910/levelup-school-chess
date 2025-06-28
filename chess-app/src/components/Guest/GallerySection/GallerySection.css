@@ -1,39 +1,106 @@
 .gallery-section {
-  background-color: #f5f3fa;
-  padding: 80px 20px;
+  background-color: #fdf6ef;
+  padding: 80px 40px;
+}
+
+.gallery-header {
   text-align: center;
+  margin-bottom: 50px;
 }
 
-.gallery-section h2 {
-  font-size: 36px;
-  color: #3b2064;
-  margin-bottom: 40px;
+.section-label {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.85rem;
+  color: #2e1b4f;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr); /* 🟣 6 صور في الصف */
-  gap: 20px;
-  justify-items: center;
+.gallery-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: #2e1b4f;
 }
+
+.gallery-grid-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.gallery-row {
+  display: flex;
+  flex-wrap: nowrap; /* ← ممنوع يلف لسطر جديد */
+  gap: 24px;
+  justify-content: flex-start;
+  will-change: transform;
+  transition: transform 0.3s ease;
+}
+
+.gallery-row-wrapper {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
 
 .gallery-item {
+  flex: 1 1 calc((100% - 5 * 24px) / 5);
+  height: 140px;
+  border-radius: 0;
   overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
-  width: 100%;
-  max-width: 180px;
+  background: white;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
+
 
 .gallery-item img {
   width: 100%;
-  height: 120px;
+  height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
-  border-radius: 12px;
+  display: block;
+  border-radius: 0;
 }
 
-.gallery-item:hover img {
-  transform: scale(1.05);
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
+
+.modal-image {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.4);
+}
+
+.close-btn {
+  position: fixed;
+  top: 30px;
+  right: 40px;
+  font-size: 3rem;
+  color: white;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+
+
+
+
+
+
+
+
+

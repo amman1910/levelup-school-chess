@@ -76,14 +76,15 @@ const NewsAndEventsSection = () => {
                   <h3 className="event-title">{event.title}</h3>
                   <p className="event-location">📍 {event.location}</p>
                   <p className="event-description">{event.description}</p>
-                  <button
-                    className="event-join-btn"
-                    href={`/join?applicantType=${event.type}&eventName=${encodeURIComponent(event.title)}`}
+                  <a
+  className="event-join-btn"
+  href={`/join?applicantType=${event.type}&eventName=${encodeURIComponent(event.title)}`}
   target="_blank"
   rel="noopener noreferrer"
-                  >
-                    Join Now
-                  </button>
+>
+  Join Now
+</a>
+
                 </div>
               </div>
             ))}
