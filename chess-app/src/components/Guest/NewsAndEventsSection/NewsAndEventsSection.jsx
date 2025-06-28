@@ -78,14 +78,9 @@ const NewsAndEventsSection = () => {
                   <p className="event-description">{event.description}</p>
                   <button
                     className="event-join-btn"
-                    onClick={() =>
-                      navigate("/join", {
-                        state: {
-                          applicantType: event.type === 'course' ? 'course' : 'tournament',
-                          eventName: event.title
-                        }
-                      })
-                    }
+                    href={`/join?applicantType=${event.type}&eventName=${encodeURIComponent(event.title)}`}
+  target="_blank"
+  rel="noopener noreferrer"
                   >
                     Join Now
                   </button>
