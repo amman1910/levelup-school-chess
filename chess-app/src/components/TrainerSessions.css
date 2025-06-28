@@ -122,7 +122,7 @@
   overflow: hidden;
 }
 
-.section-title {
+.section-title-sessions {
   background: linear-gradient(135deg, #5e3c8f 0%, #432c64 100%);
   color: #e9c44c;
   padding: 18px 25px;
@@ -519,7 +519,7 @@
     padding: 10px 14px;
   }
   
-  .section-title {
+  .section-title-sessions {
     padding: 14px 18px;
     font-size: 18px;
   }
@@ -564,7 +564,7 @@
     padding: 8px 12px;
   }
   
-  .section-title {
+  .section-title-sessions {
     padding: 12px 14px;
     font-size: 16px;
   }

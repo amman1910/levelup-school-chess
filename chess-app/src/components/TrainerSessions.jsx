@@ -456,7 +456,7 @@ const TrainerSessions = () => {
 
       {/* Upcoming Sessions appear first */}
       <section className="session-section">
-        <h2 className="section-title">Upcoming Sessions</h2>
+        <h2 className="section-title-sessions">Upcoming Sessions</h2>
         {filteredUpcoming.length === 0 ? (
           <p className="empty">
             {searchTerm ? `No upcoming sessions found matching "${searchTerm}".` : 'No upcoming sessions.'}
@@ -468,7 +468,7 @@ const TrainerSessions = () => {
 
       {/* Past Sessions appear second */}
       <section className="session-section">
-        <h2 className="section-title">Past Sessions</h2>
+        <h2 className="section-title-sessions">Past Sessions</h2>
         {filteredPast.length === 0 ? (
           <p className="empty">
             {searchTerm ? `No past sessions found matching "${searchTerm}".` : 'No past sessions.'}
