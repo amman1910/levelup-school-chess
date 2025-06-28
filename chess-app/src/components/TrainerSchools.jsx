@@ -172,8 +172,19 @@ const TrainerSchools = () => {
           }
         }
         
-        setStudents(studentsData);
-        setFilteredStudents(studentsData); // Initialize filtered list
+        // Count total sessions for this class
+        const sessionsQuery = query(collection(db, 'sessions'), where('classId', '==', classData.classId));
+        const sessionsSnapshot = await getDocs(sessionsQuery);
+        const totalSessions = sessionsSnapshot.size;
+        
+        // Add totalSessions to each student data
+        const studentsWithSessionData = studentsData.map(student => ({
+          ...student,
+          totalSessions
+        }));
+        
+        setStudents(studentsWithSessionData);
+        setFilteredStudents(studentsWithSessionData); // Initialize filtered list
         setViewMode('students');
       }
     } catch (error) {
@@ -209,6 +220,7 @@ const TrainerSchools = () => {
         contact_number: newStudent.contact_number,
         classId: selectedClass.classId,
         school: selectedSchool.schoolName,
+        sessions_attended: 0,
         createdAt: serverTimestamp()
       };
 
@@ -237,6 +249,7 @@ const TrainerSchools = () => {
       const newStudentData = {
         id: newStudent.id,
         ...studentData,
+        totalSessions: 0 // Initialize with 0 total sessions for new students
       };
       
       setStudents(prev => [...prev, newStudentData]);
@@ -753,6 +766,13 @@ const TrainerSchools = () => {
                       <Phone size={16} />
                       <span className="detail-label">Contact:</span>
                       <span className="detail-value">{student.contact_number || 'No contact'}</span>
+                    </div>
+                    <div className="detail-item">
+                      <Clock size={16} />
+                      <span className="detail-label">Attendance:</span>
+                      <span className="detail-value">
+                        {(student.sessions_attended || 0)}/{student.totalSessions || 0} sessions
+                      </span>
                     </div>
                   </div>
                 </div>
