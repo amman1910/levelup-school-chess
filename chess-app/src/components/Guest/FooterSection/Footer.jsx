@@ -28,7 +28,7 @@ const Footer = () => {
         <div className="footer-column">
           <h4>Quick Links</h4>
           <ul>
-            <li>Home</li>
+            <a href="#top">Home</a>
             <li>About</li>
             <li>Programs</li>
             <li>Gallery</li>

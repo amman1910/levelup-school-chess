@@ -9,7 +9,7 @@ import rock from '../../../assets/hero-pieces/rock.png';
 
 const HeroSection = () => {
   return (
-    <section className="hero-section">
+    <section className="hero-section" id="top">
       {/* مجموعة يمين فوق */}
       <div className="group top-right">
         <img src={king} alt="king" className="piece king" />
