@@ -17,8 +17,12 @@ const Footer = () => {
   </div>
 
   <ul className="contact-info">
-    <li><FaPhone /> 058-713-0219</li>
-    <li>Email: contact@shah2range.com</li>
+    <li>
+Email: <a href="mailto:contact@shah2range.com">contact@shah2range.com</a>
+</li>
+<li>
+  <a href="tel:0587130219">📞 058-713-0219</a>
+</li>
     <li>Jerusalem</li>
   </ul>
 </div>
