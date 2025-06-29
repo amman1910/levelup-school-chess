@@ -29,10 +29,9 @@ const Footer = () => {
           <h4>Quick Links</h4>
           <ul>
             <a href="#top">Home</a>
-            <li>About</li>
-            <li>Programs</li>
-            <li>Gallery</li>
-            <li>Contact</li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#programs">Programs</a></li>
+            <li><a href="#gallery">Gallery</a></li>
           </ul>
         </div>
 
