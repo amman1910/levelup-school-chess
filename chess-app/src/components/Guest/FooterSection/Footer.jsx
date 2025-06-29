@@ -8,11 +8,15 @@ const Footer = () => {
       <div className="footer-container">
         <div className="footer-column about">
   <div className="logo-box">
+<a href="#top">
     <img
       src="/src/assets/logos/shahtranj_logo_gold.png"
       alt="Shah2Range Logo"
       className="footer-logo"
+style={{ cursor: 'pointer' }}
     />
+</a>
+
     <h2 className="logo-text">SHAH2RANGE</h2>
   </div>
 
