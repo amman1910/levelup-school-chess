@@ -28,7 +28,10 @@ useEffect(() => {
     <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}> {/* تفعيل كلاس عند السكروول */}
       <div className="navbar-container">
         <div className="navbar-left">
+<a href="#top">
           <img src={logo} alt="Shah2Range Logo" className="navbar-logo" />
+</a>
+
         </div>
 
     <ul className="nav-links">
