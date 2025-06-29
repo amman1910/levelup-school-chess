@@ -129,6 +129,17 @@
   padding-top: 0;
 }
 
+.footer-column ul li a {
+  color: #f5ecd7;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-column ul li a:hover {
+  color: #d8c18f;
+}
+
+
 
 
 
