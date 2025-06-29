@@ -44,7 +44,8 @@ const HeroSection = () => {
   Join Now
 </a>
 
-          <button className="explore-btn">Learn more</button>
+          <a href="#why-shah2range" className="explore-btn">Learn more</a>
+
         </div>
       </div>
     </section>

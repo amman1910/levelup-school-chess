@@ -4,7 +4,7 @@ import { FaAward, FaChalkboardTeacher, FaUsers } from 'react-icons/fa';
 
 const WhyShah2Range = () => {
   return (
-    <section className="why-cards-section">
+    <section className="why-cards-section" id="why-shah2range">
       <div className="why-cards-container">
         <div className="why-card dark">
           <FaAward className="why-icon" />
