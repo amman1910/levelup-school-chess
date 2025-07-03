@@ -35,7 +35,7 @@ Technologies used:
 ## 🚀 Installation Guide
 
 1) Clone the repository:
-git clone https://github.com/your-organization/your-repository.git
+git clone https://github.com/amman1910/levelup-school-chess.git
 
 2) Navigate to the Project Folder:
 cd your-repository
