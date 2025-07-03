@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, LabelList
+} from 'recharts';
 import './AdminAnalyticsOverview.css';
 
 const AdminAttendanceTrends = ({ sessions, classes }) => {
   const [chartData, setChartData] = useState([]);
   const [selectedSchool, setSelectedSchool] = useState('');
   const [allSchools, setAllSchools] = useState([]);
+  const [minAttendance, setMinAttendance] = useState(0);
 
   useEffect(() => {
     if (!sessions || !classes) return;
@@ -35,7 +38,10 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
       grouped[classId] = {
         className,
         school,
-        attendancePercentage: parseFloat(attendancePercentage)
+        attendancePercentage: parseFloat(attendancePercentage),
+        studentCount: studentIds.length,
+        sessionCount: relatedSessions.length,
+        actualAttendance: totalAttendance
       };
     });
 
@@ -44,19 +50,20 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
     setChartData(data);
   }, [sessions, classes]);
 
-  const filteredChartData = selectedSchool
-    ? chartData.filter(c => c.school === selectedSchool)
-    : chartData;
+  const filteredChartData = chartData.filter(c => {
+    return (!selectedSchool || c.school === selectedSchool) &&
+           (!minAttendance || c.attendancePercentage >= minAttendance);
+  });
 
   return (
     <div className="trainer-analytics-page">
       <h2>Attendance Trends</h2>
-      <p className="subtitle">Track attendance percentage per class</p>
+      <p className="subtitle">Analyze attendance rates, class sizes, and session coverage by school</p>
 
       {/* KPIs */}
       <div className="analytics-kpi-grid">
         <div className="kpi-card">
-          <div className="kpi-title">📊 Total Classes</div>
+          <div className="kpi-title">🍊 Total Classes</div>
           <div className="kpi-value">{filteredChartData.length}</div>
         </div>
         <div className="kpi-card">
@@ -64,16 +71,16 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
           <div className="kpi-value">
             {filteredChartData.length > 0
               ? (
-                filteredChartData.reduce((sum, c) => sum + c.attendancePercentage, 0) /
-                filteredChartData.length
-              ).toFixed(1)
+                  filteredChartData.reduce((sum, c) => sum + c.attendancePercentage, 0) /
+                  filteredChartData.length
+                ).toFixed(1)
               : '0'
             }%
           </div>
         </div>
       </div>
 
-      {/* Filter */}
+      {/* Filters */}
       <div className="filters">
         <label>
           School:
@@ -84,7 +91,7 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
             ))}
           </select>
         </label>
-        
+
         <label>
           Min Attendance (%):
           <input
@@ -99,7 +106,7 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
         </label>
 
         <button onClick={() => { setSelectedSchool(''); setMinAttendance(0); }}>Clear Filters</button>
-</div>
+      </div>
 
       {/* Table */}
       <div className="trainer-table-wrapper" style={{ marginTop: '2rem' }}>
@@ -130,14 +137,17 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
       </div>
 
       {/* Chart */}
-      <div className="chart-container">
+      <div className="chart-container" style={{ marginTop: '2rem' }}>
         <ResponsiveContainer width="100%" height={350}>
           <BarChart data={filteredChartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="className" />
+            <XAxis dataKey="className" angle={-30} textAnchor="end" height={80} interval={0} tick={{ fontSize: 12 }} />
+
             <YAxis />
             <Tooltip />
-            <Bar dataKey="attendancePercentage" fill="#5e3c8f" />
+            <Bar dataKey="attendancePercentage" fill="#5e3c8f">
+              <LabelList dataKey="attendancePercentage" position="top" formatter={(val) => `${val}%`} />
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -146,6 +156,7 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
 };
 
 export default AdminAttendanceTrends;
+
 
 
 

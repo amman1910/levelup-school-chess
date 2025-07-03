@@ -8,13 +8,13 @@ const Footer = () => {
       <div className="footer-container">
         <div className="footer-column about">
   <div className="logo-box">
-<a href="#top">
-    <img
-      src="/src/assets/logos/shahtranj_logo_gold.png"
-      alt="Shah2Range Logo"
-      className="footer-logo"
-style={{ cursor: 'pointer' }}
-    />
+    <a href="#top">
+  <img
+    src="/src/assets/logos/shahtranj_logo_gold.png"
+    alt="Shah2Range Logo"
+    className="footer-logo"
+    style={{ cursor: 'pointer' }}
+  />
 </a>
 
     <h2 className="logo-text">SHAH2RANGE</h2>
@@ -22,7 +22,7 @@ style={{ cursor: 'pointer' }}
 
   <ul className="contact-info">
     <li>
-Email: <a href="mailto:contact@shah2range.com">contact@shah2range.com</a>
+  Email: <a href="mailto:contact@shah2range.com">contact@shah2range.com</a>
 </li>
 <li>
   <a href="tel:0587130219">📞 058-713-0219</a>
@@ -34,14 +34,15 @@ Email: <a href="mailto:contact@shah2range.com">contact@shah2range.com</a>
 
 
         <div className="footer-column">
-          <h4>Quick Links</h4>
-          <ul>
-<li>            <a href="#top">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#programs">Programs</a></li>
-            <li><a href="#gallery">Gallery</a></li>
-          </ul>
-        </div>
+  <h4>Quick Links</h4>
+  <ul>
+    <li><a href="#top">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#programs">Programs</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+  </ul>
+</div>
+
 
         <div className="footer-column">
           <h4>Follow Us</h4>

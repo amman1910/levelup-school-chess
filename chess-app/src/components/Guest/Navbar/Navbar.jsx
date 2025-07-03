@@ -25,11 +25,11 @@ useEffect(() => {
 
 
   return (
-    <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}> {/* تفعيل كلاس عند السكروول */}
+    <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}> 
       <div className="navbar-container">
         <div className="navbar-left">
-<a href="#top">
-          <img src={logo} alt="Shah2Range Logo" className="navbar-logo" />
+          <a href="#top">
+  <img src={logo} alt="Shah2Range Logo" className="navbar-logo" />
 </a>
 
         </div>
@@ -67,6 +67,7 @@ useEffect(() => {
           <button className="admin-access-btn" onClick={() => navigate('/login')}>
   Trainer / Admin Login
 </button>
+
           <button className="language-switch" title="Change Language">
             <FaGlobe />
           </button>

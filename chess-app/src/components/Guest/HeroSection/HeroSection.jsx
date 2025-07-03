@@ -10,13 +10,14 @@ import rock from '../../../assets/hero-pieces/rock.png';
 const HeroSection = () => {
   return (
     <section className="hero-section" id="top">
-      {/* مجموعة يمين فوق */}
+
+     
       <div className="group top-right">
         <img src={king} alt="king" className="piece king" />
         <img src={bishop} alt="bishop" className="piece bishop" />
       </div>
 
-      {/* مجموعة يسار تحت */}
+     
       <div className="group bottom-left">
         <img src={rock} alt="rock" className="piece rock" />
                 <img src={queen} alt="queen" className="piece queen" />
@@ -24,7 +25,7 @@ const HeroSection = () => {
         <img src={pawn} alt="pawn" className="piece pawn" />
       </div>
 
-      {/* النص والأزرار */}
+     
       <div className="hero-content">
         
         <h1>Welcome to <span className="gold-text">Shah2Range</span></h1>

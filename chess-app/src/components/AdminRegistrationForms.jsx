@@ -57,27 +57,22 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
     }
   };
 
-  // Helper function to check if form is pending
   const isFormPending = (form) => {
     const status = form.status?.toLowerCase() || 'pending';
     return status === 'pending' || !form.status;
   };
 
-  // Helper function to get status display text
   const getStatusDisplay = (form) => {
     return isFormPending(form) ? 'Pending Review' : 'Completed';
   };
 
-  // Helper function to get status class
   const getStatusClass = (form) => {
     return isFormPending(form) ? 'pending' : 'completed';
   };
 
-  // Filter forms based on status and search query
   useEffect(() => {
     let filtered = registrationForms;
 
-    // Filter by status
     if (filterStatus !== 'all') {
       filtered = filtered.filter(form => {
         const formStatus = form.status?.toLowerCase() || 'pending';
@@ -97,12 +92,10 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
     setFilteredForms(filtered);
   }, [registrationForms, filterStatus, searchQuery]);
 
-  // Load data on component mount
   useEffect(() => {
     fetchRegistrationForms();
   }, []);
 
-  // Process registration form (mark as completed with admin note)
   const processForm = async (formId) => {
     if (!adminNote.trim()) {
       error('Please add a note before processing the form');
@@ -201,7 +194,6 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
             </button>
           </div>
 
-          {/* Filters and Search */}
           <div className="forms-controls">
             <div className="filter-tabs">
               <button 

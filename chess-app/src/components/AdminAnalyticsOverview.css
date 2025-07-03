@@ -463,6 +463,44 @@
   background-color: var(--dark-purple);
 }
 
+.group-report-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.group-report-table th {
+  background-color: var(--primary-purple);
+  color: white;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+}
+
+.group-report-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+  color: #333;
+}
+
+.group-report-table tr:hover {
+  background-color: #f9f6ff;
+}
+
+.group-report-title {
+  font-size: 1.6rem;
+  color: var(--primary-purple);
+  font-weight: bold;
+}
+
+.group-report-subtitle {
+  font-size: 0.95rem;
+  color: #666;
+}
 
 
 

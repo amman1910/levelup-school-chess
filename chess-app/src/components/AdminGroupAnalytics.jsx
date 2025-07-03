@@ -4,6 +4,7 @@ import { db } from '../firebase';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import './AdminAnalyticsOverview.css';
+import logo from '../assets/logos/shahtranj_logo_gold.png';
 
 
 const AdminGroupAnalytics = () => {
@@ -77,29 +78,52 @@ const avgAttendance = totalGroups > 0
 
 
 
-  const handleExportPDF = () => {
+
+
+const handleExportPDF = () => {
   const doc = new jsPDF();
-  doc.text("Group Analytics Report", 14, 10);
+  const img = new Image();
+  img.src = logo;
 
-  const body = filteredGroups.map(g => [
-    g.className,
-    g.school,
-    g.studentCount,
-    g.sessionCount,
-    `${g.attendancePercentage}%`,
-    g.lastSession
-  ]);
+  img.onload = () => {
+    doc.addImage(img, 'PNG', 150, 10, 40, 25);
 
-  autoTable(doc, {
-    head: [['Class', 'School', 'Students', 'Sessions', 'Attendance %', 'Last Session']],
-    body,
-    startY: 20,
-    styles: { fontSize: 9 },
-    headStyles: { fillColor: [94, 60, 143] },
-  });
+    doc.setFontSize(18);
+    doc.setTextColor(40);
+    doc.text("📊 Group Analytics Report", 14, 20);
 
-  doc.save("Group_Analytics_Report.pdf");
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 28);
+
+    const body = filteredGroups.map(g => [
+      g.className,
+      g.school,
+      g.studentCount,
+      g.sessionCount,
+      `${g.attendancePercentage}%`,
+      g.lastSession
+    ]);
+
+    autoTable(doc, {
+      startY: 35,
+      head: [['Class', 'School', 'Students', 'Sessions', 'Attendance %', 'Last Session']],
+      body,
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [94, 60, 143], textColor: 255 },
+    });
+
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(9);
+      doc.text(`Page ${i} of ${pageCount}`, 200, 290, { align: 'right' });
+    }
+
+    doc.save("Group_Analytics_Report.pdf");
+  };
 };
+
 
 
 

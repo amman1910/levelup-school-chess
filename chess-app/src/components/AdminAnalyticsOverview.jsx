@@ -55,6 +55,11 @@ const AdminAnalyticsOverview = ({
           <h3>Attendance Trends</h3>
           <p>Track attendance patterns across all schools and classes</p>
         </div>
+       
+
+
+
+
 
         <div
           className="analytics-card"

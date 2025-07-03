@@ -17,10 +17,12 @@ import AdminTrainerAnalytics from './AdminTrainerAnalytics';
 import AdminTrainerSessions from './AdminTrainerSessions';
 import AdminGroupAnalytics from './AdminGroupAnalytics';
 import AdminAttendanceTrends from './AdminAttendanceTrends';
+
+
 import AdminActivityLog from './AdminActivityLog';
 import AdminProfile from './AdminProfile';
-import chessLogo from './chessLogo.png'; // ייבוא התמונה החדשה
-import chessLogo3 from './chessLogo3.png'; // ייבוא התמונה הקיימת
+import chessLogo from './chessLogo.png';
+import chessLogo3 from './chessLogo3.png'; 
 
 import './AdminArea.css';
 
@@ -67,8 +69,8 @@ const AdminArea = () => {
     console.log('Setting user in AdminArea:', userData);
     setUser(userData);
   }, [navigate]);
+  
 
-  // Fetch data function
   const fetchUsers = async () => {
     try {
       const usersSnapshot = await getDocs(collection(db, "users"));
@@ -520,6 +522,8 @@ const AdminArea = () => {
                 />
               } 
             />
+           
+
             <Route
               path="analytics/activity-log"
               element={<AdminActivityLog />}

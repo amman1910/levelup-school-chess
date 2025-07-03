@@ -139,7 +139,15 @@
   color: #d8c18f;
 }
 
+.contact-info a {
+  color: inherit;
+  text-decoration: none;
+}
 
+.contact-info a:hover {
+  color: #d8c18f;
+  text-decoration: underline;
+}
 
 
 

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useNavigate } from 'react-router-dom';
+import logo from '../assets/logos/shahtranj_logo_gold.png';
 
-import './AdminAnalyticsOverview.css'; // نفس ملف الستايل
+import './AdminAnalyticsOverview.css'; 
 
 const AdminTrainerAnalytics = ({ users, sessions }) => {
   const [filteredStats, setFilteredStats] = useState([]);
@@ -61,10 +62,27 @@ const AdminTrainerAnalytics = ({ users, sessions }) => {
   }, [users, sessions, selectedTrainer, fromDate, toDate]);
 
   
+const handleExportPDF = () => {
+  const doc = new jsPDF();
+  const img = new Image();
+  img.src = logo;
 
-  const handleExportPDF = () => {
-    const doc = new jsPDF();
-    doc.text("Trainer Analytics Report", 14, 10);
+  img.onload = () => {
+   doc.addImage(img, 'PNG', 14, 10, 24, 24);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.setTextColor(40);
+  doc.text("Trainer Analytics Report", 50, 20);
+
+  doc.setDrawColor(94, 60, 143);
+  doc.setLineWidth(0.5);
+  doc.line(14, 32, 195, 32);
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(100);
+  doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 50, 28);
 
     const body = filteredStats.map(t => [
       t.name,
@@ -76,15 +94,26 @@ const AdminTrainerAnalytics = ({ users, sessions }) => {
     ]);
 
     autoTable(doc, {
+      startY: 38,
       head: [['Trainer Name', 'Email', 'Total Sessions', 'Completed', '% Completion', 'Last Session']],
       body,
-      startY: 20,
-      styles: { fontSize: 9 },
-      headStyles: { fillColor: [94, 60, 143] },
+      styles: { fontSize: 9, font: 'helvetica' },
+      headStyles: { fillColor: [94, 60, 143], textColor: 255 },
+      alternateRowStyles: { fillColor: [248, 248, 255] }
     });
+
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(9);
+      doc.setTextColor(130);
+      doc.text(`Page ${i} of ${pageCount}`, 200, 290, { align: 'right' });
+    }
 
     doc.save("Trainer_Analytics_Report.pdf");
   };
+};
+
 
   const resetFilters = () => {
     setSelectedTrainer('');
@@ -101,7 +130,6 @@ const AdminTrainerAnalytics = ({ users, sessions }) => {
       <h2>Trainer Analytics</h2>
       <p className="subtitle">Track performance and activity of trainers</p>
 
-      {/* KPIs */}
       <div className="analytics-kpi-grid">
         <div className="kpi-card">
           <div className="kpi-title">🧑‍🏫 Total Trainers</div>
@@ -117,7 +145,6 @@ const AdminTrainerAnalytics = ({ users, sessions }) => {
         </div>
       </div>
 
-      {/* Filters */}
       <div className="filters">
         <label>
           Trainer:
@@ -142,7 +169,6 @@ const AdminTrainerAnalytics = ({ users, sessions }) => {
         <button onClick={handleExportPDF}>📥 Export PDF</button>
       </div>
 
-      {/* Table */}
       <div className="trainer-table-wrapper">
         <table className="trainer-table">
           <thead>
