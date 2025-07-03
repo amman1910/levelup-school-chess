@@ -7,7 +7,7 @@ This project was developed by our team as part of the course "Software Engineeri
 - [moataz sharabaty, github_username:motazshar]  
 - [Hadeel abbasi, github_username:hadeelAbbasi]  
 - [Ahmad abu ghosh, github_username:ahmadswe]  
-- [Amir jaber]  
+- [Ameer jaber,  github_username:xxameerxx]  
 
 
 
