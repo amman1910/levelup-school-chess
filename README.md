@@ -37,8 +37,8 @@ Technologies used:
 1) Clone the repository:
 git clone https://github.com/amman1910/levelup-school-chess.git
 
-2) Navigate to the Project Folder:
-cd your-repository
+2) Navigate to the Project app Folder:
+cd chess-app
 
 3) Install Project Dependencies:
 npm install
