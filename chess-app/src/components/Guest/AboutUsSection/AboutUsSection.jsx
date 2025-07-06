@@ -1,14 +1,17 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import './AboutUsSection.css';
 import teamPhoto from '../../../assets/aboutAs-photos/output.jpg';
 
 const AboutUsSection = () => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+
   return (
     <section id="about" className="about-section">
       {/* Header Row */}
       <div className="about-header">
-        <p className="about-section-label">About Us</p>
-        <h2 className="about-title">Champions Behind the Boards</h2>
+        <p className="about-section-label">{t('about.sectionLabel')}</p>
+        <h2 className="about-title">{t('about.title')}</h2>
       </div>
 
       {/* Content Row */}
@@ -19,24 +22,21 @@ const AboutUsSection = () => {
 
         <div className="about-text-side">
           <div className="about-paragraph">
-            <h3>Expert Coaches</h3>
+            <h3>{t('about.expertCoaches.title')}</h3>
             <p>
-              Our coaches are the backbone of Shah2Range. With years of experience in both
-              teaching and competition, they guide every player with care and passion.
+              {t('about.expertCoaches.description')}
             </p>
           </div>
           <div className="about-paragraph">
-            <h3>Vision of Growth</h3>
+            <h3>{t('about.visionOfGrowth.title')}</h3>
             <p>
-              We strive to create an inclusive space where chess nurtures intellect, resilience,
-              and lifelong learning for all ages and skill levels.
+              {t('about.visionOfGrowth.description')}
             </p>
           </div>
           <div className="about-paragraph">
-            <h3>Team of Puzzle Solvers</h3>
+            <h3>{t('about.teamOfSolvers.title')}</h3>
             <p>
-              Behind every move is a team of dedicated organizers, arbiters, and volunteers
-              working together to deliver a seamless chess experience.
+              {t('about.teamOfSolvers.description')}
             </p>
           </div>
         </div>
@@ -46,11 +46,3 @@ const AboutUsSection = () => {
 };
 
 export default AboutUsSection;
-
-
-
-
-
-
-
-
