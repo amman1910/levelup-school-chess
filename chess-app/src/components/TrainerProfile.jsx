@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { User, Mail, Calendar, Hash, Shield, Phone, Edit, X, Lock } from 'lucide-react';
 import { 
   collection, 
@@ -15,6 +16,7 @@ import { db } from '../firebase';
 import './TrainerProfile.css';
 
 const TrainerProfile = ({ currentUser }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showEmailModal, setShowEmailModal] = useState(false);
@@ -57,9 +59,7 @@ const TrainerProfile = ({ currentUser }) => {
           
           console.log('Complete user profile:', completeUserProfile);
           setUserProfile(completeUserProfile);
-        } else if (error.code === 'auth/operation-not-allowed') {
-        setEmailError('Email verification is required. Please check your Firebase settings or contact support.');
-      } else {
+        } else {
           console.error('User document not found in database');
           // אם אין מסמך, השתמש בנתונים מה-localStorage
           setUserProfile(currentUser);
@@ -79,7 +79,7 @@ const TrainerProfile = ({ currentUser }) => {
   if (loading) {
     return (
       <div className="profile-loading">
-        <div className="loading-spinner">Loading profile...</div>
+        <div className="loading-spinner">{t('trainerProfile.loadingProfile')}</div>
       </div>
     );
   }
@@ -88,8 +88,8 @@ const TrainerProfile = ({ currentUser }) => {
     return (
       <div className="profile-error">
         <div className="error-message">
-          <h3>Profile Not Found</h3>
-          <p>Unable to load your profile information. Please try logging in again.</p>
+          <h3>{t('trainerProfile.profileNotFound')}</h3>
+          <p>{t('trainerProfile.unableToLoad')}</p>
         </div>
       </div>
     );
@@ -103,7 +103,7 @@ const TrainerProfile = ({ currentUser }) => {
   console.log('mobileNumber:', userProfile.mobileNumber);
 
   // Construct full name
-  const fullName = `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() || 'Not specified';
+  const fullName = `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() || t('trainerProfile.notSpecified');
   
   // Get user initials for avatar
   const getInitials = (firstName, lastName) => {
@@ -335,7 +335,7 @@ const TrainerProfile = ({ currentUser }) => {
               <h1>{fullName}</h1>
               <span className="profile-role">
                 <Shield size={16} />
-                {userProfile.role?.charAt(0).toUpperCase() + userProfile.role?.slice(1) || 'Trainer'}
+                {userProfile.role?.charAt(0).toUpperCase() + userProfile.role?.slice(1) || t('trainerProfile.trainer')}
               </span>
             </div>
           </div>
@@ -344,7 +344,7 @@ const TrainerProfile = ({ currentUser }) => {
         {/* Profile Content */}
         <div className="profile-content">
           <div className="profile-info-card">
-            <h2 className="card-title">Profile Information</h2>
+            <h2 className="card-title">{t('trainerProfile.profileInformation')}</h2>
             
             <div className="profile-fields">
               <div className="profile-field">
@@ -352,7 +352,7 @@ const TrainerProfile = ({ currentUser }) => {
                   <User size={20} />
                 </div>
                 <div className="field-content">
-                  <label className="field-label">Full Name</label>
+                  <label className="field-label">{t('trainerProfile.fullName')}</label>
                   <span className="field-value">{fullName}</span>
                 </div>
               </div>
@@ -362,13 +362,13 @@ const TrainerProfile = ({ currentUser }) => {
                   <Mail size={20} />
                 </div>
                 <div className="field-content">
-                  <label className="field-label">Email Address</label>
-                  <span className="field-value">{userProfile.email || 'Not specified'}</span>
+                  <label className="field-label">{t('trainerProfile.emailAddress')}</label>
+                  <span className="field-value">{userProfile.email || t('trainerProfile.notSpecified')}</span>
                 </div>
                 <button 
                   className="change-email-btn"
                   onClick={() => setShowEmailModal(true)}
-                  title="Change Email"
+                  title={t('trainerProfile.changeEmail')}
                 >
                   <Edit size={16} />
                 </button>
@@ -379,8 +379,8 @@ const TrainerProfile = ({ currentUser }) => {
                   <Phone size={20} />
                 </div>
                 <div className="field-content">
-                  <label className="field-label">Mobile Number</label>
-                  <span className="field-value">{userProfile.mobileNumber || 'Not specified'}</span>
+                  <label className="field-label">{t('trainerProfile.mobileNumber')}</label>
+                  <span className="field-value">{userProfile.mobileNumber || t('trainerProfile.notSpecified')}</span>
                 </div>
               </div>
 
@@ -389,8 +389,8 @@ const TrainerProfile = ({ currentUser }) => {
                   <Calendar size={20} />
                 </div>
                 <div className="field-content">
-                  <label className="field-label">Age</label>
-                  <span className="field-value">{userProfile.age || 'Not specified'}</span>
+                  <label className="field-label">{t('trainerProfile.age')}</label>
+                  <span className="field-value">{userProfile.age || t('trainerProfile.notSpecified')}</span>
                 </div>
               </div>
 
@@ -399,8 +399,8 @@ const TrainerProfile = ({ currentUser }) => {
                   <Hash size={20} />
                 </div>
                 <div className="field-content">
-                  <label className="field-label">User ID</label>
-                  <span className="field-value field-id">{userProfile.uid || userProfile.id || 'Not available'}</span>
+                  <label className="field-label">{t('trainerProfile.userId')}</label>
+                  <span className="field-value field-id">{userProfile.uid || userProfile.id || t('trainerProfile.notAvailableId')}</span>
                 </div>
               </div>
 
@@ -409,9 +409,9 @@ const TrainerProfile = ({ currentUser }) => {
                   <Shield size={20} />
                 </div>
                 <div className="field-content">
-                  <label className="field-label">Role</label>
+                  <label className="field-label">{t('trainerProfile.role')}</label>
                   <span className="field-value role-badge">
-                    {userProfile.role?.charAt(0).toUpperCase() + userProfile.role?.slice(1) || 'Trainer'}
+                    {userProfile.role?.charAt(0).toUpperCase() + userProfile.role?.slice(1) || t('trainerProfile.trainer')}
                   </span>
                 </div>
               </div>
@@ -420,19 +420,19 @@ const TrainerProfile = ({ currentUser }) => {
 
           {/* Security Actions Card */}
           <div className="profile-stats-card">
-            <h2 className="card-title">Security Settings</h2>
+            <h2 className="card-title">{t('trainerProfile.securitySettings')}</h2>
             <div className="security-actions">
               <button 
                 className="change-password-btn"
                 onClick={handleChangePassword}
-                title="Change Password"
+                title={t('trainerProfile.changePassword')}
               >
                 <div className="action-icon">
                   <Lock size={20} />
                 </div>
                 <div className="action-content">
-                  <span className="action-label">Change Password</span>
-                  <span className="action-desc">Update your account password</span>
+                  <span className="action-label">{t('trainerProfile.changePassword')}</span>
+                  <span className="action-desc">{t('trainerProfile.updatePassword')}</span>
                 </div>
               </button>
             </div>
@@ -440,15 +440,15 @@ const TrainerProfile = ({ currentUser }) => {
 
           {/* Additional Info Card */}
           <div className="profile-stats-card">
-            <h2 className="card-title">Account Information</h2>
+            <h2 className="card-title">{t('trainerProfile.accountInformation')}</h2>
             <div className="stats-grid">
               <div className="stat-item">
                 <div className="stat-icon">
                   <User size={24} />
                 </div>
                 <div className="stat-content">
-                  <span className="stat-label">Account Type</span>
-                  <span className="stat-value">Professional Trainer</span>
+                  <span className="stat-label">{t('trainerProfile.accountType')}</span>
+                  <span className="stat-value">{t('trainerProfile.professionalTrainer')}</span>
                 </div>
               </div>
               
@@ -457,8 +457,8 @@ const TrainerProfile = ({ currentUser }) => {
                   <Shield size={24} />
                 </div>
                 <div className="stat-content">
-                  <span className="stat-label">Access Level</span>
-                  <span className="stat-value">Trainer Dashboard</span>
+                  <span className="stat-label">{t('trainerProfile.accessLevel')}</span>
+                  <span className="stat-value">{t('trainerProfile.trainerDashboard')}</span>
                 </div>
               </div>
 
@@ -467,11 +467,11 @@ const TrainerProfile = ({ currentUser }) => {
                   <Calendar size={24} />
                 </div>
                 <div className="stat-content">
-                  <span className="stat-label">Member Since</span>
+                  <span className="stat-label">{t('trainerProfile.memberSince')}</span>
                   <span className="stat-value">
                     {userProfile.createdAt ? 
                       new Date(userProfile.createdAt.seconds * 1000).toLocaleDateString('he-IL') : 
-                      'Unknown'
+                      t('trainerProfile.unknown')
                     }
                   </span>
                 </div>
@@ -482,9 +482,9 @@ const TrainerProfile = ({ currentUser }) => {
                   <Phone size={24} />
                 </div>
                 <div className="stat-content">
-                  <span className="stat-label">Contact Status</span>
+                  <span className="stat-label">{t('trainerProfile.contactStatus')}</span>
                   <span className="stat-value">
-                    {userProfile.mobileNumber ? 'Available' : 'Not Available'}
+                    {userProfile.mobileNumber ? t('trainerProfile.available') : t('trainerProfile.notAvailable')}
                   </span>
                 </div>
               </div>
@@ -497,7 +497,7 @@ const TrainerProfile = ({ currentUser }) => {
           <div className="modal-overlay">
             <div className="email-modal">
               <div className="modal-header">
-                <h3>Change Email Address</h3>
+                <h3>{t('trainerProfile.changeEmailAddress')}</h3>
                 <button className="close-btn" onClick={closeEmailModal}>
                   <X size={24} />
                 </button>
@@ -507,39 +507,39 @@ const TrainerProfile = ({ currentUser }) => {
                 {emailError && <div className="error-message">{emailError}</div>}
                 
                 <div className="form-group">
-                  <label htmlFor="currentPassword">Current Password:</label>
+                  <label htmlFor="currentPassword">{t('trainerProfile.currentPassword')}:</label>
                   <input
                     type="password"
                     id="currentPassword"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Enter your current password"
+                    placeholder={t('trainerProfile.currentPasswordPlaceholder')}
                     required
                     disabled={emailLoading}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="newEmail">New Email:</label>
+                  <label htmlFor="newEmail">{t('trainerProfile.newEmail')}:</label>
                   <input
                     type="email"
                     id="newEmail"
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
-                    placeholder="Enter new email address"
+                    placeholder={t('trainerProfile.newEmailPlaceholder')}
                     required
                     disabled={emailLoading}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="confirmEmail">Confirm New Email:</label>
+                  <label htmlFor="confirmEmail">{t('trainerProfile.confirmNewEmail')}:</label>
                   <input
                     type="email"
                     id="confirmEmail"
                     value={confirmEmail}
                     onChange={(e) => setConfirmEmail(e.target.value)}
-                    placeholder="Confirm new email address"
+                    placeholder={t('trainerProfile.confirmEmailPlaceholder')}
                     required
                     disabled={emailLoading}
                   />
@@ -552,14 +552,14 @@ const TrainerProfile = ({ currentUser }) => {
                     onClick={closeEmailModal}
                     disabled={emailLoading}
                   >
-                    Cancel
+                    {t('trainerNotifications.cancel')}
                   </button>
                   <button 
                     type="submit" 
                     className="change-btn"
                     disabled={emailLoading}
                   >
-                    {emailLoading ? 'Changing...' : 'Change Email'}
+                    {emailLoading ? t('trainerProfile.changing') : t('trainerProfile.changeEmail')}
                   </button>
                 </div>
               </form>
@@ -572,7 +572,7 @@ const TrainerProfile = ({ currentUser }) => {
           <div className="modal-overlay">
             <div className="password-modal">
               <div className="modal-header">
-                <h3>Change Password</h3>
+                <h3>{t('trainerProfile.changePassword')}</h3>
                 <button className="close-btn" onClick={closePasswordModal}>
                   <X size={24} />
                 </button>
@@ -582,26 +582,26 @@ const TrainerProfile = ({ currentUser }) => {
                 {passwordError && <div className="error-message">{passwordError}</div>}
                 
                 <div className="form-group">
-                  <label htmlFor="currentPasswordChange">Current Password:</label>
+                  <label htmlFor="currentPasswordChange">{t('trainerProfile.currentPassword')}:</label>
                   <input
                     type="password"
                     id="currentPasswordChange"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Enter your current password"
+                    placeholder={t('trainerProfile.currentPasswordPlaceholder')}
                     required
                     disabled={passwordLoading}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="newPasswordChange">New Password:</label>
+                  <label htmlFor="newPasswordChange">{t('trainerProfile.newPassword')}:</label>
                   <input
                     type="password"
                     id="newPasswordChange"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new password (min 6 characters)"
+                    placeholder={t('trainerProfile.newPasswordPlaceholder')}
                     required
                     disabled={passwordLoading}
                     minLength="6"
@@ -609,13 +609,13 @@ const TrainerProfile = ({ currentUser }) => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="confirmPasswordChange">Confirm New Password:</label>
+                  <label htmlFor="confirmPasswordChange">{t('trainerProfile.confirmNewPassword')}:</label>
                   <input
                     type="password"
                     id="confirmPasswordChange"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm new password"
+                    placeholder={t('trainerProfile.confirmPasswordPlaceholder')}
                     required
                     disabled={passwordLoading}
                     minLength="6"
@@ -629,14 +629,14 @@ const TrainerProfile = ({ currentUser }) => {
                     onClick={closePasswordModal}
                     disabled={passwordLoading}
                   >
-                    Cancel
+                    {t('trainerNotifications.cancel')}
                   </button>
                   <button 
                     type="submit" 
                     className="change-btn"
                     disabled={passwordLoading}
                   >
-                    {passwordLoading ? 'Changing...' : 'Change Password'}
+                    {passwordLoading ? t('trainerProfile.changing') : t('trainerProfile.changePassword')}
                   </button>
                 </div>
               </form>

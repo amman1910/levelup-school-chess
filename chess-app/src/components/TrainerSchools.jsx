@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { collection, getDocs, query, where, doc, getDoc, setDoc, updateDoc, arrayUnion, serverTimestamp, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
@@ -14,6 +15,7 @@ import {
 import 'react-circular-progressbar/dist/styles.css';
 
 const TrainerSchools = () => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
   const [schoolsData, setSchoolsData] = useState([]);
   const [expandedSchool, setExpandedSchool] = useState(null);
   const [viewMode, setViewMode] = useState('schools'); // 'schools', 'classes', 'students'
@@ -198,7 +200,7 @@ const TrainerSchools = () => {
     e.preventDefault();
     
     if (!newStudent.id || !newStudent.fullName || !newStudent.contact_number) {
-      alert('Please fill in all required fields (Student ID, Full Name, Contact Number)');
+      alert(t('trainerSchools.fillRequiredFields'));
       return;
     }
 
@@ -208,7 +210,7 @@ const TrainerSchools = () => {
       // Check if student ID already exists
       const existingStudent = await getDoc(doc(db, 'students', newStudent.id));
       if (existingStudent.exists()) {
-        alert('A student with this ID already exists');
+        alert(t('trainerSchools.studentIdExists'));
         setAddingStudent(false);
         return;
       }
@@ -259,11 +261,11 @@ const TrainerSchools = () => {
       setNewStudent({ id: '', fullName: '', grade: '', contact_number: '' });
       setShowAddStudentForm(false);
       
-      alert('Student added successfully!');
+      alert(t('trainerSchools.studentAddedSuccess'));
       
     } catch (error) {
       console.error('Error adding student:', error);
-      alert('Error adding student. Please try again.');
+      alert(t('trainerSchools.errorAddingStudent'));
     } finally {
       setAddingStudent(false);
     }
@@ -318,7 +320,7 @@ const TrainerSchools = () => {
         const syllabusUrl = classDoc.data().syllabus;
         
         if (!syllabusUrl) {
-          alert('No syllabus found for this class');
+          alert(t('trainerSchools.noSyllabusFound'));
           setLoadingSyllabus(false);
           return;
         }
@@ -326,11 +328,11 @@ const TrainerSchools = () => {
         // Open the syllabus URL directly in a new tab
         window.open(syllabusUrl, '_blank');
       } else {
-        alert('Class not found');
+        alert(t('trainerSchools.classNotFound'));
       }
     } catch (error) {
       console.error('Error opening syllabus:', error);
-      alert('Error opening syllabus. Please try again.');
+      alert(t('trainerSchools.errorOpeningSyllabus'));
     } finally {
       setLoadingSyllabus(false);
     }
@@ -386,8 +388,8 @@ const TrainerSchools = () => {
     return (
       <div className="schools-page">
         <div className="page-header">
-          <h2>My Schools Overview</h2>
-          <p>Click on any school to view its classes and details</p>
+          <h2>{t('trainerSchools.mySchoolsOverview')}</h2>
+          <p>{t('trainerSchools.clickSchoolToView')}</p>
         </div>
         
         <div className="school-cards">
@@ -417,8 +419,8 @@ const TrainerSchools = () => {
                       </div>
                     </div>
                     <div className="school-stats">
-                      <p><BookOpen size={16} /> Classes: {school.classes.length}</p>
-                      <p><Users size={16} /> Students: {school.totalStudents}</p>
+                      <p><BookOpen size={16} /> {t('trainerSchools.classes')}: {school.classes.length}</p>
+                      <p><Users size={16} /> {t('trainerSchools.students')}: {school.totalStudents}</p>
                     </div>
                     <div className="progress-circle">
                       <CircularProgressbar
@@ -435,17 +437,17 @@ const TrainerSchools = () => {
 
                   {isExpanded && (
                     <div className="school-preview">
-                      <h4>Classes Preview:</h4>
+                      <h4>{t('trainerSchools.classesPreview')}:</h4>
                       <div className="classes-preview-list">
                         {school.classes.slice(0, 3).map(cls => (
                           <div key={cls.classId} className="class-preview-item">
                             <span className="class-name">{cls.className}</span>
-                            <span className="class-students">{cls.studentCount} students</span>
+                            <span className="class-students">{cls.studentCount} {t('trainerSchools.students')}</span>
                           </div>
                         ))}
                         {school.classes.length > 3 && (
                           <div className="more-classes">
-                            +{school.classes.length - 3} more classes
+                            +{school.classes.length - 3} {t('trainerSchools.moreClasses')}
                           </div>
                         )}
                       </div>
@@ -457,7 +459,7 @@ const TrainerSchools = () => {
                       className="view-details-btn"
                       onClick={() => handleSchoolClick(school)}
                     >
-                      View Classes Details
+                      {t('trainerSchools.viewClassesDetails')}
                     </button>
                     <button
                       className="view-school-details-btn"
@@ -466,7 +468,7 @@ const TrainerSchools = () => {
                         handleViewSchoolDetails(school.schoolName);
                       }}
                     >
-                      View School Details
+                      {t('trainerSchools.viewSchoolDetails')}
                     </button>
                   </div>
                 </div>
@@ -517,7 +519,7 @@ const TrainerSchools = () => {
 
               {loadingSchoolDetails ? (
                 <div style={{ textAlign: 'center', padding: '20px' }}>
-                  <div>Loading school details...</div>
+                  <div>{t('trainerSchools.loadingSchoolDetails')}...</div>
                 </div>
               ) : selectedSchoolDetails ? (
                 <div>
@@ -534,21 +536,21 @@ const TrainerSchools = () => {
                   </h2>
                   
                   <div style={{ marginBottom: '15px' }}>
-                    <strong style={{ color: '#333', display: 'block', marginBottom: '5px' }}>Address:</strong>
+                    <strong style={{ color: '#333', display: 'block', marginBottom: '5px' }}>{t('trainerSchools.address')}:</strong>
                     <p style={{ margin: 0, color: '#666', fontSize: '16px' }}>
                       {selectedSchoolDetails.address}
                     </p>
                   </div>
 
                   <div style={{ marginBottom: '15px' }}>
-                    <strong style={{ color: '#333', display: 'block', marginBottom: '5px' }}>Contact Person:</strong>
+                    <strong style={{ color: '#333', display: 'block', marginBottom: '5px' }}>{t('trainerSchools.contactPerson')}:</strong>
                     <p style={{ margin: 0, color: '#666', fontSize: '16px' }}>
                       {selectedSchoolDetails.contact_person}
                     </p>
                   </div>
 
                   <div style={{ marginBottom: '15px' }}>
-                    <strong style={{ color: '#333', display: 'block', marginBottom: '5px' }}>Phone:</strong>
+                    <strong style={{ color: '#333', display: 'block', marginBottom: '5px' }}>{t('forms.phone')}:</strong>
                     <p style={{ margin: 0, color: '#666', fontSize: '16px' }}>
                       {selectedSchoolDetails.phone}
                     </p>
@@ -569,11 +571,11 @@ const TrainerSchools = () => {
         <div className="page-header with-back">
           <button onClick={handleBackToClasses} className="back-btn">
             <ArrowLeft size={20} />
-            Back to Classes
+            {t('trainerSchools.backToClasses')}
           </button>
           <div className="class-info">
             <h2><BookOpen size={24} /> {selectedClass?.className}</h2>
-            <p>{selectedSchool?.schoolName} • {filteredStudents.length} of {Math.max(0, students.length - 1)} students</p>
+            <p>{selectedSchool?.schoolName} • {filteredStudents.length} {t('trainerSchools.of')} {Math.max(0, students.length - 1)} {t('trainerSchools.students')}</p>
           </div>
           <button 
             onClick={() => setShowAddStudentForm(true)} 
@@ -581,7 +583,7 @@ const TrainerSchools = () => {
             disabled={showAddStudentForm}
           >
             <Plus size={20} />
-            Add New Student
+            {t('trainerSchools.addNewStudent')}
           </button>
         </div>
 
@@ -590,7 +592,7 @@ const TrainerSchools = () => {
           <div className="add-student-form-container">
             <div className="add-student-form">
               <div className="form-header">
-                <h3>Add New Student</h3>
+                <h3>{t('trainerSchools.addNewStudent')}</h3>
                 <button 
                   onClick={() => {
                     setShowAddStudentForm(false);
@@ -607,14 +609,14 @@ const TrainerSchools = () => {
                   <div className="form-group">
                     <label htmlFor="studentId">
                       <Hash size={16} />
-                      Student ID
+                      {t('trainerSchools.studentId')}
                     </label>
                     <input
                       type="text"
                       id="studentId"
                       value={newStudent.id}
                       onChange={(e) => handleInputChange('id', e.target.value)}
-                      placeholder="Enter student ID"
+                      placeholder={t('trainerSchools.enterStudentId')}
                       required
                     />
                   </div>
@@ -622,14 +624,14 @@ const TrainerSchools = () => {
                   <div className="form-group">
                     <label htmlFor="fullName">
                       <User size={16} />
-                      Full Name
+                      {t('trainerProfile.fullName')}
                     </label>
                     <input
                       type="text"
                       id="fullName"
                       value={newStudent.fullName}
                       onChange={(e) => handleInputChange('fullName', e.target.value)}
-                      placeholder="Enter full name"
+                      placeholder={t('trainerSchools.enterFullName')}
                       required
                     />
                   </div>
@@ -637,14 +639,14 @@ const TrainerSchools = () => {
                   <div className="form-group">
                     <label htmlFor="grade">
                       <Users size={16} />
-                      Grade
+                      {t('forms.grade')}
                     </label>
                     <select
                       id="grade"
                       value={newStudent.grade}
                       onChange={(e) => handleInputChange('grade', e.target.value)}
                     >
-                      <option value="">Select Grade</option>
+                      <option value="">{t('trainerSchools.selectGrade')}</option>
                       {gradeOptions.map(grade => (
                         <option key={grade} value={grade}>
                           {grade}
@@ -656,14 +658,14 @@ const TrainerSchools = () => {
                   <div className="form-group">
                     <label htmlFor="contactNumber">
                       <Phone size={16} />
-                      Contact Number
+                      {t('trainerSchools.contactNumber')}
                     </label>
                     <input
                       type="tel"
                       id="contactNumber"
                       value={newStudent.contact_number}
                       onChange={(e) => handleInputChange('contact_number', e.target.value)}
-                      placeholder="Enter contact number"
+                      placeholder={t('trainerSchools.enterContactNumber')}
                       required
                     />
                   </div>
@@ -679,14 +681,14 @@ const TrainerSchools = () => {
                     className="cancel-btn"
                     disabled={addingStudent}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                   <button 
                     type="submit" 
                     className="submit-btn"
                     disabled={addingStudent}
                   >
-                    {addingStudent ? 'Adding...' : 'Add Student'}
+                    {addingStudent ? t('trainerSchools.adding') + '...' : t('trainerSchools.addStudent')}
                   </button>
                 </div>
               </form>
@@ -701,7 +703,7 @@ const TrainerSchools = () => {
               <Search size={18} className="search-icon" />
               <input
                 type="text"
-                placeholder="Search students by name..."
+                placeholder={t('trainerSchools.searchStudentsByName')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="search-input"
@@ -715,30 +717,30 @@ const TrainerSchools = () => {
           </div>
           {searchTerm && (
             <div className="search-results-info">
-              Found {filteredStudents.length} student{filteredStudents.length !== 1 ? 's' : ''} 
-              {searchTerm && ` matching "${searchTerm}"`}
+              {t('trainerSchools.found')} {filteredStudents.length} {filteredStudents.length !== 1 ? t('trainerSchools.students') : t('trainerSchools.student')} 
+              {searchTerm && ` ${t('trainerSchools.matching')} "${searchTerm}"`}
             </div>
           )}
         </div>
 
         {loadingStudents ? (
           <div className="loading-container">
-            <div className="loading-spinner">Loading students...</div>
+            <div className="loading-spinner">{t('common.loading')}</div>
           </div>
         ) : filteredStudents.length === 0 && students.length > 0 ? (
           <div className="no-students">
             <div className="no-students-icon">🔍</div>
-            <h3>No Students Found</h3>
-            <p>No students match your search "{searchTerm}". Try a different search term.</p>
+            <h3>{t('trainerSchools.noStudentsFound')}</h3>
+            <p>{t('trainerSchools.noStudentsMatchSearch')} "{searchTerm}". {t('trainerSchools.tryDifferentSearch')}.</p>
             <button onClick={handleClearSearch} className="clear-search-action-btn">
-              Show All Students
+              {t('trainerSchools.showAllStudents')}
             </button>
           </div>
         ) : students.length === 0 ? (
           <div className="no-students">
             <div className="no-students-icon">👥</div>
-            <h3>No Students Found</h3>
-            <p>This class doesn't have any students yet. Click "Add New Student" to get started!</p>
+            <h3>{t('trainerSchools.noStudentsFound')}</h3>
+            <p>{t('trainerSchools.noStudentsInClass')} "{t('trainerSchools.addNewStudent')}" {t('trainerSchools.toGetStarted')}!</p>
           </div>
         ) : (
           <div className="students-list">
@@ -749,29 +751,29 @@ const TrainerSchools = () => {
                 </div>
                 <div className="student-info">
                   <div className="student-header">
-                    <h3><User size={20} /> {student.fullName || 'No Name'}</h3>
+                    <h3><User size={20} /> {student.fullName || t('trainerSchools.noName')}</h3>
                   </div>
                   <div className="student-details">
                     <div className="detail-item">
                       <Hash size={16} />
-                      <span className="detail-label">Student ID:</span>
+                      <span className="detail-label">{t('trainerSchools.studentId')}:</span>
                       <span className="detail-value">{student.id}</span>
                     </div>
                     <div className="detail-item">
                       <Users size={16} />
-                      <span className="detail-label">Grade:</span>
-                      <span className="detail-value">{student.grade || 'Not specified'}</span>
+                      <span className="detail-label">{t('forms.grade')}:</span>
+                      <span className="detail-value">{student.grade || t('trainerProfile.notSpecified')}</span>
                     </div>
                     <div className="detail-item">
                       <Phone size={16} />
-                      <span className="detail-label">Contact:</span>
-                      <span className="detail-value">{student.contact_number || 'No contact'}</span>
+                      <span className="detail-label">{t('trainerSchools.contact')}:</span>
+                      <span className="detail-value">{student.contact_number || t('trainerSchools.noContact')}</span>
                     </div>
                     <div className="detail-item">
                       <Clock size={16} />
-                      <span className="detail-label">Attendance:</span>
+                      <span className="detail-label">{t('trainerSessions.attendance')}:</span>
                       <span className="detail-value">
-                        {(student.sessions_attended || 0)}/{student.totalSessions || 0} sessions
+                        {(student.sessions_attended || 0)}/{student.totalSessions || 0} {t('trainerSchools.sessions')}
                       </span>
                     </div>
                   </div>
@@ -790,11 +792,11 @@ const TrainerSchools = () => {
       <div className="page-header with-back">
         <button onClick={handleBackToSchools} className="back-btn">
           <ArrowLeft size={20} />
-          Back to Schools
+          {t('trainerSchools.backToSchools')}
         </button>
         <div className="school-info">
           <h2><School size={24} /> {selectedSchool?.schoolName}</h2>
-          <p>{selectedSchool?.classes.length} classes • {selectedSchool?.totalStudents} students</p>
+          <p>{selectedSchool?.classes.length} {t('trainerSchools.classes')} • {selectedSchool?.totalStudents} {t('trainerSchools.students')}</p>
         </div>
       </div>
 
@@ -819,15 +821,15 @@ const TrainerSchools = () => {
             <div className="class-stats">
               <div className="stat-item">
                 <Users size={16} />
-                <span>{cls.studentCount} Students</span>
+                <span>{cls.studentCount} {t('trainerSchools.students')}</span>
               </div>
               <div className="stat-item">
                 <Clock size={16} />
-                <span>{cls.sessionCount} Sessions</span>
+                <span>{cls.sessionCount} {t('trainerSchools.sessions')}</span>
               </div>
               <div className="stat-item">
                 <BarChart size={16} />
-                <span>{cls.progress}% Progress</span>
+                <span>{cls.progress}% {t('trainerSchools.progress')}</span>
               </div>
             </div>
 
@@ -836,14 +838,14 @@ const TrainerSchools = () => {
                 className="view-sessions-btn"
                 onClick={() => navigate(`/trainer-area/sessions?searchClass=${encodeURIComponent(cls.className)}`)}
               >
-                View Sessions
+                {t('trainerSchools.viewSessions')}
               </button>
               <button
                 className="view-students-btn"
                 onClick={() => handleViewStudents(cls)}
                 disabled={loadingStudents}
               >
-                {loadingStudents ? 'Loading...' : 'View Students'}
+                {loadingStudents ? t('common.loading') + '...' : t('trainerSchools.viewStudents')}
               </button>
               <button
                 className="view-syllabus-btn"
@@ -851,7 +853,7 @@ const TrainerSchools = () => {
                 disabled={loadingSyllabus}
               >
                 <FileText size={16} />
-                {loadingSyllabus ? 'Loading...' : 'View Syllabus'}
+                {loadingSyllabus ? t('common.loading') + '...' : t('trainerSchools.viewSyllabus')}
               </button>
             </div>
           </div>

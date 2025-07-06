@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import './TrainerDashboard.css';
@@ -10,6 +11,7 @@ import {
 } from 'recharts';
 
 const TrainerDashboard = () => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
   const [stats, setStats] = useState({
     classes: 0,
     students: 0,
@@ -103,14 +105,14 @@ const TrainerDashboard = () => {
 
   return (
     <div className="dashboard-page">
-      <h2>Welcome Back, {trainerName}</h2>
+      <h2>{t('trainerDashboard.welcomeBack')}, {trainerName}</h2>
 
       <div className="stats-grid">
         <div className="stat-card">
           <BookOpen size={32} />
           <div>
             <h3>{stats.classes}</h3>
-            <p>Classes</p>
+            <p>{t('trainerDashboard.classes')}</p>
           </div>
         </div>
 
@@ -118,7 +120,7 @@ const TrainerDashboard = () => {
           <Users size={32} />
           <div>
             <h3>{stats.students}</h3>
-            <p>Students</p>
+            <p>{t('trainerDashboard.students')}</p>
           </div>
         </div>
 
@@ -126,7 +128,7 @@ const TrainerDashboard = () => {
           <CalendarCheck2 size={32} />
           <div>
             <h3>{stats.upcomingSessions}</h3>
-            <p>Upcoming Sessions</p>
+            <p>{t('trainerDashboard.upcomingSessions')}</p>
           </div>
         </div>
 
@@ -134,22 +136,22 @@ const TrainerDashboard = () => {
           <ClipboardCheck size={32} />
           <div>
             <h3>{stats.recordedSessions}</h3>
-            <p>Recorded Sessions</p>
+            <p>{t('trainerDashboard.recordedSessions')}</p>
           </div>
         </div>
       </div>
 
       <div className="upcoming-section">
-        <h3>Next Sessions</h3>
+        <h3>{t('trainerDashboard.nextSessions')}</h3>
         {upcoming.length === 0 ? (
-          <p>No upcoming sessions.</p>
+          <p>{t('trainerDashboard.noUpcomingSessions')}</p>
         ) : (
           <ul className="session-list">
             {upcoming.map((session, idx) => (
               <li key={idx}>
                 <span>{session.date.toLocaleString()}</span>
-                <span>{session.topic || 'No topic'}</span>
-                <span className="status-indicator upcoming">Upcoming</span>
+                <span>{session.topic || t('trainerSessions.notSpecified')}</span>
+                <span className="status-indicator upcoming">{t('trainerDashboard.upcoming')}</span>
               </li>
             ))}
           </ul>
@@ -157,7 +159,7 @@ const TrainerDashboard = () => {
       </div>
 
       <div className="chart-section">
-        <h3>Recorded Sessions per Class</h3>
+        <h3>{t('trainerDashboard.recordedSessionsPerClass')}</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={classProgress}>
             <XAxis dataKey="name" stroke="#5e3c8f" />

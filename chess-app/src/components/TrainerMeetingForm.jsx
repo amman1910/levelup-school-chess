@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { db } from '../firebase';
 import { collection, addDoc, getDoc, doc, query, where, getDocs, updateDoc, Timestamp, increment } from 'firebase/firestore';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './TrainerMeetingForm.css';
 
 const TrainerMeetingForm = () => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [method, setMethod] = useState('In-Person');
@@ -273,7 +275,7 @@ const TrainerMeetingForm = () => {
     const trainerId = user?.uid;
 
     if (!trainerId) {
-      alert('User not found. Please log in again.');
+      alert(t('messages.error'));
       return;
     }
 
@@ -326,7 +328,7 @@ const TrainerMeetingForm = () => {
           actionDescription = `Updated a session for class "${group}" at ${school} from ${date}`;
         }
         
-        setSuccessMessage('Session updated successfully!');
+        setSuccessMessage(t('trainerMeeting.sessionUpdated'));
       } else {
         // Create new session
         console.log('Creating new session');
@@ -336,7 +338,7 @@ const TrainerMeetingForm = () => {
         actionType = 'add-session';
         actionDescription = `Recorded a new session for class "${group}" at ${school} on ${date}`;
         
-        setSuccessMessage('Session recorded successfully!');
+        setSuccessMessage(t('trainerMeeting.sessionRecorded'));
       }
 
       // רישום פעולה ב-adminLogs
@@ -407,16 +409,16 @@ const TrainerMeetingForm = () => {
       )}
       
       <h2>
-        {isEditing ? 'Edit Training Session' : 
-         isRecording ? 'Record Training Session' : 
-         'Record Training Session'}
+        {isEditing ? t('trainerMeeting.editTrainingSession') : 
+         isRecording ? t('trainerMeeting.recordTrainingSession') : 
+         t('trainerMeeting.recordTrainingSession')}
       </h2>
       <form onSubmit={handleSubmit}>
         <section>
-          <h3>Session Info</h3>
+          <h3>{t('trainerMeeting.sessionInfo')}</h3>
           
           <label>
-            Date:
+            {t('trainerMeeting.date')}:
             <input 
               type="date" 
               value={date} 
@@ -426,7 +428,7 @@ const TrainerMeetingForm = () => {
           </label>
           
           <label>
-            Start Time:
+            {t('trainerMeeting.startTime')}:
             <input 
               type="time" 
               value={startTime} 
@@ -436,7 +438,7 @@ const TrainerMeetingForm = () => {
           </label>
           
           <label>
-            Duration (minutes):
+            {t('trainerMeeting.duration')}:
             <input 
               type="number" 
               min="1" 
@@ -447,31 +449,31 @@ const TrainerMeetingForm = () => {
           </label>
           
           <label>
-            Session Topic:
+            {t('trainerMeeting.sessionTopic')}:
             <input 
               type="text" 
               value={topic} 
               onChange={(e) => setTopic(e.target.value)} 
-              placeholder="e.g., Chess basics, Opening principles"
+              placeholder={t('trainerMeeting.topicPlaceholder')}
               required 
             />
           </label>
           
           <label>
-            Method:
+            {t('trainerMeeting.method')}:
             <select value={method} onChange={(e) => setMethod(e.target.value)}>
-              <option value="In-Person">In-Person</option>
-              <option value="Online">Online</option>
+              <option value="In-Person">{t('trainerMeeting.inPerson')}</option>
+              <option value="Online">{t('trainerMeeting.online')}</option>
             </select>
           </label>
           
           <label>
-            Session Number:
+            {t('trainerMeeting.sessionNumber')}:
             <input 
               type="text" 
               value={sessionCount} 
               onChange={(e) => setSessionCount(e.target.value)}
-              placeholder="e.g., 1, 2, 3..."
+              placeholder={t('trainerMeeting.sessionNumberPlaceholder')}
             />
           </label>
 
@@ -479,9 +481,9 @@ const TrainerMeetingForm = () => {
           {!sessionData && (
             <>
               <label>
-                School:
+                {t('trainerMeeting.school')}:
                 <select value={school} onChange={handleSchoolChange} required>
-                  <option value="">Select School</option>
+                  <option value="">{t('trainerMeeting.selectSchool')}</option>
                   {availableSchools.map(s => (
                     <option key={s.name} value={s.name}>{s.name}</option>
                   ))}
@@ -489,9 +491,9 @@ const TrainerMeetingForm = () => {
               </label>
 
               <label>
-                Class:
+                {t('trainerMeeting.class')}:
                 <select value={group} onChange={handleGroupChange} required>
-                  <option value="">Select Class</option>
+                  <option value="">{t('trainerMeeting.selectClass')}</option>
                   {availableGroups.map(g => (
                     <option key={g.id} value={g.name}>{g.name}</option>
                   ))}
@@ -504,11 +506,11 @@ const TrainerMeetingForm = () => {
           {sessionData && (
             <>
               <label>
-                School:
+                {t('trainerMeeting.school')}:
                 <input type="text" value={school} disabled />
               </label>
               <label>
-                Class Name:
+                {t('trainerMeeting.className')}:
                 <input type="text" value={group} disabled />
               </label>
             </>
@@ -516,9 +518,9 @@ const TrainerMeetingForm = () => {
         </section>
 
         <section>
-          <h3>Attendance</h3>
+          <h3>{t('trainerMeeting.attendance')}</h3>
           {students.length === 0 ? (
-            <p>No students found. Please select a class first.</p>
+            <p>{t('trainerMeeting.noStudents')}</p>
           ) : (
             <div className="student-grid">
               {students.map(student => (
@@ -536,34 +538,34 @@ const TrainerMeetingForm = () => {
         </section>
 
         <section>
-          <h3>Rating</h3>
+          <h3>{t('trainerMeeting.rating')}</h3>
           <label>
-            Material Rating:
+            {t('trainerMeeting.materialRating')}:
             {renderStars(materialRating, setMaterialRating)}
           </label>
           <label>
-            Student Rating:
+            {t('trainerMeeting.studentRating')}:
             {renderStars(studentRating, setStudentRating)}
           </label>
         </section>
 
         <section>
-          <h3>Notes</h3>
+          <h3>{t('trainerMeeting.notes')}</h3>
           <label>
-            Trainer Notes:
+            {t('trainerMeeting.trainerNotes')}:
             <textarea 
               value={notes} 
               onChange={(e) => setNotes(e.target.value)} 
-              placeholder="Any notes, observations, or feedback about the session..."
+              placeholder={t('trainerMeeting.notesPlaceholder')}
               rows="4"
             />
           </label>
         </section>
 
         <button type="submit">
-          {isEditing ? 'Update Session' : 
-           isRecording ? 'Complete Session' : 
-           'Save Session'}
+          {isEditing ? t('trainerMeeting.updateSession') : 
+           isRecording ? t('trainerMeeting.completeSession') : 
+           t('trainerMeeting.saveSession')}
         </button>
       </form>
     </div>

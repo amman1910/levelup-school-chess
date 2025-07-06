@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { 
   collection, 
   query, 
@@ -10,6 +11,7 @@ import { db } from '../firebase';
 import './TrainerMaterialsLibary.css';
 
 const TrainerMaterialsLibrary = () => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -117,12 +119,12 @@ const TrainerMaterialsLibrary = () => {
     if (fileUrl) {
       window.open(fileUrl, '_blank');
     } else {
-      alert('File URL not available');
+      alert(t('trainerMaterials.fileNotAvailable'));
     }
   };
 
   const formatDate = (timestamp) => {
-    if (!timestamp) return 'Unknown';
+    if (!timestamp) return t('trainerMaterials.unknown');
     return timestamp.toDate().toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -148,15 +150,15 @@ const TrainerMaterialsLibrary = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading materials...</div>;
+    return <div className="loading">{t('trainerMaterials.loadingMaterials')}</div>;
   }
 
   return (
     <div className="materials-library">
       <div className="materials-header">
         <div className="header-content">
-          <h1>Materials Library</h1>
-          <p>Access your authorized learning materials and presentations</p>
+          <h1>{t('trainerMaterials.materialsLibrary')}</h1>
+          <p>{t('trainerMaterials.accessMaterials')}</p>
         </div>
       </div>
 
@@ -165,7 +167,7 @@ const TrainerMaterialsLibrary = () => {
           <div className="search-box">
             <input
               type="text"
-              placeholder="Search materials..."
+              placeholder={t('trainerMaterials.searchMaterials')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
@@ -178,9 +180,9 @@ const TrainerMaterialsLibrary = () => {
             onChange={(e) => setSearchFilter(e.target.value)}
             className="filter-select search-filter-select"
           >
-            <option value="all">Search All</option>
-            <option value="topic">Search by Topic</option>
-            <option value="description">Search by Description</option>
+            <option value="all">{t('trainerMaterials.searchAll')}</option>
+            <option value="topic">{t('trainerMaterials.searchByTopic')}</option>
+            <option value="description">{t('trainerMaterials.searchByDescription')}</option>
           </select>
 
           <select
@@ -188,11 +190,11 @@ const TrainerMaterialsLibrary = () => {
             onChange={(e) => setFilterType(e.target.value)}
             className="filter-select type-filter-select"
           >
-            <option value="all">All Types</option>
-            <option value="presentation">Presentations</option>
-            <option value="document">Documents</option>
-            <option value="video">Videos</option>
-            <option value="image">Images</option>
+            <option value="all">{t('trainerMaterials.allTypes')}</option>
+            <option value="presentation">{t('trainerMaterials.presentations')}</option>
+            <option value="document">{t('trainerMaterials.documents')}</option>
+            <option value="video">{t('trainerMaterials.videos')}</option>
+            <option value="image">{t('trainerMaterials.images')}</option>
           </select>
 
           <select
@@ -200,43 +202,43 @@ const TrainerMaterialsLibrary = () => {
             onChange={(e) => setDateFilter(e.target.value)}
             className="filter-select date-filter-select"
           >
-            <option value="all">All Dates</option>
-            <option value="today">Today</option>
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
+            <option value="all">{t('trainerMaterials.allDates')}</option>
+            <option value="today">{t('trainerMaterials.today')}</option>
+            <option value="week">{t('trainerMaterials.thisWeek')}</option>
+            <option value="month">{t('trainerMaterials.thisMonth')}</option>
           </select>
         </div>
 
         <div className="materials-count">
-          <span>{filteredMaterials.length} materials found</span>
+          <span>{filteredMaterials.length} {t('trainerMaterials.materialsFound')}</span>
         </div>
       </div>
 
       {/* Active Filters Display */}
       {(searchTerm || filterType !== 'all' || dateFilter !== 'all' || searchFilter !== 'all') && (
         <div className="active-filters">
-          <span className="filters-label">Active Filters:</span>
+          <span className="filters-label">{t('trainerMaterials.activeFilters')}</span>
           {searchTerm && (
             <span className="filter-chip">
-              Search: "{searchTerm}"
+              {t('trainerMaterials.search')}: "{searchTerm}"
               <button onClick={() => setSearchTerm('')} className="remove-filter">×</button>
             </span>
           )}
           {filterType !== 'all' && (
             <span className="filter-chip">
-              Type: {filterType}
+              {t('trainerMaterials.type')}: {filterType}
               <button onClick={() => setFilterType('all')} className="remove-filter">×</button>
             </span>
           )}
           {dateFilter !== 'all' && (
             <span className="filter-chip">
-              Date: {dateFilter}
+              {t('trainerMaterials.date')}: {dateFilter}
               <button onClick={() => setDateFilter('all')} className="remove-filter">×</button>
             </span>
           )}
           {searchFilter !== 'all' && (
             <span className="filter-chip">
-              Search in: {searchFilter}
+              {t('trainerMaterials.searchIn')}: {searchFilter}
               <button onClick={() => setSearchFilter('all')} className="remove-filter">×</button>
             </span>
           )}
@@ -249,7 +251,7 @@ const TrainerMaterialsLibrary = () => {
             }}
             className="clear-all-filters"
           >
-            Clear All
+            {t('trainerMaterials.clearAll')}
           </button>
         </div>
       )}
@@ -257,11 +259,11 @@ const TrainerMaterialsLibrary = () => {
       {filteredMaterials.length === 0 ? (
         <div className="no-materials">
           <div className="no-materials-icon">📚</div>
-          <h3>No materials found</h3>
+          <h3>{t('trainerMaterials.noMaterialsFound')}</h3>
           <p>
             {searchTerm || filterType !== 'all' || dateFilter !== 'all'
-              ? 'Try adjusting your search or filter criteria'
-              : 'You don\'t have access to any materials yet. Contact your administrator.'}
+              ? t('trainerMaterials.adjustCriteria')
+              : t('trainerMaterials.noAccess')}
           </p>
         </div>
       ) : (
@@ -283,7 +285,7 @@ const TrainerMaterialsLibrary = () => {
                 
                 <div className="material-meta">
                   <div className="upload-date">
-                    <span className="meta-label">Uploaded:</span>
+                    <span className="meta-label">{t('trainerMaterials.uploaded')}:</span>
                     <span className="meta-value">{formatDate(material.uploadedAt)}</span>
                   </div>
                 </div>
@@ -296,7 +298,7 @@ const TrainerMaterialsLibrary = () => {
                   disabled={!material.fileUrl}
                 >
                   <span className="btn-icon">📂</span>
-                  Open File
+                  {t('trainerMaterials.openFile')}
                 </button>
               </div>
             </div>

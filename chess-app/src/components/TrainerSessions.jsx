@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { collection, getDocs, doc, getDoc, query, where, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './TrainerSessions.css';
 
 const TrainerSessions = () => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
   const [upcoming, setUpcoming] = useState([]);
   const [past, setPast] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +47,7 @@ const TrainerSessions = () => {
 
   // Helper function to format Timestamp to D/M/Y
   const formatTimestampToDisplay = (timestamp) => {
-    if (!timestamp) return 'No Date';
+    if (!timestamp) return t('messages.noData');
     
     let dateObj;
     if (timestamp.seconds) {
@@ -340,13 +342,13 @@ const TrainerSessions = () => {
     <table className="sessions-table">
       <thead>
         <tr>
-          <th>Class</th>
-          <th>School</th>
-          <th>Date</th>
-          <th>Duration</th>
-          <th>Status</th>
-          <th># Students</th>
-          <th>Actions</th>
+          <th>{t('trainerSessions.class')}</th>
+          <th>{t('trainerSessions.school')}</th>
+          <th>{t('trainerSessions.date')}</th>
+          <th>{t('trainerSessions.duration')}</th>
+          <th>{t('trainerSessions.status')}</th>
+          <th># {t('trainerSessions.students')}</th>
+          <th>{t('trainerSessions.actions')}</th>
         </tr>
       </thead>
       <tbody>
@@ -356,15 +358,15 @@ const TrainerSessions = () => {
             <td>{s.school}</td>
             <td>{s.date}</td>
             <td>{s.duration} min</td>
-            <td className={`status ${s.status}`}>{s.status.charAt(0).toUpperCase() + s.status.slice(1)}</td>
+            <td className={`status ${s.status}`}>{s.status === 'upcoming' ? t('trainerSessions.upcoming') : t('trainerSessions.completed')}</td>
             <td>{s.studentsCount}</td>
             <td>
               <button 
                 className="record-btn"
                 onClick={(event) => handleRecordSession(s, event)}
-                title="Record this session"
+                title={t('trainerSessions.record')}
               >
-                Record
+                {t('trainerSessions.record')}
               </button>
             </td>
           </tr>
@@ -377,13 +379,13 @@ const TrainerSessions = () => {
     <table className="sessions-table">
       <thead>
         <tr>
-          <th>Class</th>
-          <th>School</th>
-          <th>Date</th>
-          <th>Duration</th>
-          <th>Status</th>
-          <th># Students</th>
-          <th>Actions</th>
+          <th>{t('trainerSessions.class')}</th>
+          <th>{t('trainerSessions.school')}</th>
+          <th>{t('trainerSessions.date')}</th>
+          <th>{t('trainerSessions.duration')}</th>
+          <th>{t('trainerSessions.status')}</th>
+          <th># {t('trainerSessions.students')}</th>
+          <th>{t('trainerSessions.actions')}</th>
         </tr>
       </thead>
       <tbody>
@@ -393,23 +395,23 @@ const TrainerSessions = () => {
             <td>{s.school}</td>
             <td>{s.date}</td>
             <td>{s.duration} min</td>
-            <td className={`status ${s.status}`}>{s.status.charAt(0).toUpperCase() + s.status.slice(1)}</td>
+            <td className={`status ${s.status}`}>{s.status === 'upcoming' ? t('trainerSessions.upcoming') : t('trainerSessions.completed')}</td>
             <td>{s.studentsCount}</td>
             <td>
               <div className="action-buttons">
                 <button 
                   className="show-btn"
                   onClick={(event) => handleShowSession(s, event)}
-                  title="View session details"
+                  title={t('trainerSessions.show')}
                 >
-                  Show
+                  {t('trainerSessions.show')}
                 </button>
                 <button 
                   className="edit-btn"
                   onClick={(event) => handleEditSession(s, event)}
-                  title="Edit this session"
+                  title={t('trainerSessions.edit')}
                 >
-                  Edit
+                  {t('trainerSessions.edit')}
                 </button>
               </div>
             </td>
@@ -419,16 +421,16 @@ const TrainerSessions = () => {
     </table>
   );
 
-  if (loading) return <p className="loading">Loading sessions...</p>;
+  if (loading) return <p className="loading">{t('trainerSessions.loadingSessions')}</p>;
 
   return (
     <div className="sessions-page">
       {/* Search Section - Simplified */}
       {autoSearchClass && (
         <div className="auto-search-info">
-          <span>🔍 Showing sessions for class: <strong>{autoSearchClass}</strong></span>
+          <span>🔍 {t('trainerSessions.showingSessions')} <strong>{autoSearchClass}</strong></span>
           <button onClick={clearSearch} className="clear-auto-search-btn">
-            Show All Sessions
+            {t('trainerSessions.showAllSessions')}
           </button>
         </div>
       )}
@@ -436,7 +438,7 @@ const TrainerSessions = () => {
       <div className="search-input-wrapper">
         <input
           type="text"
-          placeholder="Search by school, class, date, or topic..."
+          placeholder={t('trainerSessions.searchSessions')}
           value={searchTerm}
           onChange={handleSearchChange}
           className="search-input"
@@ -450,16 +452,16 @@ const TrainerSessions = () => {
       
       {searchTerm && (
         <div className="search-results-info">
-          Found {filteredPast.length + filteredUpcoming.length} session(s) matching "{searchTerm}"
+          {t('trainerSessions.foundSessions')} {filteredPast.length + filteredUpcoming.length} {t('trainerSessions.sessionMatching')} "{searchTerm}"
         </div>
       )}
 
       {/* Upcoming Sessions appear first */}
       <section className="session-section">
-        <h2 className="section-title-sessions">Upcoming Sessions</h2>
+        <h2 className="section-title-sessions">{t('trainerSessions.upcomingSessions')}</h2>
         {filteredUpcoming.length === 0 ? (
           <p className="empty">
-            {searchTerm ? `No upcoming sessions found matching "${searchTerm}".` : 'No upcoming sessions.'}
+            {searchTerm ? `${t('trainerSessions.noUpcomingFound')} "${searchTerm}".` : t('trainerSessions.noUpcomingSessions')}
           </p>
         ) : (
           renderUpcomingTable(filteredUpcoming)
@@ -468,10 +470,10 @@ const TrainerSessions = () => {
 
       {/* Past Sessions appear second */}
       <section className="session-section">
-        <h2 className="section-title-sessions">Past Sessions</h2>
+        <h2 className="section-title-sessions">{t('trainerSessions.pastSessions')}</h2>
         {filteredPast.length === 0 ? (
           <p className="empty">
-            {searchTerm ? `No past sessions found matching "${searchTerm}".` : 'No past sessions.'}
+            {searchTerm ? `${t('trainerSessions.noPastFound')} "${searchTerm}".` : t('trainerSessions.noPastSessions')}
           </p>
         ) : (
           renderPastTable(filteredPast)
@@ -483,44 +485,44 @@ const TrainerSessions = () => {
         <div className="modal-overlay" onClick={closeModal}>
           <div className="session-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Session Details</h3>
+              <h3>{t('trainerSessions.sessionDetails')}</h3>
               <button className="close-btn" onClick={closeModal}>×</button>
             </div>
             
             <div className="modal-content">
               <div className="session-info">
-                <h4>Session Information</h4>
+                <h4>{t('trainerSessions.sessionInformation')}</h4>
                 <div className="info-grid">
                   <div className="info-item">
-                    <label>Date:</label>
+                    <label>{t('trainerSessions.date')}:</label>
                     <span>{selectedSession.date}</span>
                   </div>
                   <div className="info-item">
-                    <label>Start Time:</label>
-                    <span>{selectedSession.fullData.startTime || 'Not specified'}</span>
+                    <label>{t('trainerSessions.startTime')}:</label>
+                    <span>{selectedSession.fullData.startTime || t('trainerSessions.notSpecified')}</span>
                   </div>
                   <div className="info-item">
-                    <label>Duration:</label>
-                    <span>{selectedSession.duration} minutes</span>
+                    <label>{t('trainerSessions.duration')}:</label>
+                    <span>{selectedSession.duration} {t('trainerSessions.minutes')}</span>
                   </div>
                   <div className="info-item">
-                    <label>Topic:</label>
-                    <span>{selectedSession.topic || 'Not specified'}</span>
+                    <label>{t('trainerSessions.topic')}:</label>
+                    <span>{selectedSession.topic || t('trainerSessions.notSpecified')}</span>
                   </div>
                   <div className="info-item">
-                    <label>Method:</label>
-                    <span>{selectedSession.method || 'Not specified'}</span>
+                    <label>{t('trainerSessions.method')}:</label>
+                    <span>{selectedSession.method || t('trainerSessions.notSpecified')}</span>
                   </div>
                   <div className="info-item">
-                    <label>Session Number:</label>
-                    <span>{selectedSession.fullData.sessionCount || 'Not specified'}</span>
+                    <label>{t('trainerSessions.sessionNumber')}:</label>
+                    <span>{selectedSession.fullData.sessionCount || t('trainerSessions.notSpecified')}</span>
                   </div>
                   <div className="info-item">
-                    <label>School:</label>
+                    <label>{t('trainerSessions.school')}:</label>
                     <span>{selectedSession.school}</span>
                   </div>
                   <div className="info-item">
-                    <label>Class:</label>
+                    <label>{t('trainerSessions.class')}:</label>
                     <span>{selectedSession.className}</span>
                   </div>
                 </div>
@@ -528,13 +530,13 @@ const TrainerSessions = () => {
 
               {students.length > 0 && (
                 <div className="attendance-info">
-                  <h4>Attendance</h4>
+                  <h4>{t('trainerSessions.attendance')}</h4>
                   <div className="student-list">
                     {students.map(student => (
                       <div key={student.id} className="student-item">
                         <span className="student-name">{student.fullName || student.id}</span>
                         <span className={`attendance-status ${selectedSession.fullData.attendance?.[student.id] ? 'present' : 'absent'}`}>
-                          {selectedSession.fullData.attendance?.[student.id] ? 'Present' : 'Absent'}
+                          {selectedSession.fullData.attendance?.[student.id] ? t('trainerSessions.present') : t('trainerSessions.absent')}
                         </span>
                       </div>
                     ))}
@@ -543,10 +545,10 @@ const TrainerSessions = () => {
               )}
 
               <div className="ratings-info">
-                <h4>Ratings</h4>
+                <h4>{t('trainerSessions.ratings')}</h4>
                 <div className="ratings-grid">
                   <div className="rating-item">
-                    <label>Material Rating:</label>
+                    <label>{t('trainerSessions.materialRating')}:</label>
                     <div className="stars">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <span key={star} className={selectedSession.fullData.materialRating >= star ? 'star filled' : 'star'}>
@@ -556,7 +558,7 @@ const TrainerSessions = () => {
                     </div>
                   </div>
                   <div className="rating-item">
-                    <label>Student Rating:</label>
+                    <label>{t('trainerSessions.studentRating')}:</label>
                     <div className="stars">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <span key={star} className={selectedSession.fullData.studentRating >= star ? 'star filled' : 'star'}>
@@ -570,7 +572,7 @@ const TrainerSessions = () => {
 
               {selectedSession.fullData.notes && (
                 <div className="notes-info">
-                  <h4>Notes</h4>
+                  <h4>{t('trainerSessions.notes')}</h4>
                   <p>{selectedSession.fullData.notes}</p>
                 </div>
               )}
