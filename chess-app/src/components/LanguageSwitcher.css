@@ -1,0 +1,124 @@
+.language-switcher {
+  display: flex;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.language-select {
+  background-color: var(--white, #ffffff);
+  border: 2px solid var(--light-border, #e6e6e6);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text-color, #333333);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  min-width: 120px;
+}
+
+.language-select:hover {
+  border-color: var(--secondary-gold, #e9c44c);
+  background-color: var(--light-gold, #f7eac5);
+}
+
+.language-select:focus {
+  border-color: var(--secondary-gold, #e9c44c);
+  box-shadow: 0 0 0 3px rgba(233, 196, 76, 0.2);
+}
+
+/* Navbar specific styling */
+.navbar .language-switcher .language-select {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  font-weight: 500;
+}
+
+.navbar .language-switcher .language-select:hover {
+  border-color: var(--secondary-gold, #e9c44c);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar .language-switcher .language-select option {
+  background-color: var(--white, #ffffff);
+  color: var(--text-color, #333333);
+}
+
+/* Admin/Trainer sidebar styling */
+.admin-sidebar .language-switcher,
+.trainer-sidebar .language-switcher {
+  margin: 10px 0;
+  padding: 0 15px;
+}
+
+.admin-sidebar .language-switcher .language-select,
+.trainer-sidebar .language-switcher .language-select {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  width: 100%;
+  font-size: 13px;
+  padding: 8px 10px;
+}
+
+.admin-sidebar .language-switcher .language-select:hover,
+.trainer-sidebar .language-switcher .language-select:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--secondary-gold, #e9c44c);
+}
+
+.admin-sidebar .language-switcher .language-select option,
+.trainer-sidebar .language-switcher .language-select option {
+  background-color: var(--primary-purple, #5e3c8f);
+  color: white;
+}
+
+/* Footer styling */
+.footer .language-switcher .language-select {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 13px;
+}
+
+.footer .language-switcher .language-select option {
+  background-color: var(--primary-purple, #5e3c8f);
+  color: white;
+}
+
+/* RTL Support */
+[dir="rtl"] .language-select {
+  text-align: right;
+}
+
+[dir="rtl"] .language-switcher {
+  margin: 0 10px 0 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .language-select {
+    min-width: 100px;
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+  
+  .navbar .language-switcher {
+    margin: 0 5px;
+  }
+  
+  .admin-sidebar .language-switcher,
+  .trainer-sidebar .language-switcher {
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .language-select {
+    min-width: 80px;
+    font-size: 12px;
+    padding: 5px 6px;
+  }
+}
