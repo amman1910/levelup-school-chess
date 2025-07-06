@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import './AdminDashboard.css';
@@ -12,6 +13,7 @@ import {
 } from 'recharts';
 
 const Dashboard = ({ users, classes, students }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalClasses: 0,
@@ -117,17 +119,17 @@ const Dashboard = ({ users, classes, students }) => {
 
         // Prepare role distribution for pie chart
         const roleData = [
-          { name: 'Trainers', value: trainers, color: '#5e3c8f' },
-          { name: 'Admins', value: admins, color: '#e9c44c' },
-          { name: 'Others', value: others, color: '#8260b3' }
+          { name: t('adminDashboard.trainersRole'), value: trainers, color: '#5e3c8f' },
+          { name: t('adminDashboard.adminsRole'), value: admins, color: '#e9c44c' },
+          { name: t('adminDashboard.othersRole'), value: others, color: '#8260b3' }
         ].filter(item => item.value > 0);
 
         // Generate recent activity (mock data based on real data)
         const recentActivities = [
-          { type: 'session', desc: `${completedSessions} sessions completed this month`, time: 'Today' },
-          { type: 'user', desc: `${users.length} total users in system`, time: 'Current' },
-          { type: 'class', desc: `${classes.length} active classes`, time: 'Current' },
-          { type: 'student', desc: `${students.length} students enrolled`, time: 'Current' }
+          { type: 'session', desc: `${completedSessions} ${t('adminDashboard.sessionsCompletedThisMonth')}`, time: t('adminDashboard.today') },
+          { type: 'user', desc: `${users.length} ${t('adminDashboard.totalUsersInSystem')}`, time: t('adminDashboard.current') },
+          { type: 'class', desc: `${classes.length} ${t('adminDashboard.activeClassesInSystem')}`, time: t('adminDashboard.current') },
+          { type: 'student', desc: `${students.length} ${t('adminDashboard.studentsEnrolled')}`, time: t('adminDashboard.current') }
         ];
 
         // Update all state
@@ -154,14 +156,14 @@ const Dashboard = ({ users, classes, students }) => {
     if (users.length > 0 || classes.length > 0 || students.length > 0) {
       fetchData();
     }
-  }, [users, classes, students]);
+  }, [users, classes, students, t]);
 
   const COLORS = ['#5e3c8f', '#e9c44c', '#8260b3', '#d4b43c'];
 
   return (
     <div className="admin-dashboard-page">
-      <h2>Welcome Back, {adminName}</h2>
-      <p className="dashboard-subtitle">System Overview & Analytics</p>
+      <h2>{t('adminDashboard.welcomeBack')}, {adminName}</h2>
+      <p className="dashboard-subtitle">{t('adminDashboard.systemOverviewAnalytics')}</p>
 
       {/* Main Stats Grid */}
       <div className="admin-stats-grid">
@@ -169,7 +171,7 @@ const Dashboard = ({ users, classes, students }) => {
           <Users size={32} />
           <div>
             <h3>{stats.totalUsers}</h3>
-            <p>Total Users</p>
+            <p>{t('adminDashboard.totalUsers')}</p>
           </div>
         </div>
 
@@ -177,7 +179,7 @@ const Dashboard = ({ users, classes, students }) => {
           <BookOpen size={32} />
           <div>
             <h3>{stats.totalClasses}</h3>
-            <p>Active Classes</p>
+            <p>{t('adminDashboard.activeClasses')}</p>
           </div>
         </div>
 
@@ -185,7 +187,7 @@ const Dashboard = ({ users, classes, students }) => {
           <GraduationCap size={32} />
           <div>
             <h3>{stats.totalStudents}</h3>
-            <p>Total Students</p>
+            <p>{t('adminDashboard.totalStudents')}</p>
           </div>
         </div>
 
@@ -193,7 +195,7 @@ const Dashboard = ({ users, classes, students }) => {
           <Building2 size={32} />
           <div>
             <h3>{stats.totalSchools}</h3>
-            <p>Schools</p>
+            <p>{t('adminDashboard.schools')}</p>
           </div>
         </div>
       </div>
@@ -204,7 +206,7 @@ const Dashboard = ({ users, classes, students }) => {
           <UserCheck size={28} />
           <div>
             <h3>{stats.trainers}</h3>
-            <p>Trainers</p>
+            <p>{t('adminDashboard.trainers')}</p>
           </div>
         </div>
 
@@ -212,7 +214,7 @@ const Dashboard = ({ users, classes, students }) => {
           <Calendar size={28} />
           <div>
             <h3>{stats.activeSessions}</h3>
-            <p>Upcoming Sessions</p>
+            <p>{t('adminDashboard.upcomingSessions')}</p>
           </div>
         </div>
 
@@ -220,7 +222,7 @@ const Dashboard = ({ users, classes, students }) => {
           <TrendingUp size={28} />
           <div>
             <h3>{stats.completedSessions}</h3>
-            <p>Completed Sessions</p>
+            <p>{t('adminDashboard.completedSessions')}</p>
           </div>
         </div>
 
@@ -228,7 +230,7 @@ const Dashboard = ({ users, classes, students }) => {
           <Activity size={28} />
           <div>
             <h3>{stats.admins}</h3>
-            <p>Administrators</p>
+            <p>{t('adminDashboard.administrators')}</p>
           </div>
         </div>
       </div>
@@ -236,8 +238,8 @@ const Dashboard = ({ users, classes, students }) => {
       <div className="admin-dashboard-content">
         {/* Trainer Performance Chart */}
         <div className="admin-chart-section">
-          <h3>Top Trainers Performance</h3>
-          <p className="chart-description">Completed sessions by trainer</p>
+          <h3>{t('adminDashboard.topTrainersPerformance')}</h3>
+          <p className="chart-description">{t('adminDashboard.completedSessionsByTrainer')}</p>
           {trainerData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={trainerData}>
@@ -261,21 +263,21 @@ const Dashboard = ({ users, classes, students }) => {
                   dataKey="sessions" 
                   fill="#e9c44c" 
                   radius={[6, 6, 0, 0]}
-                  name="Completed Sessions"
+                  name={t('adminDashboard.completedSessions')}
                 />
               </BarChart>
             </ResponsiveContainer>
           ) : (
             <div className="no-data">
-              <p>No trainer data available</p>
+              <p>{t('adminDashboard.noTrainerData')}</p>
             </div>
           )}
         </div>
 
         {/* Role Distribution */}
         <div className="admin-chart-section">
-          <h3>User Role Distribution</h3>
-          <p className="chart-description">System users by role</p>
+          <h3>{t('adminDashboard.userRoleDistribution')}</h3>
+          <p className="chart-description">{t('adminDashboard.systemUsersByRole')}</p>
           {roleDistribution.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -298,14 +300,14 @@ const Dashboard = ({ users, classes, students }) => {
             </ResponsiveContainer>
           ) : (
             <div className="no-data">
-              <p>No role data available</p>
+              <p>{t('adminDashboard.noRoleData')}</p>
             </div>
           )}
         </div>
 
         {/* Recent Activity */}
         <div className="admin-activity-section">
-          <h3>System Overview</h3>
+          <h3>{t('adminDashboard.systemOverview')}</h3>
           <div className="activity-list">
             {recentActivity.map((activity, index) => (
               <div key={index} className="activity-item">
@@ -326,22 +328,22 @@ const Dashboard = ({ users, classes, students }) => {
 
         {/* Quick Stats Summary */}
         <div className="admin-summary-section">
-          <h3>Quick Summary</h3>
+          <h3>{t('adminDashboard.quickSummary')}</h3>
           <div className="summary-grid">
             <div className="summary-item">
-              <span className="summary-label">Average Students per Class</span>
+              <span className="summary-label">{t('adminDashboard.avgStudentsPerClass')}</span>
               <span className="summary-value">
                 {stats.totalClasses > 0 ? Math.round(stats.totalStudents / stats.totalClasses) : 0}
               </span>
             </div>
             <div className="summary-item">
-              <span className="summary-label">Classes per Trainer</span>
+              <span className="summary-label">{t('adminDashboard.classesPerTrainer')}</span>
               <span className="summary-value">
                 {stats.trainers > 0 ? Math.round(stats.totalClasses / stats.trainers) : 0}
               </span>
             </div>
             <div className="summary-item">
-              <span className="summary-label">Session Completion Rate</span>
+              <span className="summary-label">{t('adminDashboard.sessionCompletionRate')}</span>
               <span className="summary-value">
                 {(stats.activeSessions + stats.completedSessions) > 0 
                   ? Math.round((stats.completedSessions / (stats.activeSessions + stats.completedSessions)) * 100)
@@ -349,7 +351,7 @@ const Dashboard = ({ users, classes, students }) => {
               </span>
             </div>
             <div className="summary-item">
-              <span className="summary-label">Students per School</span>
+              <span className="summary-label">{t('adminDashboard.studentsPerSchool')}</span>
               <span className="summary-value">
                 {stats.totalSchools > 0 ? Math.round(stats.totalStudents / stats.totalSchools) : 0}
               </span>
