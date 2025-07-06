@@ -1,0 +1,306 @@
+/* RTL Support for Arabic Language */
+
+/* Global RTL adjustments */
+[dir="rtl"] {
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', 'Arial', sans-serif;
+}
+
+/* Text alignment */
+[dir="rtl"] .text-left {
+  text-align: right !important;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left !important;
+}
+
+/* Flexbox direction adjustments */
+[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .flex-row-reverse {
+  flex-direction: row;
+}
+
+/* Margin and Padding adjustments */
+[dir="rtl"] .ml-auto {
+  margin-left: unset;
+  margin-right: auto;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-right: unset;
+  margin-left: auto;
+}
+
+[dir="rtl"] .pl-3 {
+  padding-left: unset;
+  padding-right: 1rem;
+}
+
+[dir="rtl"] .pr-3 {
+  padding-right: unset;
+  padding-left: 1rem;
+}
+
+/* Sidebar adjustments for RTL */
+[dir="rtl"] .admin-sidebar,
+[dir="rtl"] .trainer-sidebar {
+  left: unset;
+  right: 0;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+[dir="rtl"] .admin-content,
+[dir="rtl"] .trainer-content {
+  margin-left: 0;
+  margin-right: 260px;
+}
+
+[dir="rtl"] .trainer-content {
+  margin-right: 220px;
+}
+
+/* Navigation adjustments */
+[dir="rtl"] .admin-nav,
+[dir="rtl"] .trainer-nav {
+  text-align: right;
+}
+
+[dir="rtl"] .admin-link,
+[dir="rtl"] .trainer-link {
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .notification-badge {
+  margin-left: unset;
+  margin-right: auto;
+  left: 12px;
+  right: unset;
+}
+
+/* Header adjustments */
+[dir="rtl"] .admin-header,
+[dir="rtl"] .trainer-header {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .page-title {
+  text-align: right;
+}
+
+/* Button and form adjustments */
+[dir="rtl"] .action-buttons {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .refresh-button {
+  order: 1;
+}
+
+/* Modal and popup adjustments */
+[dir="rtl"] .modal-header {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .modal-footer {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .close-btn {
+  left: 15px;
+  right: unset;
+}
+
+/* Table adjustments */
+[dir="rtl"] table {
+  direction: rtl;
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+[dir="rtl"] th:first-child,
+[dir="rtl"] td:first-child {
+  text-align: right;
+}
+
+[dir="rtl"] th:last-child,
+[dir="rtl"] td:last-child {
+  text-align: left;
+}
+
+/* Form elements */
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] input[type="email"],
+[dir="rtl"] input[type="url"] {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Checkbox and radio adjustments */
+[dir="rtl"] .checkbox-label {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .checkbox-label input[type="checkbox"] {
+  margin-left: 10px;
+  margin-right: 0;
+}
+
+/* Card and content adjustments */
+[dir="rtl"] .welcome-card,
+[dir="rtl"] .stat-card,
+[dir="rtl"] .info-card {
+  text-align: right;
+}
+
+[dir="rtl"] .border-left {
+  border-left: none;
+  border-right: 5px solid var(--secondary-gold);
+}
+
+/* Conversation and message adjustments */
+[dir="rtl"] .conversation-header {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .admin-info {
+  text-align: right;
+}
+
+[dir="rtl"] .message.sent {
+  justify-content: flex-start;
+}
+
+[dir="rtl"] .message.received {
+  justify-content: flex-end;
+}
+
+[dir="rtl"] .message-input-container {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .back-btn {
+  margin-right: unset;
+  margin-left: 15px;
+}
+
+/* Navigation arrows and icons */
+[dir="rtl"] .arrow-right::before {
+  content: "←";
+}
+
+[dir="rtl"] .arrow-left::before {
+  content: "→";
+}
+
+/* Guest page adjustments */
+[dir="rtl"] .hero-section {
+  text-align: right;
+}
+
+[dir="rtl"] .navbar {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .navbar .nav-links {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .footer {
+  text-align: right;
+}
+
+[dir="rtl"] .footer .footer-links {
+  flex-direction: row-reverse;
+}
+
+/* Grid adjustments */
+[dir="rtl"] .grid {
+  direction: rtl;
+}
+
+[dir="rtl"] .grid-item {
+  text-align: right;
+}
+
+/* Responsive RTL adjustments */
+@media (max-width: 768px) {
+  [dir="rtl"] .admin-content,
+  [dir="rtl"] .trainer-content {
+    margin-right: 70px;
+    margin-left: 0;
+  }
+  
+  [dir="rtl"] .admin-sidebar,
+  [dir="rtl"] .trainer-sidebar {
+    right: 0;
+    left: unset;
+  }
+}
+
+@media (max-width: 480px) {
+  [dir="rtl"] .admin-content,
+  [dir="rtl"] .trainer-content {
+    margin-right: 60px;
+    margin-left: 0;
+  }
+  
+  [dir="rtl"] .trainer-content {
+    margin-right: 60px;
+  }
+}
+
+/* Font optimization for Arabic */
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6 {
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+[dir="rtl"] p, [dir="rtl"] span, [dir="rtl"] div {
+  line-height: 1.6;
+}
+
+/* Improve Arabic text readability */
+[dir="rtl"] {
+  font-feature-settings: "liga" 1, "kern" 1;
+  text-rendering: optimizeLegibility;
+}
+
+/* Animation adjustments for RTL */
+[dir="rtl"] .slide-in-left {
+  animation-name: slideInRight;
+}
+
+[dir="rtl"] .slide-in-right {
+  animation-name: slideInLeft;
+}
+
+/* Custom scrollbar for RTL */
+[dir="rtl"] ::-webkit-scrollbar {
+  width: 8px;
+}
+
+[dir="rtl"] ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+[dir="rtl"] ::-webkit-scrollbar-thumb {
+  background: var(--secondary-gold);
+  border-radius: 4px;
+}
+
+[dir="rtl"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-gold);
+}
