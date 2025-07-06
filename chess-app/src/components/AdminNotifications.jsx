@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { 
   collection, 
   query, 
@@ -22,6 +23,7 @@ import { db, storage } from '../firebase';
 import './AdminNotifications.css';
 
 const AdminNotifications = ({ loading, setLoading, error, success }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
   const [currentUser, setCurrentUser] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [filteredConversations, setFilteredConversations] = useState([]);
@@ -501,7 +503,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
   };
 
   const getUserRoleDisplay = (role) => {
-    return role === 'admin' ? 'Administrator' : 'Trainer';
+    return role === 'admin' ? t('admin.administrator') : t('trainer.trainer');
   };
 
   const getUserRoleColor = (role) => {
@@ -558,7 +560,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
 
   // הוספת בדיקת loading בתחילת הקומפוננטה - זה התיקון העיקרי!
   if (notificationsLoading) {
-    return <div className="loading">Loading notifications...</div>;
+    return <div className="loading">{t('trainerNotifications.loadingNotifications')}</div>;
   }
 
   return (
@@ -566,12 +568,12 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
       {!selectedConversation ? (
         <div className="admin-notifications-list">
           <div className="admin-notifications-header">
-            <h2>Messages & Notifications</h2>
+            <h2>{t('trainerNotifications.messagesNotifications')}</h2>
             <button 
               className="admin-new-message-btn"
               onClick={() => setShowNewMessageForm(true)}
             >
-              + New Message
+              + {t('trainerNotifications.newMessage')}
             </button>
           </div>
 
@@ -580,7 +582,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
             <div className="admin-search-bar">
               <input
                 type="text"
-                placeholder="Search conversations by user name..."
+                placeholder={t('adminNotifications.searchConversationsByUser')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="admin-search-input"
@@ -589,7 +591,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
                 <button 
                   className="admin-search-clear"
                   onClick={clearSearch}
-                  title="Clear search"
+                  title={t('trainerNotifications.clearSearch')}
                 >
                   ×
                 </button>
@@ -599,8 +601,8 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
             {searchQuery && (
               <div className="admin-search-results-info">
                 {filteredConversations.length === 0 
-                  ? "No conversations found matching your search" 
-                  : `Found ${filteredConversations.length} conversation${filteredConversations.length === 1 ? '' : 's'}`
+                  ? t('trainerNotifications.noConversationsFound')
+                  : `${t('trainerNotifications.foundAdmins')} ${filteredConversations.length} conversation${filteredConversations.length === 1 ? '' : 's'}`
                 }
               </div>
             )}
@@ -608,13 +610,13 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
 
           {conversations.length === 0 ? (
             <div className="admin-no-conversations">
-              <p>No messages yet. Click "New Message" to start a conversation with a user.</p>
+              <p>{t('adminNotifications.noMessagesWithUsers')}</p>
             </div>
           ) : filteredConversations.length === 0 && searchQuery ? (
             <div className="admin-no-conversations">
-              <p>No conversations found matching "{searchQuery}"</p>
+              <p>{t('trainerNotifications.noConversationsMatching')} "{searchQuery}"</p>
               <button onClick={clearSearch} className="admin-clear-search-btn">
-                Clear search
+                {t('trainerNotifications.clearSearch')}
               </button>
             </div>
           ) : (
@@ -639,7 +641,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
                   <div className="admin-last-message">
                     <p>
                       {conversation.lastMessage?.fileUrl && !conversation.lastMessage?.message 
-                        ? '📎 File attachment'
+                        ? `📎 ${t('trainerNotifications.fileAttachment')}`
                         : conversation.lastMessage?.fileUrl && conversation.lastMessage?.message
                         ? `${conversation.lastMessage.message} 📎`
                         : conversation.lastMessage?.message}
@@ -658,7 +660,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
             <div className="admin-modal-overlay">
               <div className="admin-new-message-modal">
                 <div className="admin-modal-header">
-                  <h3>New Message</h3>
+                  <h3>{t('trainerNotifications.newMessage')}</h3>
                   <button 
                     className="admin-close-btn"
                     onClick={() => {
@@ -674,14 +676,14 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
                 </div>
                 <div className="admin-modal-body">
                   <div className="admin-user-selection">
-                    <label>Select User(s):</label>
+                    <label>{t('adminNotifications.selectUsers')}:</label>
                     
                     {/* User Search Bar */}
                     <div className="admin-user-search-container">
                       <div className="admin-user-search-bar">
                         <input
                           type="text"
-                          placeholder="Search users by name..."
+                          placeholder={t('adminNotifications.searchUsersByName')}
                           value={userSearchQuery}
                           onChange={(e) => setUserSearchQuery(e.target.value)}
                           className="admin-user-search-input"
@@ -690,7 +692,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
                           <button 
                             className="admin-user-search-clear"
                             onClick={clearUserSearch}
-                            title="Clear search"
+                            title={t('trainerNotifications.clearAdminSearch')}
                           >
                             ×
                           </button>
@@ -700,19 +702,40 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
                       {userSearchQuery && (
                         <div className="admin-user-search-results-info">
                           {filteredUsers.length === 0 
-                            ? "No users found matching your search" 
-                            : `Found ${filteredUsers.length} user${filteredUsers.length === 1 ? '' : 's'}`
+                            ? t('adminNotifications.noUsersFound')
+                            : `${t('trainerNotifications.foundAdmins')} ${filteredUsers.length} user${filteredUsers.length === 1 ? '' : 's'}`
                           }
                         </div>
                       )}
                     </div>
                     
-                    <div className="admin-user-checkboxes">
+                   <div className="admin-user-checkboxes">
+                      {/* הוספת Select All checkbox */}
+                      <label className="admin-checkbox-label select-all-label">
+                        <input
+                          type="checkbox"
+                          checked={filteredUsers.length > 0 && selectedUsers.length === filteredUsers.length}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              // Select all filtered users
+                              setSelectedUsers(filteredUsers.map(user => user.id));
+                            } else {
+                              // Deselect all
+                              setSelectedUsers([]);
+                            }
+                          }}
+                          disabled={filteredUsers.length === 0}
+                        />
+                        <span className="admin-user-details select-all-text">
+                          <strong>{t('trainerNotifications.selectAll')} ({filteredUsers.length})</strong>
+                        </span>
+                      </label>
+
                       {filteredUsers.length === 0 && userSearchQuery ? (
                         <div className="admin-no-users-found">
-                          <p>No users found matching "{userSearchQuery}"</p>
+                          <p>{t('adminNotifications.noUsersFound')} "{userSearchQuery}"</p>
                           <button onClick={clearUserSearch} className="admin-clear-user-search-btn">
-                            Clear search
+                            {t('trainerNotifications.clearAdminSearch')}
                           </button>
                         </div>
                       ) : (
@@ -741,16 +764,16 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
                     </div>
                   </div>
                   <div className="admin-message-input">
-                    <label>Message:</label>
+                    <label>{t('trainerNotifications.message')}:</label>
                     <textarea
                       value={newMessageText}
                       onChange={(e) => setNewMessageText(e.target.value)}
-                      placeholder="Type your message here..."
+                      placeholder={t('trainerNotifications.messagePlaceholder')}
                       rows="4"
                     />
                   </div>
                   <div className="admin-file-input">
-                    <label>Attach File (optional):</label>
+                    <label>{t('trainerNotifications.attachFile')}</label>
                     <input
                       type="file"
                       onChange={(e) => setSelectedNewMessageFile(e.target.files[0])}
@@ -779,14 +802,14 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
                       if (fileInput) fileInput.value = '';
                     }}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                   <button 
                     className="admin-send-btn"
                     onClick={sendNewMessage}
                     disabled={(!newMessageText.trim() && !selectedNewMessageFile) || selectedUsers.length === 0 || fileUploading}
                   >
-                    {fileUploading ? 'Uploading...' : 'Send Message'}
+                    {fileUploading ? t('trainerNotifications.uploading') : t('trainerNotifications.sendMessage')}
                   </button>
                 </div>
               </div>
@@ -800,7 +823,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
               className="admin-back-btn"
               onClick={() => setSelectedConversation(null)}
             >
-              ← Back
+              ← {t('trainerNotifications.back')}
             </button>
             <div className="admin-chat-user-info">
               <h3>{getUserDisplayName(selectedConversation.user)}</h3>
@@ -850,7 +873,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type your message..."
+                placeholder={t('trainerNotifications.typeMessage')}
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                 className="message-text-input"
               />
@@ -861,7 +884,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
                 style={{ display: 'none' }}
                 id="chatFileInput"
               />
-              <label htmlFor="chatFileInput" className="file-select-button" title="Attach file">
+              <label htmlFor="chatFileInput" className="file-select-button" title={t('trainerNotifications.attachFileBtn')}>
                 📎
               </label>
             </div>
@@ -876,7 +899,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
               disabled={(!newMessage.trim() && !selectedFile) || fileUploading}
               className="send-message-button"
             >
-              {fileUploading ? 'Uploading...' : 'Send'}
+              {fileUploading ? t('trainerNotifications.uploading') : t('trainerNotifications.send')}
             </button>
           </div>
         </div>
