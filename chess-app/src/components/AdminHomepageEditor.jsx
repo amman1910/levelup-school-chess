@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { db, storage } from '../firebase';
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import './AdminHomepageEditor.css';
 
 const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
   // State for all collections
   const [newsList, setNewsList] = useState([]);
   const [eventsList, setEventsList] = useState([]);
@@ -93,7 +95,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
       setNewsList(news);
     } catch (err) {
       console.error('Failed to fetch news:', err);
-      error('Failed to load news.');
+      error(t('adminHomepage.failedToLoadNews'));
     }
   };
 
@@ -107,7 +109,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
       setEventsList(events);
     } catch (err) {
       console.error('Failed to fetch events:', err);
-      error('Failed to load events.');
+      error(t('adminHomepage.failedToLoadEvents'));
     }
   };
 
@@ -121,7 +123,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
       setGalleryList(gallery);
     } catch (err) {
       console.error('Failed to fetch gallery:', err);
-      error('Failed to load gallery.');
+      error(t('adminHomepage.failedToLoadGallery'));
     }
   };
 
@@ -130,7 +132,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     try {
       await Promise.all([fetchNews(), fetchEvents(), fetchGallery()]);
     } catch (err) {
-      error('Failed to load data.');
+      error(t('adminHomepage.failedToLoadData'));
     } finally {
       setLoading(false);
     }
@@ -144,7 +146,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
   const handleImageChange = (section, file) => {
     if (file) {
       if (!file.type.startsWith('image/')) {
-        error('Please select a valid image file.');
+        error(t('adminHomepage.selectValidImage'));
         return;
       }
       setSelectedImages(prev => ({ ...prev, [section]: file }));
@@ -163,7 +165,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
   const handleNewsSubmit = async (e) => {
     e.preventDefault();
     if (!newsForm.title.trim() || !newsForm.description.trim()) {
-      error('Please fill in title and description.');
+      error(t('adminHomepage.fillTitleDescription'));
       return;
     }
 
@@ -204,10 +206,10 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
       setSelectedImages(prev => ({ ...prev, news: null }));
       setImagePreviews(prev => ({ ...prev, news: null }));
       
-      success('News item added successfully!');
+      success(t('adminHomepage.newsItemAdded'));
     } catch (err) {
       console.error('Error adding news:', err);
-      error('Failed to add news item.');
+      error(t('adminHomepage.failedToAddNews'));
     } finally {
       setLoading(false);
     }
@@ -217,7 +219,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
   const handleEventsSubmit = async (e) => {
     e.preventDefault();
     if (!eventsForm.title.trim() || !eventsForm.description.trim() || !eventsForm.date || !eventsForm.location.trim()) {
-      error('Please fill in all required fields.');
+      error(t('adminHomepage.fillAllRequiredFields'));
       return;
     }
 
@@ -264,10 +266,10 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
       setSelectedImages(prev => ({ ...prev, events: null }));
       setImagePreviews(prev => ({ ...prev, events: null }));
       
-      success('Event added successfully!');
+      success(t('adminHomepage.eventAdded'));
     } catch (err) {
       console.error('Error adding event:', err);
-      error('Failed to add event.');
+      error(t('adminHomepage.failedToAddEvent'));
     } finally {
       setLoading(false);
     }
@@ -277,7 +279,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
   const handleGallerySubmit = async (e) => {
     e.preventDefault();
     if (!selectedImages.gallery || !galleryForm.title.trim()) {
-      error('Please fill in title and select an image.');
+      error(t('adminHomepage.fillTitleSelectImage'));
       return;
     }
 
@@ -311,10 +313,10 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
       setSelectedImages(prev => ({ ...prev, gallery: null }));
       setImagePreviews(prev => ({ ...prev, gallery: null }));
       
-      success('Gallery image added successfully!');
+      success(t('adminHomepage.galleryImageAdded'));
     } catch (err) {
       console.error('Error adding gallery image:', err);
-      error('Failed to add gallery image.');
+      error(t('adminHomepage.failedToAddGallery'));
     } finally {
       setLoading(false);
     }
@@ -333,11 +335,11 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     }
 
     if (!itemToDelete) {
-      error(`${section.charAt(0).toUpperCase() + section.slice(1)} item not found`);
+      error(`${section.charAt(0).toUpperCase() + section.slice(1)} ${t('adminHomepage.itemNotFound')}`);
       return;
     }
 
-    if (!window.confirm(`Are you sure you want to delete the ${section} item "${itemToDelete.title}"?`)) return;
+    if (!window.confirm(t('adminHomepage.confirmDelete', { section, title: itemToDelete.title }))) return;
 
     setLoading(true);
     try {
@@ -371,10 +373,10 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
         setGalleryList(prev => prev.filter(item => item.id !== id));
       }
       
-      success(`${section.charAt(0).toUpperCase() + section.slice(1)} item deleted successfully!`);
+      success(t('adminHomepage.itemDeleted', { section: section.charAt(0).toUpperCase() + section.slice(1) }));
     } catch (err) {
       console.error(`Error deleting ${section}:`, err);
-      error(`Failed to delete ${section} item.`);
+      error(t('adminHomepage.failedToDelete', { section }));
     } finally {
       setLoading(false);
     }
@@ -404,7 +406,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
   const handleEditSave = async (section, id) => {
     const data = editData[section];
     if (!data.title.trim()) {
-      error('Please fill in required fields.');
+      error(t('adminHomepage.fillRequiredFields'));
       return;
     }
 
@@ -419,7 +421,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     }
 
     if (!itemToEdit) {
-      error(`${section.charAt(0).toUpperCase() + section.slice(1)} item not found`);
+      error(`${section.charAt(0).toUpperCase() + section.slice(1)} ${t('adminHomepage.itemNotFound')}`);
       return;
     }
 
@@ -429,13 +431,13 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
       
       if (section === 'news') {
         if (!data.description.trim()) {
-          error('Please fill in all fields.');
+          error(t('adminHomepage.fillAllFields'));
           return;
         }
         updateData.description = data.description.trim();
       } else if (section === 'events') {
         if (!data.description.trim() || !data.date || !data.location.trim()) {
-          error('Please fill in all fields.');
+          error(t('adminHomepage.fillAllFields'));
           return;
         }
         updateData.description = data.description.trim();
@@ -471,10 +473,10 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
       }
 
       setEditingItems(prev => ({ ...prev, [section]: null }));
-      success(`${section.charAt(0).toUpperCase() + section.slice(1)} item updated successfully!`);
+      success(t('adminHomepage.itemUpdated', { section: section.charAt(0).toUpperCase() + section.slice(1) }));
     } catch (err) {
       console.error(`Error updating ${section}:`, err);
-      error(`Failed to update ${section} item.`);
+      error(t('adminHomepage.failedToUpdate', { section }));
     } finally {
       setLoading(false);
     }
@@ -531,22 +533,22 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
   const renderNewsSection = () => (
     <>
       <div className="content-section">
-        <h3>Add New News Item</h3>
+        <h3>{t('adminHomepage.addNewNewsItem')}</h3>
         <form onSubmit={handleNewsSubmit} className="content-form">
           <div className="form-row">
             <div className="input-group">
-              <label>Title (Required):</label>
+              <label>{t('adminHomepage.titleRequired')}:</label>
               <input
                 type="text"
                 value={newsForm.title}
                 onChange={(e) => setNewsForm({...newsForm, title: e.target.value})}
-                placeholder="Enter news title"
+                placeholder={t('adminHomepage.enterNewsTitle')}
                 className="form-input"
                 required
               />
             </div>
             <div className="input-group">
-              <label>Image (Optional):</label>
+              <label>{t('adminHomepage.imageOptional')}:</label>
               <input
                 type="file"
                 accept="image/*"
@@ -557,11 +559,11 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
           </div>
 
           <div className="input-group">
-            <label>Description (Required):</label>
+            <label>{t('adminHomepage.descriptionRequired')}:</label>
             <textarea
               value={newsForm.description}
               onChange={(e) => setNewsForm({...newsForm, description: e.target.value})}
-              placeholder="Enter news description"
+              placeholder={t('adminHomepage.enterNewsDescription')}
               className="form-textarea"
               rows="3"
               required
@@ -570,7 +572,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
 
           {imagePreviews.news && (
             <div className="image-preview">
-              <h4>Image Preview:</h4>
+              <h4>{t('adminHomepage.imagePreview')}:</h4>
               <img src={imagePreviews.news} alt="Preview" className="preview-image" />
             </div>
           )}
@@ -580,18 +582,18 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
             disabled={loading}
             className="submit-btn"
           >
-            {loading ? 'Adding...' : 'Add News Item'}
+            {loading ? t('adminHomepage.adding') + '...' : t('adminHomepage.addNewsItem')}
           </button>
         </form>
       </div>
 
       <div className="content-list-section">
         <div className="section-header">
-          <h3>News Items ({newsList.length})</h3>
+          <h3>{t('adminHomepage.newsItems')} ({newsList.length})</h3>
           <div className="header-controls">
             <input
               type="text"
-              placeholder="Search news..."
+              placeholder={t('adminHomepage.searchNews')}
               value={searchQueries.news}
               onChange={(e) => setSearchQueries(prev => ({...prev, news: e.target.value}))}
               className="search-input"
@@ -601,10 +603,10 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
               onChange={(e) => setSortOptions(prev => ({...prev, news: e.target.value}))}
               className="sort-select"
             >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="alphabetical">A → Z</option>
-              <option value="reverse-alphabetical">Z → A</option>
+              <option value="newest">{t('adminHomepage.newestFirst')}</option>
+              <option value="oldest">{t('adminHomepage.oldestFirst')}</option>
+              <option value="alphabetical">{t('adminHomepage.alphabetical')}</option>
+              <option value="reverse-alphabetical">{t('adminHomepage.reverseAlphabetical')}</option>
             </select>
           </div>
         </div>
@@ -612,8 +614,8 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
         <div className="content-grid">
           {getSortedItems(getFilteredItems(newsList, searchQueries.news), sortOptions.news).length === 0 ? (
             <div className="empty-state">
-              <h4>No news items found</h4>
-              <p>{searchQueries.news ? 'No news items match your search criteria.' : 'No news items have been added yet.'}</p>
+              <h4>{t('adminHomepage.noNewsItemsFound')}</h4>
+              <p>{searchQueries.news ? t('adminHomepage.noNewsMatchSearch') : t('adminHomepage.noNewsAdded')}</p>
             </div>
           ) : (
             getSortedItems(getFilteredItems(newsList, searchQueries.news), sortOptions.news).map(item => (
@@ -634,7 +636,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                           news: { ...prev.news, title: e.target.value } 
                         }))}
                         className="edit-input"
-                        placeholder="Edit title"
+                        placeholder={t('adminHomepage.editTitle')}
                       />
                       <textarea
                         value={editData.news.description}
@@ -644,7 +646,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                         }))}
                         className="edit-textarea"
                         rows="2"
-                        placeholder="Edit description"
+                        placeholder={t('adminHomepage.editDescription')}
                       />
                       <div className="edit-actions">
                         <button 
@@ -652,13 +654,13 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                           className="save-btn"
                           disabled={loading}
                         >
-                          Save
+                          {t('common.save')}
                         </button>
                         <button 
                           onClick={() => setEditingItems(prev => ({ ...prev, news: null }))}
                           className="cancel-btn"
                         >
-                          Cancel
+                          {t('common.cancel')}
                         </button>
                       </div>
                     </div>
@@ -672,14 +674,14 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                           className="edit-btn" 
                           onClick={() => startEditing('news', item)}
                         >
-                          Edit
+                          {t('common.edit')}
                         </button>
                         <button
                           className="delete-btn"
                           onClick={() => handleDelete('news', item.id, item.imageUrl)}
                           disabled={loading}
                         >
-                          Delete
+                          {t('common.delete')}
                         </button>
                       </div>
                     </>
@@ -696,22 +698,22 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
   const renderEventsSection = () => (
     <>
       <div className="content-section">
-        <h3>Add New Event</h3>
+        <h3>{t('adminHomepage.addNewEvent')}</h3>
         <form onSubmit={handleEventsSubmit} className="content-form">
           <div className="form-row">
             <div className="input-group">
-              <label>Title (Required):</label>
+              <label>{t('adminHomepage.titleRequired')}:</label>
               <input
                 type="text"
                 value={eventsForm.title}
                 onChange={(e) => setEventsForm({...eventsForm, title: e.target.value})}
-                placeholder="Enter event title"
+                placeholder={t('adminHomepage.enterEventTitle')}
                 className="form-input"
                 required
               />
             </div>
             <div className="input-group">
-              <label>Date (Required):</label>
+              <label>{t('adminHomepage.dateRequired')}:</label>
               <input
                 type="date"
                 value={eventsForm.date}
@@ -724,35 +726,34 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
 
           <div className="form-row">
             <div className="input-group">
-              <label>Location (Required):</label>
+              <label>{t('adminHomepage.locationRequired')}:</label>
               <input
                 type="text"
                 value={eventsForm.location}
                 onChange={(e) => setEventsForm({...eventsForm, location: e.target.value})}
-                placeholder="Enter event location"
+                placeholder={t('adminHomepage.enterEventLocation')}
                 className="form-input"
                 required
               />
             </div>
             <div className="input-group">
-  <label>Event Type (Required):</label>
-  <select
-    value={eventsForm.type}
-    onChange={(e) => setEventsForm({ ...eventsForm, type: e.target.value })}
-    className="form-input"
-    required
-  >
-    <option value="">Select Type</option>
-    <option value="tournament">Tournament</option>
-    <option value="course">Course</option>
-
-    <option value="workshop">Workshop</option>
-    <option value="other">Other</option>
-  </select>
-</div>
+              <label>{t('adminHomepage.eventTypeRequired')}:</label>
+              <select
+                value={eventsForm.type}
+                onChange={(e) => setEventsForm({ ...eventsForm, type: e.target.value })}
+                className="form-input"
+                required
+              >
+                <option value="">{t('adminHomepage.selectType')}</option>
+                <option value="tournament">{t('adminHomepage.tournament')}</option>
+                <option value="course">{t('adminHomepage.course')}</option>
+                <option value="workshop">{t('adminHomepage.workshop')}</option>
+                <option value="other">{t('adminHomepage.other')}</option>
+              </select>
+            </div>
 
             <div className="input-group">
-              <label>Image (Optional):</label>
+              <label>{t('adminHomepage.imageOptional')}:</label>
               <input
                 type="file"
                 accept="image/*"
@@ -763,11 +764,11 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
           </div>
 
           <div className="input-group">
-            <label>Description (Required):</label>
+            <label>{t('adminHomepage.descriptionRequired')}:</label>
             <textarea
               value={eventsForm.description}
               onChange={(e) => setEventsForm({...eventsForm, description: e.target.value})}
-              placeholder="Enter event description"
+              placeholder={t('adminHomepage.enterEventDescription')}
               className="form-textarea"
               rows="3"
               required
@@ -776,7 +777,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
 
           {imagePreviews.events && (
             <div className="image-preview">
-              <h4>Image Preview:</h4>
+              <h4>{t('adminHomepage.imagePreview')}:</h4>
               <img src={imagePreviews.events} alt="Preview" className="preview-image" />
             </div>
           )}
@@ -786,18 +787,18 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
             disabled={loading}
             className="submit-btn"
           >
-            {loading ? 'Adding...' : 'Add Event'}
+            {loading ? t('adminHomepage.adding') + '...' : t('adminHomepage.addEvent')}
           </button>
         </form>
       </div>
 
       <div className="content-list-section">
         <div className="section-header">
-          <h3>Events ({eventsList.length})</h3>
+          <h3>{t('adminHomepage.events')} ({eventsList.length})</h3>
           <div className="header-controls">
             <input
               type="text"
-              placeholder="Search events..."
+              placeholder={t('adminHomepage.searchEvents')}
               value={searchQueries.events}
               onChange={(e) => setSearchQueries(prev => ({...prev, events: e.target.value}))}
               className="search-input"
@@ -807,10 +808,10 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
               onChange={(e) => setSortOptions(prev => ({...prev, events: e.target.value}))}
               className="sort-select"
             >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="alphabetical">A → Z</option>
-              <option value="reverse-alphabetical">Z → A</option>
+              <option value="newest">{t('adminHomepage.newestFirst')}</option>
+              <option value="oldest">{t('adminHomepage.oldestFirst')}</option>
+              <option value="alphabetical">{t('adminHomepage.alphabetical')}</option>
+              <option value="reverse-alphabetical">{t('adminHomepage.reverseAlphabetical')}</option>
             </select>
           </div>
         </div>
@@ -818,8 +819,8 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
         <div className="content-grid">
           {getSortedItems(getFilteredItems(eventsList, searchQueries.events), sortOptions.events).length === 0 ? (
             <div className="empty-state">
-              <h4>No events found</h4>
-              <p>{searchQueries.events ? 'No events match your search criteria.' : 'No events have been added yet.'}</p>
+              <h4>{t('adminHomepage.noEventsFound')}</h4>
+              <p>{searchQueries.events ? t('adminHomepage.noEventsMatchSearch') : t('adminHomepage.noEventsAdded')}</p>
             </div>
           ) : (
             getSortedItems(getFilteredItems(eventsList, searchQueries.events), sortOptions.events).map(item => (
@@ -840,7 +841,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                           events: { ...prev.events, title: e.target.value } 
                         }))}
                         className="edit-input"
-                        placeholder="Edit title"
+                        placeholder={t('adminHomepage.editTitle')}
                       />
                       <input
                         type="date"
@@ -859,7 +860,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                           events: { ...prev.events, location: e.target.value } 
                         }))}
                         className="edit-input"
-                        placeholder="Edit location"
+                        placeholder={t('adminHomepage.editLocation')}
                       />
                       <textarea
                         value={editData.events.description}
@@ -869,7 +870,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                         }))}
                         className="edit-textarea"
                         rows="2"
-                        placeholder="Edit description"
+                        placeholder={t('adminHomepage.editDescription')}
                       />
                       <div className="edit-actions">
                         <button 
@@ -877,13 +878,13 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                           className="save-btn"
                           disabled={loading}
                         >
-                          Save
+                          {t('common.save')}
                         </button>
                         <button 
                           onClick={() => setEditingItems(prev => ({ ...prev, events: null }))}
                           className="cancel-btn"
                         >
-                          Cancel
+                          {t('common.cancel')}
                         </button>
                       </div>
                     </div>
@@ -893,7 +894,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                       <div className="event-meta">
                         <p className="event-date">📅 {formatDate(item.date)}</p>
                         <p className="event-location">📍 {item.location}</p>
-                        <p className="upload-date">⬆️ Uploaded: {formatDate(item.uploadedAt)}</p>
+                        <p className="upload-date">⬆️ {t('adminHomepage.uploaded')}: {formatDate(item.uploadedAt)}</p>
                       </div>
                       <p className="content-description">{item.description}</p>
                       <div className="content-actions">
@@ -901,14 +902,14 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                           className="edit-btn" 
                           onClick={() => startEditing('events', item)}
                         >
-                          Edit
+                          {t('common.edit')}
                         </button>
                         <button
                           className="delete-btn"
                           onClick={() => handleDelete('events', item.id, item.imageUrl)}
                           disabled={loading}
                         >
-                          Delete
+                          {t('common.delete')}
                         </button>
                       </div>
                     </>
@@ -925,22 +926,22 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
   const renderGallerySection = () => (
     <>
       <div className="content-section">
-        <h3>Add New Gallery Image</h3>
+        <h3>{t('adminHomepage.addNewGalleryImage')}</h3>
         <form onSubmit={handleGallerySubmit} className="content-form">
           <div className="form-row">
             <div className="input-group">
-              <label>Title (Required):</label>
+              <label>{t('adminHomepage.titleRequired')}:</label>
               <input
                 type="text"
                 value={galleryForm.title}
                 onChange={(e) => setGalleryForm({...galleryForm, title: e.target.value})}
-                placeholder="Enter image title"
+                placeholder={t('adminHomepage.enterImageTitle')}
                 className="form-input"
                 required
               />
             </div>
             <div className="input-group">
-              <label>Image (Required):</label>
+              <label>{t('adminHomepage.imageRequired')}:</label>
               <input
                 type="file"
                 accept="image/*"
@@ -953,7 +954,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
 
           {imagePreviews.gallery && (
             <div className="image-preview">
-              <h4>Image Preview:</h4>
+              <h4>{t('adminHomepage.imagePreview')}:</h4>
               <img src={imagePreviews.gallery} alt="Preview" className="preview-image" />
             </div>
           )}
@@ -963,18 +964,18 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
             disabled={loading}
             className="submit-btn"
           >
-            {loading ? 'Adding...' : 'Add Gallery Image'}
+            {loading ? t('adminHomepage.adding') + '...' : t('adminHomepage.addGalleryImage')}
           </button>
         </form>
       </div>
 
       <div className="content-list-section">
         <div className="section-header">
-          <h3>Gallery Images ({galleryList.length})</h3>
+          <h3>{t('adminHomepage.galleryImages')} ({galleryList.length})</h3>
           <div className="header-controls">
             <input
               type="text"
-              placeholder="Search gallery..."
+              placeholder={t('adminHomepage.searchGallery')}
               value={searchQueries.gallery}
               onChange={(e) => setSearchQueries(prev => ({...prev, gallery: e.target.value}))}
               className="search-input"
@@ -984,10 +985,10 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
               onChange={(e) => setSortOptions(prev => ({...prev, gallery: e.target.value}))}
               className="sort-select"
             >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="alphabetical">A → Z</option>
-              <option value="reverse-alphabetical">Z → A</option>
+              <option value="newest">{t('adminHomepage.newestFirst')}</option>
+              <option value="oldest">{t('adminHomepage.oldestFirst')}</option>
+              <option value="alphabetical">{t('adminHomepage.alphabetical')}</option>
+              <option value="reverse-alphabetical">{t('adminHomepage.reverseAlphabetical')}</option>
             </select>
           </div>
         </div>
@@ -995,8 +996,8 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
         <div className="gallery-grid">
           {getSortedItems(getFilteredItems(galleryList, searchQueries.gallery), sortOptions.gallery).length === 0 ? (
             <div className="empty-state">
-              <h4>No gallery images found</h4>
-              <p>{searchQueries.gallery ? 'No images match your search criteria.' : 'No gallery images have been added yet.'}</p>
+              <h4>{t('adminHomepage.noGalleryImagesFound')}</h4>
+              <p>{searchQueries.gallery ? t('adminHomepage.noImagesMatchSearch') : t('adminHomepage.noGalleryImagesAdded')}</p>
             </div>
           ) : (
             getSortedItems(getFilteredItems(galleryList, searchQueries.gallery), sortOptions.gallery).map(item => (
@@ -1015,7 +1016,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                           gallery: { ...prev.gallery, title: e.target.value } 
                         }))}
                         className="edit-input"
-                        placeholder="Edit title"
+                        placeholder={t('adminHomepage.editTitle')}
                       />
                       <div className="edit-actions">
                         <button 
@@ -1023,13 +1024,13 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                           className="save-btn"
                           disabled={loading}
                         >
-                          Save
+                          {t('common.save')}
                         </button>
                         <button 
                           onClick={() => setEditingItems(prev => ({ ...prev, gallery: null }))}
                           className="cancel-btn"
                         >
-                          Cancel
+                          {t('common.cancel')}
                         </button>
                       </div>
                     </div>
@@ -1042,20 +1043,20 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
                           className="view-btn" 
                           onClick={() => openImageViewer(item)}
                         >
-                          View
+                          {t('adminHomepage.view')}
                         </button>
                         <button 
                           className="edit-btn" 
                           onClick={() => startEditing('gallery', item)}
                         >
-                          Edit
+                          {t('common.edit')}
                         </button>
                         <button
                           className="delete-btn"
                           onClick={() => handleDelete('gallery', item.id, item.imageUrl)}
                           disabled={loading}
                         >
-                          Delete
+                          {t('common.delete')}
                         </button>
                       </div>
                     </>
@@ -1076,15 +1077,15 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
         <div className="homepage-stats">
           <div className="stat-card news">
             <div className="stat-number">{newsList.length}</div>
-            <div className="stat-label">News Items</div>
+            <div className="stat-label">{t('adminHomepage.newsItems')}</div>
           </div>
           <div className="stat-card events">
             <div className="stat-number">{eventsList.length}</div>
-            <div className="stat-label">Events</div>
+            <div className="stat-label">{t('adminHomepage.events')}</div>
           </div>
           <div className="stat-card gallery">
             <div className="stat-number">{galleryList.length}</div>
-            <div className="stat-label">Gallery Images</div>
+            <div className="stat-label">{t('adminHomepage.galleryImages')}</div>
           </div>
         </div>
       </div>
@@ -1095,19 +1096,19 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
           className={`nav-tab ${activeSection === 'news' ? 'active' : ''}`}
           onClick={() => setActiveSection('news')}
         >
-          📰 News Management
+          📰 {t('adminHomepage.newsManagement')}
         </button>
         <button 
           className={`nav-tab ${activeSection === 'events' ? 'active' : ''}`}
           onClick={() => setActiveSection('events')}
         >
-          📅 Events Management
+          📅 {t('adminHomepage.eventsManagement')}
         </button>
         <button 
           className={`nav-tab ${activeSection === 'gallery' ? 'active' : ''}`}
           onClick={() => setActiveSection('gallery')}
         >
-          🖼️ Gallery Management
+          🖼️ {t('adminHomepage.galleryManagement')}
         </button>
       </div>
 
