@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, LabelList
 } from 'recharts';
 import './AdminAnalyticsOverview.css';
 
 const AdminAttendanceTrends = ({ sessions, classes }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+  
   const [chartData, setChartData] = useState([]);
   const [selectedSchool, setSelectedSchool] = useState('');
   const [allSchools, setAllSchools] = useState([]);
@@ -57,17 +60,17 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
 
   return (
     <div className="trainer-analytics-page">
-      <h2>Attendance Trends</h2>
-      <p className="subtitle">Analyze attendance rates, class sizes, and session coverage by school</p>
+      <h2>{t('adminAttendanceTrends.attendanceTrends')}</h2>
+      <p className="subtitle">{t('adminAttendanceTrends.analyzeAttendanceRates')}</p>
 
       {/* KPIs */}
       <div className="analytics-kpi-grid">
         <div className="kpi-card">
-          <div className="kpi-title">🍊 Total Classes</div>
+          <div className="kpi-title">🍊 {t('adminAttendanceTrends.totalClasses')}</div>
           <div className="kpi-value">{filteredChartData.length}</div>
         </div>
         <div className="kpi-card">
-          <div className="kpi-title">📈 Avg Attendance</div>
+          <div className="kpi-title">📈 {t('adminAttendanceTrends.avgAttendance')}</div>
           <div className="kpi-value">
             {filteredChartData.length > 0
               ? (
@@ -83,9 +86,9 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
       {/* Filters */}
       <div className="filters">
         <label>
-          School:
+          {t('adminAttendanceTrends.school')}
           <select value={selectedSchool} onChange={(e) => setSelectedSchool(e.target.value)}>
-            <option value="">All</option>
+            <option value="">{t('adminAttendanceTrends.all')}</option>
             {allSchools.map((school, idx) => (
               <option key={idx} value={school}>{school}</option>
             ))}
@@ -93,19 +96,21 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
         </label>
 
         <label>
-          Min Attendance (%):
+          {t('adminAttendanceTrends.minAttendancePercent')}
           <input
             type="number"
             value={minAttendance}
             onChange={(e) => setMinAttendance(Number(e.target.value))}
-            placeholder="e.g. 70"
+            placeholder={t('adminAttendanceTrends.attendanceExample')}
             min="0"
             max="100"
             style={{ width: '80px', marginLeft: '10px' }}
           />
         </label>
 
-        <button onClick={() => { setSelectedSchool(''); setMinAttendance(0); }}>Clear Filters</button>
+        <button onClick={() => { setSelectedSchool(''); setMinAttendance(0); }}>
+          {t('adminAttendanceTrends.clearFilters')}
+        </button>
       </div>
 
       {/* Table */}
@@ -113,12 +118,12 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
         <table className="trainer-table">
           <thead>
             <tr>
-              <th>Class</th>
-              <th>School</th>
-              <th>Sessions</th>
-              <th>Students</th>
-              <th>Present</th>
-              <th>Attendance %</th>
+              <th>{t('adminAttendanceTrends.class')}</th>
+              <th>{t('adminAttendanceTrends.schoolColumn')}</th>
+              <th>{t('adminAttendanceTrends.sessions')}</th>
+              <th>{t('adminAttendanceTrends.students')}</th>
+              <th>{t('adminAttendanceTrends.present')}</th>
+              <th>{t('adminAttendanceTrends.attendancePercent')}</th>
             </tr>
           </thead>
           <tbody>
@@ -142,7 +147,6 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
           <BarChart data={filteredChartData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="className" angle={-30} textAnchor="end" height={80} interval={0} tick={{ fontSize: 12 }} />
-
             <YAxis />
             <Tooltip />
             <Bar dataKey="attendancePercentage" fill="#5e3c8f">
@@ -156,7 +160,3 @@ const AdminAttendanceTrends = ({ sessions, classes }) => {
 };
 
 export default AdminAttendanceTrends;
-
-
-
-

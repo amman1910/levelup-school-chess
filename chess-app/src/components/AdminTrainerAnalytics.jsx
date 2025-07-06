@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useNavigate } from 'react-router-dom';
@@ -7,11 +8,12 @@ import logo from '../assets/logos/shahtranj_logo_gold.png';
 import './AdminAnalyticsOverview.css'; 
 
 const AdminTrainerAnalytics = ({ users, sessions }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+  
   const [filteredStats, setFilteredStats] = useState([]);
   const [selectedTrainer, setSelectedTrainer] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
-
 
   const navigate = useNavigate();
 
@@ -73,7 +75,7 @@ const handleExportPDF = () => {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(18);
   doc.setTextColor(40);
-  doc.text("Trainer Analytics Report", 50, 20);
+  doc.text(t('adminTrainerAnalytics.trainerAnalyticsReport'), 50, 20);
 
   doc.setDrawColor(94, 60, 143);
   doc.setLineWidth(0.5);
@@ -82,20 +84,27 @@ const handleExportPDF = () => {
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   doc.setTextColor(100);
-  doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 50, 28);
+  doc.text(`${t('adminTrainerAnalytics.generatedOn')} ${new Date().toLocaleDateString()}`, 50, 28);
 
-    const body = filteredStats.map(t => [
-      t.name,
-      t.email,
-      t.total,
-      t.completed,
-      `${t.percent}%`,
-      t.lastDate
+    const body = filteredStats.map(trainer => [
+      trainer.name,
+      trainer.email,
+      trainer.total,
+      trainer.completed,
+      `${trainer.percent}%`,
+      trainer.lastDate
     ]);
 
     autoTable(doc, {
       startY: 38,
-      head: [['Trainer Name', 'Email', 'Total Sessions', 'Completed', '% Completion', 'Last Session']],
+      head: [[
+        t('adminTrainerAnalytics.trainerName'), 
+        t('adminTrainerAnalytics.email'), 
+        t('adminTrainerAnalytics.totalSessions'), 
+        t('adminTrainerAnalytics.completed'), 
+        t('adminTrainerAnalytics.completionPercent'), 
+        t('adminTrainerAnalytics.lastSession')
+      ]],
       body,
       styles: { fontSize: 9, font: 'helvetica' },
       headStyles: { fillColor: [94, 60, 143], textColor: 255 },
@@ -107,13 +116,12 @@ const handleExportPDF = () => {
       doc.setPage(i);
       doc.setFontSize(9);
       doc.setTextColor(130);
-      doc.text(`Page ${i} of ${pageCount}`, 200, 290, { align: 'right' });
+      doc.text(t('adminTrainerAnalytics.pageOf', { current: i, total: pageCount }), 200, 290, { align: 'right' });
     }
 
     doc.save("Trainer_Analytics_Report.pdf");
   };
 };
-
 
   const resetFilters = () => {
     setSelectedTrainer('');
@@ -127,81 +135,81 @@ const handleExportPDF = () => {
 
   return (
     <div className="trainer-analytics-page">
-      <h2>Trainer Analytics</h2>
-      <p className="subtitle">Track performance and activity of trainers</p>
+      <h2>{t('adminTrainerAnalytics.trainerAnalytics')}</h2>
+      <p className="subtitle">{t('adminTrainerAnalytics.trackPerformance')}</p>
 
       <div className="analytics-kpi-grid">
         <div className="kpi-card">
-          <div className="kpi-title">🧑‍🏫 Total Trainers</div>
+          <div className="kpi-title">🧑‍🏫 {t('adminTrainerAnalytics.totalTrainers')}</div>
           <div className="kpi-value">{totalTrainers}</div>
         </div>
         <div className="kpi-card">
-          <div className="kpi-title">📆 Total Sessions</div>
+          <div className="kpi-title">📆 {t('adminTrainerAnalytics.totalSessions')}</div>
           <div className="kpi-value">{totalSessions}</div>
         </div>
         <div className="kpi-card">
-          <div className="kpi-title">✅ Avg Completion</div>
+          <div className="kpi-title">✅ {t('adminTrainerAnalytics.avgCompletion')}</div>
           <div className="kpi-value">{avgCompletion}%</div>
         </div>
       </div>
 
       <div className="filters">
         <label>
-          Trainer:
+          {t('adminTrainerAnalytics.trainer')}
           <select value={selectedTrainer} onChange={(e) => setSelectedTrainer(e.target.value)}>
-            <option value="">All</option>
-            {users.filter(u => u.role === 'trainer').map((t) => (
-              <option key={t.id} value={t.id}>{t.firstName} {t.lastName}</option>
+            <option value="">{t('adminTrainerAnalytics.all')}</option>
+            {users.filter(u => u.role === 'trainer').map((trainer) => (
+              <option key={trainer.id} value={trainer.id}>{trainer.firstName} {trainer.lastName}</option>
             ))}
           </select>
         </label>
 
         <label>
-          From:
+          {t('adminTrainerAnalytics.from')}
           <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
         </label>
         <label>
-          To:
+          {t('adminTrainerAnalytics.to')}
           <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
         </label>
 
-        <button onClick={resetFilters}>Clear Filters</button>
-        <button onClick={handleExportPDF}>📥 Export PDF</button>
+        <button onClick={resetFilters}>{t('adminTrainerAnalytics.clearFilters')}</button>
+        <button onClick={handleExportPDF}>📥 {t('adminTrainerAnalytics.exportPdf')}</button>
       </div>
 
       <div className="trainer-table-wrapper">
         <table className="trainer-table">
           <thead>
             <tr>
-              <th>Trainer Name</th>
-              <th>Email</th>
-              <th>Total Sessions</th>
-              <th>Completed</th>
-              <th>% Completion</th>
-              <th>Last Session</th>
-              <th>Details</th>
+              <th>{t('adminTrainerAnalytics.trainerName')}</th>
+              <th>{t('adminTrainerAnalytics.email')}</th>
+              <th>{t('adminTrainerAnalytics.totalSessions')}</th>
+              <th>{t('adminTrainerAnalytics.completed')}</th>
+              <th>{t('adminTrainerAnalytics.completionPercent')}</th>
+              <th>{t('adminTrainerAnalytics.lastSession')}</th>
+              <th>{t('adminTrainerAnalytics.details')}</th>
             </tr>
           </thead>
           <tbody>
             {filteredStats.length > 0 ? (
-              filteredStats.map((t, i) => (
+              filteredStats.map((trainer, i) => (
                 <tr key={i}>
-                  <td>{t.name}</td>
-                  <td>{t.email}</td>
-                  <td>{t.total}</td>
-                  <td>{t.completed}</td>
-                  <td>{t.percent}%</td>
-                  <td>{t.lastDate}</td>
+                  <td>{trainer.name}</td>
+                  <td>{trainer.email}</td>
+                  <td>{trainer.total}</td>
+                  <td>{trainer.completed}</td>
+                  <td>{trainer.percent}%</td>
+                  <td>{trainer.lastDate}</td>
                   <td>
-                    <button onClick={() => navigate(`/admin-area/analytics/trainers/${t.id}/sessions`)}>
-                      View Sessions
+                    <button onClick={() => navigate(`/admin-area/analytics/trainers/${trainer.id}/sessions`)}>
+                      {t('adminTrainerAnalytics.viewSessions')}
                     </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="7" style={{ textAlign: 'center' }}>No data found.</td>
+                <td colSpan="7" style={{ textAlign: 'center' }}>{t('adminTrainerAnalytics.noDataFound')}</td>
               </tr>
             )}
           </tbody>
@@ -212,4 +220,3 @@ const handleExportPDF = () => {
 };
 
 export default AdminTrainerAnalytics;
-

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import './AdminAnalyticsOverview.css';
 
 const AdminActivityLog = () => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+  
   const [logs, setLogs] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,11 +31,11 @@ const AdminActivityLog = () => {
   const formatRole = (role) => {
     switch(role) {
       case 'admin':
-        return 'Administrator';
+        return t('adminActivityLog.administrator');
       case 'trainer':
-        return 'Trainer';
+        return t('adminActivityLog.trainer');
       default:
-        return role || 'Unknown';
+        return role || t('adminActivityLog.unknown');
     }
   };
 
@@ -153,24 +156,24 @@ const AdminActivityLog = () => {
   if (loading) {
     return (
       <div className="trainer-analytics-page">
-        <h2>Admin Activity Log</h2>
-        <p className="subtitle">Loading activity logs...</p>
+        <h2>{t('adminActivityLog.activityLog')}</h2>
+        <p className="subtitle">{t('adminActivityLog.loadingActivityLogs')}</p>
       </div>
     );
   }
 
   return (
     <div className="trainer-analytics-page">
-      <h2>Activity Log</h2>
-      <p className="subtitle">View all user actions and changes ({logs.length} entries)</p>
+      <h2>{t('adminActivityLog.activityLog')}</h2>
+      <p className="subtitle">{t('adminActivityLog.viewAllUserActions', { count: logs.length })}</p>
 
       {/* Search and Filter Section */}
       <div className="filters">
         <label>
-          Search Users/Actions:
+          {t('adminActivityLog.searchUsersActions')}
           <input
             type="text"
-            placeholder="Search by user name, action, or description..."
+            placeholder={t('adminActivityLog.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{ minWidth: '300px' }}
@@ -178,7 +181,7 @@ const AdminActivityLog = () => {
         </label>
 
         <label>
-          Filter by Date:
+          {t('adminActivityLog.filterByDate')}
           <input
             type="date"
             value={dateFilter}
@@ -188,7 +191,7 @@ const AdminActivityLog = () => {
 
         {(searchQuery || dateFilter) && (
           <button onClick={clearFilters} style={{ backgroundColor: '#dc3545' }}>
-            Clear Filters
+            {t('adminActivityLog.clearFilters')}
           </button>
         )}
       </div>
@@ -203,9 +206,9 @@ const AdminActivityLog = () => {
           fontSize: '0.9rem',
           color: '#666'
         }}>
-          Showing {filteredLogs.length} of {logs.length} entries
-          {searchQuery && ` matching "${searchQuery}"`}
-          {dateFilter && ` on ${new Date(dateFilter).toLocaleDateString()}`}
+          {t('adminActivityLog.showingResults', { filtered: filteredLogs.length, total: logs.length })}
+          {searchQuery && ` ${t('adminActivityLog.matchingSearch', { query: searchQuery })}`}
+          {dateFilter && ` ${t('adminActivityLog.onDate', { date: new Date(dateFilter).toLocaleDateString() })}`}
         </div>
       )}
 
@@ -213,12 +216,12 @@ const AdminActivityLog = () => {
         <table className="trainer-table">
           <thead>
             <tr>
-              <th>Timestamp</th>
-              <th>User Name</th>
-              <th>Role</th>
-              <th>Action</th>
-              <th>Target Type</th>
-              <th>Description</th>
+              <th>{t('adminActivityLog.timestamp')}</th>
+              <th>{t('adminActivityLog.userName')}</th>
+              <th>{t('adminActivityLog.role')}</th>
+              <th>{t('adminActivityLog.action')}</th>
+              <th>{t('adminActivityLog.targetType')}</th>
+              <th>{t('adminActivityLog.description')}</th>
             </tr>
           </thead>
           <tbody>
@@ -228,7 +231,7 @@ const AdminActivityLog = () => {
                 return (
                   <tr key={i}>
                     <td>{formatDate(log.timestamp)}</td>
-                    <td>{log.adminName || 'Unknown User'}</td>
+                    <td>{log.adminName || t('adminActivityLog.unknownUser')}</td>
                     <td>
                       <span 
                         style={{ 
@@ -273,8 +276,8 @@ const AdminActivityLog = () => {
               <tr>
                 <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
                   {(searchQuery || dateFilter) 
-                    ? 'No activity logs match your search criteria.' 
-                    : 'No activity logs available.'
+                    ? t('adminActivityLog.noActivityLogsMatch')
+                    : t('adminActivityLog.noActivityLogsAvailable')
                   }
                 </td>
               </tr>
@@ -292,7 +295,7 @@ const AdminActivityLog = () => {
           border: '1px solid #e9ecef',
           minWidth: '140px'
         }}>
-          <strong>Total Actions:</strong> {logs.length}
+          <strong>{t('adminActivityLog.totalActions')}:</strong> {logs.length}
         </div>
         
         <div style={{ 
@@ -302,7 +305,7 @@ const AdminActivityLog = () => {
           border: '1px solid #e9ecef',
           minWidth: '140px'
         }}>
-          <strong>Filtered Results:</strong> {filteredLogs.length}
+          <strong>{t('adminActivityLog.filteredResults')}:</strong> {filteredLogs.length}
         </div>
         
         <div style={{ 
@@ -312,7 +315,7 @@ const AdminActivityLog = () => {
           border: '1px solid #e9ecef',
           minWidth: '140px'
         }}>
-          <strong>Admin Actions:</strong> {filteredLogs.filter(log => getUserRole(log.adminName) === 'admin').length}
+          <strong>{t('adminActivityLog.adminActions')}:</strong> {filteredLogs.filter(log => getUserRole(log.adminName) === 'admin').length}
         </div>
         
         <div style={{ 
@@ -322,7 +325,7 @@ const AdminActivityLog = () => {
           border: '1px solid #e9ecef',
           minWidth: '140px'
         }}>
-          <strong>Trainer Actions:</strong> {filteredLogs.filter(log => getUserRole(log.adminName) === 'trainer').length}
+          <strong>{t('adminActivityLog.trainerActions')}:</strong> {filteredLogs.filter(log => getUserRole(log.adminName) === 'trainer').length}
         </div>
         
         <div style={{ 
@@ -332,7 +335,7 @@ const AdminActivityLog = () => {
           border: '1px solid #e9ecef',
           minWidth: '140px'
         }}>
-          <strong>Active Users:</strong> {new Set(filteredLogs.map(log => log.adminName)).size}
+          <strong>{t('adminActivityLog.activeUsers')}:</strong> {new Set(filteredLogs.map(log => log.adminName)).size}
         </div>
       </div>
     </div>

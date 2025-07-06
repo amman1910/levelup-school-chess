@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { useNavigate } from 'react-router-dom';
 import './AdminAnalyticsOverview.css';
 
@@ -15,12 +16,13 @@ const AdminAnalyticsOverview = ({
   fetchClasses,
   fetchStudents
 }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
   const navigate = useNavigate();
 
   return (
     <div className="analytics-overview-page">
-      <h2>Admin Analytics Overview</h2>
-      <p className="subtitle-overview">Monitor and analyze platform activity</p>
+      <h2>{t('adminAnalytics.adminAnalyticsOverview')}</h2>
+      <p className="subtitle-overview">{t('adminAnalytics.monitorAndAnalyze')}</p>
 
       <div className="analytics-cards-grid">
         <div
@@ -30,8 +32,8 @@ const AdminAnalyticsOverview = ({
           <div className="icon-wrapper">
             <i className="fas fa-chart-line"></i>
           </div>
-          <h3>Trainer Analytics</h3>
-          <p>View trainer activity, performance, and report generation</p>
+          <h3>{t('adminAnalytics.trainerAnalytics')}</h3>
+          <p>{t('adminAnalytics.trainerAnalyticsDesc')}</p>
         </div>
 
         <div
@@ -41,8 +43,8 @@ const AdminAnalyticsOverview = ({
           <div className="icon-wrapper">
             <i className="fas fa-users"></i>
           </div>
-          <h3>Group Analytics</h3>
-          <p>Analyze group progress, attendance trends, and participation</p>
+          <h3>{t('adminAnalytics.groupAnalytics')}</h3>
+          <p>{t('adminAnalytics.groupAnalyticsDesc')}</p>
         </div>
 
         <div
@@ -52,14 +54,9 @@ const AdminAnalyticsOverview = ({
           <div className="icon-wrapper">
             <i className="fas fa-calendar-check"></i>
           </div>
-          <h3>Attendance Trends</h3>
-          <p>Track attendance patterns across all schools and classes</p>
+          <h3>{t('adminAnalytics.attendanceTrends')}</h3>
+          <p>{t('adminAnalytics.attendanceTrendsDesc')}</p>
         </div>
-       
-
-
-
-
 
         <div
           className="analytics-card"
@@ -68,8 +65,8 @@ const AdminAnalyticsOverview = ({
           <div className="icon-wrapper">
             <i className="fas fa-clipboard-list"></i>
           </div>
-          <h3>Users Activity Log</h3>
-          <p>View logs of all users actions and changes</p>
+          <h3>{t('adminAnalytics.usersActivityLog')}</h3>
+          <p>{t('adminAnalytics.usersActivityLogDesc')}</p>
         </div>
       </div>
     </div>
@@ -77,6 +74,3 @@ const AdminAnalyticsOverview = ({
 };
 
 export default AdminAnalyticsOverview;
-
-
-
