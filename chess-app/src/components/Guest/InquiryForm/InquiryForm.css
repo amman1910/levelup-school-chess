@@ -73,5 +73,22 @@
 
 
 
+.inquiry-language-switcher {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
 
+/* בתמיכה ל-RTL (ערבית) */
+[dir="rtl"] .inquiry-language-switcher {
+  right: auto;
+  left: 20px;
+}
+
+.inquiry-form-section {
+  position: relative;
+  min-height: 100vh;
+  padding: 20px;
+}
 
