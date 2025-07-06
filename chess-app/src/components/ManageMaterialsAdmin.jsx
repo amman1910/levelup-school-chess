@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { db, storage } from '../firebase';
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import './ManageMaterialsAdmin.css';
 
 const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+  
   const [users, setUsers] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -64,11 +67,11 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
   })).sort((a, b) => a.name.localeCompare(b.name));
 
   const materialTypes = [
-    { value: '', label: 'Select Type (Optional)' },
-    { value: 'Presentation', label: 'Presentation' },
-    { value: 'Document', label: 'Document' },
-    { value: 'Image', label: 'Image' },
-    { value: 'Video', label: 'Video' }
+    { value: '', label: t('adminMaterials.selectTypeOptional') },
+    { value: 'Presentation', label: t('adminMaterials.presentation') },
+    { value: 'Document', label: t('adminMaterials.document') },
+    { value: 'Image', label: t('adminMaterials.image') },
+    { value: 'Video', label: t('adminMaterials.video') }
   ];
 
   // Fetch users from database
@@ -82,7 +85,7 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
       setUsers(usersList);
     } catch (err) {
       console.error('Error fetching users:', err);
-      error('Failed to load users data');
+      error(t('adminMaterials.failedToLoadUsers'));
     }
   };
 
@@ -108,7 +111,7 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
       setMaterialList(materials);
     } catch (err) {
       console.error('Failed to fetch materials:', err);
-      error('Failed to load materials.');
+      error(t('adminMaterials.failedToLoadMaterials'));
     } finally {
       setLoading(false);
     }
@@ -181,12 +184,12 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
 
   const handleUpload = async () => {
     if (selectedFiles.length === 0) {
-      error('Please select at least one file.');
+      error(t('adminMaterials.pleaseSelectFiles'));
       return;
     }
 
     if (!formData.title.trim()) {
-      error('Please enter a title.');
+      error(t('adminMaterials.pleaseEnterTitle'));
       return;
     }
 
@@ -238,10 +241,10 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
       const fileInput = document.querySelector('.materials-file-input');
       if (fileInput) fileInput.value = '';
       
-      success(`Successfully uploaded ${newMaterials.length} material${newMaterials.length > 1 ? 's' : ''}`);
+      success(t('adminMaterials.uploadSuccess', { count: newMaterials.length }));
     } catch (err) {
       console.error('Error uploading:', err);
-      error('Upload failed');
+      error(t('adminMaterials.uploadFailed'));
     } finally {
       setLoading(false);
     }
@@ -270,7 +273,7 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
 
   const handleSaveEdit = async (materialId) => {
     if (!editData.title.trim()) {
-      error('Please enter a title.');
+      error(t('adminMaterials.pleaseEnterTitle'));
       return;
     }
 
@@ -305,10 +308,10 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
       setEditingId(null);
       setEditData({ title: '', description: '', type: '', trainerIdAccess: [] });
       
-      success('Material updated successfully');
+      success(t('adminMaterials.materialUpdatedSuccessfully'));
     } catch (err) {
       console.error('Failed to save changes:', err);
-      error('Failed to save changes.');
+      error(t('adminMaterials.failedToSaveChanges'));
     } finally {
       setLoading(false);
     }
@@ -323,11 +326,11 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
     // קבלת פרטי החומר לפני המחיקה
     const material = materialList.find(m => m.id === id);
     if (!material) {
-      error('Material not found');
+      error(t('adminMaterials.materialNotFound'));
       return;
     }
 
-    if (!window.confirm(`Are you sure you want to delete the material "${material.title}"?`)) return;
+    if (!window.confirm(t('adminMaterials.confirmDeleteMaterial', { title: material.title }))) return;
 
     setLoading(true);
     try {
@@ -352,10 +355,10 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
       );
 
       setMaterialList(prev => prev.filter(m => m.id !== id));
-      success('Material deleted successfully');
+      success(t('adminMaterials.materialDeletedSuccessfully'));
     } catch (err) {
       console.error('Error deleting material:', err);
-      error('Failed to delete material.');
+      error(t('adminMaterials.failedToDeleteMaterial'));
     } finally {
       setLoading(false);
     }
@@ -410,35 +413,35 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
         <div className="materials-stats">
           <div className="stat-card total">
             <div className="stat-number">{materialList.length}</div>
-            <div className="stat-label">Total Materials</div>
+            <div className="stat-label">{t('adminMaterials.totalMaterials')}</div>
           </div>
           <div className="stat-card trainers">
             <div className="stat-number">{trainers.length}</div>
-            <div className="stat-label">Available Trainers</div>
+            <div className="stat-label">{t('adminMaterials.availableTrainers')}</div>
           </div>
         </div>
       </div>
 
       {/* Upload Section */}
       <div className="materials-upload-section">
-        <h3>Upload New Learning Materials</h3>
+        <h3>{t('adminMaterials.uploadNewMaterials')}</h3>
         <div className="upload-area">
           <div className="form-row">
             <div className="input-group">
-              <label htmlFor="title">Title (Required):</label>
+              <label htmlFor="title">{t('adminMaterials.titleRequired')}:</label>
               <input
                 id="title"
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Enter material title"
+                placeholder={t('adminMaterials.enterMaterialTitle')}
                 className="form-input"
                 required
               />
             </div>
 
             <div className="input-group">
-              <label htmlFor="type">Type:</label>
+              <label htmlFor="type">{t('adminMaterials.type')}:</label>
               <select
                 id="type"
                 value={formData.type}
@@ -455,19 +458,19 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
           </div>
 
           <div className="input-group">
-            <label htmlFor="description">Description:</label>
+            <label htmlFor="description">{t('adminMaterials.description')}:</label>
             <textarea
               id="description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Enter material description (optional)"
+              placeholder={t('adminMaterials.enterMaterialDescription')}
               className="form-textarea"
               rows="3"
             />
           </div>
 
           <div className="input-group">
-            <label htmlFor="files">Files:</label>
+            <label htmlFor="files">{t('adminMaterials.files')}:</label>
             <input
               id="files"
               type="file"
@@ -480,7 +483,7 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
           {selectedFiles.length > 0 && (
             <>
               <div className="selected-files-preview">
-                <h4>Selected Files:</h4>
+                <h4>{t('adminMaterials.selectedFiles')}:</h4>
                 <div className="files-list">
                   {selectedFiles.map((file, index) => (
                     <div key={index} className="file-item">
@@ -493,7 +496,7 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
               </div>
 
               <div className="viewer-selection">
-                <h4>Select Trainers with Access:</h4>
+                <h4>{t('adminMaterials.selectTrainersWithAccess')}:</h4>
                 <div className="viewers-grid">
                   {trainers.map(user => (
                     <label key={user.id} className="viewer-checkbox">
@@ -513,7 +516,7 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
                 disabled={loading || !formData.title.trim()}
                 className="upload-btn"
               >
-                {loading ? 'Uploading...' : `Upload ${selectedFiles.length} File${selectedFiles.length > 1 ? 's' : ''}`}
+                {loading ? t('adminMaterials.uploading') + '...' : t('adminMaterials.uploadFiles', { count: selectedFiles.length })}
               </button>
             </>
           )}
@@ -523,11 +526,11 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
       {/* Materials List */}
       <div className="materials-list-section">
         <div className="section-header">
-          <h3>Learning Materials Library ({sortedMaterials.length})</h3>
+          <h3>{t('adminMaterials.materialsLibrary', { count: sortedMaterials.length })}</h3>
           <div className="header-controls">
             <input
               type="text"
-              placeholder="Search materials..."
+              placeholder={t('adminMaterials.searchMaterials')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input"
@@ -537,21 +540,21 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
               onChange={(e) => setTypeFilter(e.target.value)}
               className="filter-select"
             >
-              <option value="">All Types</option>
-              <option value="Presentation">Presentations</option>
-              <option value="Document">Documents</option>
-              <option value="Image">Images</option>
-              <option value="Video">Videos</option>
+              <option value="">{t('adminMaterials.allTypes')}</option>
+              <option value="Presentation">{t('adminMaterials.presentations')}</option>
+              <option value="Document">{t('adminMaterials.documents')}</option>
+              <option value="Image">{t('adminMaterials.images')}</option>
+              <option value="Video">{t('adminMaterials.videos')}</option>
             </select>
             <select 
               value={sortOption} 
               onChange={(e) => setSortOption(e.target.value)}
               className="sort-select"
             >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="alphabetical">A → Z</option>
-              <option value="reverse-alphabetical">Z → A</option>
+              <option value="newest">{t('adminMaterials.newestFirst')}</option>
+              <option value="oldest">{t('adminMaterials.oldestFirst')}</option>
+              <option value="alphabetical">{t('adminMaterials.alphabetical')}</option>
+              <option value="reverse-alphabetical">{t('adminMaterials.reverseAlphabetical')}</option>
             </select>
           </div>
         </div>
@@ -559,8 +562,8 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
         {(searchQuery || typeFilter) && (
           <div className="search-results-info">
             {filteredMaterials.length === 0 
-              ? "No materials found matching your criteria" 
-              : `Found ${filteredMaterials.length} material${filteredMaterials.length === 1 ? '' : 's'}`
+              ? t('adminMaterials.noMaterialsMatchCriteria')
+              : t('adminMaterials.foundMaterials', { count: filteredMaterials.length })
             }
           </div>
         )}
@@ -569,13 +572,13 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
           <div className="empty-state">
             {(searchQuery || typeFilter) ? (
               <>
-                <h4>No materials found</h4>
-                <p>No materials match your search criteria.</p>
+                <h4>{t('adminMaterials.noMaterialsFound')}</h4>
+                <p>{t('adminMaterials.noMaterialsMatchSearch')}</p>
               </>
             ) : (
               <>
-                <h4>No materials uploaded</h4>
-                <p>Upload your first learning material using the form above.</p>
+                <h4>{t('adminMaterials.noMaterialsUploaded')}</h4>
+                <p>{t('adminMaterials.uploadFirstMaterial')}</p>
               </>
             )}
           </div>
@@ -600,17 +603,17 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
                     <div className="edit-form">
                       <div className="edit-row">
                         <div className="edit-group">
-                          <label>Title:</label>
+                          <label>{t('adminMaterials.title')}:</label>
                           <input
                             type="text"
                             value={editData.title}
                             onChange={(e) => setEditData(prev => ({ ...prev, title: e.target.value }))}
                             className="edit-input"
-                            placeholder="Material title"
+                            placeholder={t('adminMaterials.materialTitle')}
                           />
                         </div>
                         <div className="edit-group">
-                          <label>Type:</label>
+                          <label>{t('adminMaterials.type')}:</label>
                           <select
                             value={editData.type}
                             onChange={(e) => setEditData(prev => ({ ...prev, type: e.target.value }))}
@@ -626,18 +629,18 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
                       </div>
                       
                       <div className="edit-group">
-                        <label>Description:</label>
+                        <label>{t('adminMaterials.description')}:</label>
                         <textarea
                           value={editData.description}
                           onChange={(e) => setEditData(prev => ({ ...prev, description: e.target.value }))}
                           className="edit-textarea"
                           rows="2"
-                          placeholder="Material description"
+                          placeholder={t('adminMaterials.materialDescription')}
                         />
                       </div>
 
                       <div className="edit-trainers">
-                        <label>Trainer Access:</label>
+                        <label>{t('adminMaterials.trainerAccess')}:</label>
                         <div className="edit-trainers-grid">
                           {trainers.map(user => (
                             <label key={user.id} className="trainer-checkbox">
@@ -658,13 +661,13 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
                           className="save-btn"
                           disabled={loading}
                         >
-                          {loading ? 'Saving...' : 'Save Changes'}
+                          {loading ? t('adminMaterials.saving') + '...' : t('adminMaterials.saveChanges')}
                         </button>
                         <button 
                           onClick={handleCancelEdit}
                           className="cancel-btn"
                         >
-                          Cancel
+                          {t('common.cancel')}
                         </button>
                       </div>
                     </div>
@@ -677,7 +680,7 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
                       )}
                       <div className="material-stats">
                         <span className="viewer-count">
-                          {material.trainerIdAccess.length} trainer{material.trainerIdAccess.length !== 1 ? 's' : ''} with access
+                          {t('adminMaterials.trainersWithAccess', { count: material.trainerIdAccess.length })}
                         </span>
                       </div>
                       
@@ -688,20 +691,20 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
                           rel="noopener noreferrer"
                           className="action-btn view-btn"
                         >
-                          View
+                          {t('adminMaterials.view')}
                         </a>
                         <button 
                           onClick={() => startEditing(material)}
                           className="action-btn edit-btn"
                         >
-                          Edit
+                          {t('common.edit')}
                         </button>
                         <button 
                           className="action-btn delete-btn" 
                           onClick={() => handleDelete(material.id, material.fileUrl)}
                           disabled={loading}
                         >
-                          Delete
+                          {t('common.delete')}
                         </button>
                       </div>
                     </>
@@ -716,14 +719,14 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
       {/* Filter by User Section */}
       {trainers.length > 0 && (
         <div className="filter-by-user-section">
-          <h3>View Materials by Trainer</h3>
+          <h3>{t('adminMaterials.viewMaterialsByTrainer')}</h3>
           <div className="user-filter-controls">
             <select 
               value={viewerFilter} 
               onChange={(e) => setViewerFilter(e.target.value)}
               className="user-filter-select"
             >
-              <option value="">-- Select a Trainer --</option>
+              <option value="">{t('adminMaterials.selectTrainer')}</option>
               {trainers.map(user => (
                 <option key={user.id} value={user.id}>{user.name}</option>
               ))}
@@ -731,14 +734,14 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
 
             {viewerFilter && (
               <div className="filtered-materials">
-                <h4>Materials accessible to {trainers.find(u => u.id === viewerFilter)?.name}:</h4>
+                <h4>{t('adminMaterials.materialsAccessibleTo', { trainerName: trainers.find(u => u.id === viewerFilter)?.name })}:</h4>
                 {(() => {
                   const userMaterials = getSortedMaterials(
                     materialList.filter(material => material.trainerIdAccess.includes(viewerFilter))
                   );
                   
                   return userMaterials.length === 0 ? (
-                    <p className="no-materials">No materials available for this trainer.</p>
+                    <p className="no-materials">{t('adminMaterials.noMaterialsForTrainer')}</p>
                   ) : (
                     <div className="filtered-materials-grid">
                       {userMaterials.map(material => (
@@ -759,7 +762,7 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
                               rel="noopener noreferrer"
                               className="action-btn view-btn"
                             >
-                              View Material
+                              {t('adminMaterials.viewMaterial')}
                             </a>
                           </div>
                         </div>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { db } from '../firebase';
-
 import { doc, setDoc, deleteDoc, updateDoc, collection, getDocs, getDoc } from 'firebase/firestore';
 import { logAdminAction } from '../utils/adminLogger';
 
-
-
 const ManageStudents = ({ students, classes, setStudents, loading, setLoading, error, success, setError, setSuccess, fetchStudents }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+  
   // Debug logs
   console.log('ManageStudents props:', { 
     students: Array.isArray(students) ? `Array(${students.length})` : students,
@@ -42,8 +42,18 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
 
   // Grade options A-L
   const gradeOptions = [
-    'Grade A', 'Grade B', 'Grade C', 'Grade D', 'Grade E', 'Grade F',
-    'Grade G', 'Grade H', 'Grade I', 'Grade J', 'Grade K', 'Grade L'
+    { value: 'Grade A', label: t('adminStudents.gradeA') },
+    { value: 'Grade B', label: t('adminStudents.gradeB') },
+    { value: 'Grade C', label: t('adminStudents.gradeC') },
+    { value: 'Grade D', label: t('adminStudents.gradeD') },
+    { value: 'Grade E', label: t('adminStudents.gradeE') },
+    { value: 'Grade F', label: t('adminStudents.gradeF') },
+    { value: 'Grade G', label: t('adminStudents.gradeG') },
+    { value: 'Grade H', label: t('adminStudents.gradeH') },
+    { value: 'Grade I', label: t('adminStudents.gradeI') },
+    { value: 'Grade J', label: t('adminStudents.gradeJ') },
+    { value: 'Grade K', label: t('adminStudents.gradeK') },
+    { value: 'Grade L', label: t('adminStudents.gradeL') }
   ];
 
   // Fetch schools from database
@@ -55,7 +65,7 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
       setSchools(schoolsData);
     } catch (err) {
       console.error('Error fetching schools:', err);
-      errorFunction('Failed to load schools data');
+      errorFunction(t('adminStudents.failedToLoadSchools'));
     } finally {
       setSchoolsLoading(false);
     }
@@ -127,17 +137,16 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
     try {
       if (!newStudent.id || !newStudent.fullName) {
         console.log('Validation failed - calling error function');
-        errorFunction('Please fill all required fields: Student ID and Full Name');
+        errorFunction(t('adminStudents.fillAllRequiredFields'));
         setLoading(false);
         return;
       }
-
 
       // Check if student ID already exists
       const existingStudent = (students || []).find(std => std.id === newStudent.id);
       if (existingStudent && !isEditing) {
         console.log('Student ID exists - calling error function');
-        errorFunction(`A student with ID "${newStudent.id}" already exists. Please choose a different ID.`);
+        errorFunction(t('adminStudents.studentIdExists', { id: newStudent.id }));
         setLoading(false);
         return;
       }
@@ -151,16 +160,18 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
           classId: newStudent.classId,
           updatedAt: new Date()
         });
-          const currentAdmin = JSON.parse(localStorage.getItem('user'));
-  await logAdminAction({
-    admin: currentAdmin,
-    actionType: 'update-student',
-    targetType: 'student',
-    targetId: newStudent.id,
-    description: `Updated student ${newStudent.fullName}`
-  });
+        
+        const currentAdmin = JSON.parse(localStorage.getItem('user'));
+        await logAdminAction({
+          admin: currentAdmin,
+          actionType: 'update-student',
+          targetType: 'student',
+          targetId: newStudent.id,
+          description: `Updated student ${newStudent.fullName}`
+        });
+        
         console.log('Student updated successfully - calling success function');
-        successFunction('Student updated successfully!');
+        successFunction(t('adminStudents.studentUpdatedSuccessfully'));
       } else {
         await setDoc(doc(db, "students", newStudent.id), {
           fullName: newStudent.fullName,
@@ -189,16 +200,17 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
           // Don't fail the entire operation if class update fails
         }
 
-          const currentAdmin = JSON.parse(localStorage.getItem('user'));
-  await logAdminAction({
-    admin: currentAdmin,
-    actionType: 'add-student',
-    targetType: 'student',
-    targetId: newStudent.id,
-    description: `Added student ${newStudent.fullName} to class ${newStudent.classId}`
-  });
+        const currentAdmin = JSON.parse(localStorage.getItem('user'));
+        await logAdminAction({
+          admin: currentAdmin,
+          actionType: 'add-student',
+          targetType: 'student',
+          targetId: newStudent.id,
+          description: `Added student ${newStudent.fullName} to class ${newStudent.classId}`
+        });
+        
         console.log('Student added successfully - calling success function');
-        successFunction('Student added successfully!');
+        successFunction(t('adminStudents.studentAddedSuccessfully'));
       }
 
       // Update local state
@@ -213,7 +225,6 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
           setStudents([...students, { ...newStudent, sessions_attended: 0, createdAt: new Date() }]);
         }
       }
-
 
       setNewStudent({
         id: '',
@@ -239,7 +250,7 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
   };
 
   const handleDeleteStudent = async (studentId) => {
-    if (!window.confirm("Are you sure you want to delete this student?")) return;
+    if (!window.confirm(t('adminStudents.confirmDeleteStudent'))) return;
     setLoading(true);
     
     console.log('handleDeleteStudent called - errorFunction:', typeof errorFunction);
@@ -274,17 +285,16 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
       }
 
       const currentAdmin = JSON.parse(localStorage.getItem('user'));
-await logAdminAction({
-  admin: currentAdmin,
-  actionType: 'delete-student',
-  targetType: 'student',
-  targetId: studentId,
-  description: `Deleted student with ID ${studentId}`
-});
-
+      await logAdminAction({
+        admin: currentAdmin,
+        actionType: 'delete-student',
+        targetType: 'student',
+        targetId: studentId,
+        description: `Deleted student with ID ${studentId}`
+      });
 
       console.log('Student deleted successfully - calling success function');
-      successFunction('Student deleted successfully');
+      successFunction(t('adminStudents.studentDeletedSuccessfully'));
       
       // Update local state
       if (setStudents && Array.isArray(students)) {
@@ -299,7 +309,7 @@ await logAdminAction({
     } catch (err) {
       console.error("Error deleting student:", err);
       console.log('Caught delete error - calling error function');
-      errorFunction('Failed to delete student: ' + err.message);
+      errorFunction(t('adminStudents.failedToDeleteStudent') + ': ' + err.message);
     }
     setLoading(false);
   };
@@ -436,31 +446,31 @@ await logAdminAction({
     <div className="user-management-container">
       {/* Add Student Section */}
       <div className="add-user-section">
-        <h2>{isEditing ? 'Edit Student' : 'Add New Student'}</h2>
+        <h2>{isEditing ? t('adminStudents.editStudent') : t('adminStudents.addNewStudent')}</h2>
         
         <form onSubmit={handleAddStudent} className="add-user-form">
           <div className="form-row">
             <div className="form-group">
-              <label>Student ID*</label>
+              <label>{t('adminStudents.studentIdRequired')}</label>
               <input
                 type="text"
                 name="id"
                 value={newStudent.id}
                 onChange={handleStudentChange}
-                placeholder="Student ID"
+                placeholder={t('adminStudents.studentIdPlaceholder')}
                 required
                 disabled={isEditing}
               />
             </div>
             
             <div className="form-group">
-              <label>Full Name*</label>
+              <label>{t('adminStudents.fullNameRequired')}</label>
               <input
                 type="text"
                 name="fullName"
                 value={newStudent.fullName}
                 onChange={handleStudentChange}
-                placeholder="Full Name"
+                placeholder={t('adminStudents.fullNamePlaceholder')}
                 required
               />
             </div>
@@ -468,36 +478,36 @@ await logAdminAction({
 
           <div className="form-row">
             <div className="form-group">
-              <label>Grade</label>
+              <label>{t('adminStudents.grade')}</label>
               <select
                 name="grade"
                 value={newStudent.grade}
                 onChange={handleStudentChange}
               >
-                <option value="">Select Grade</option>
+                <option value="">{t('adminStudents.selectGrade')}</option>
                 {gradeOptions.map(grade => (
-                  <option key={grade} value={grade}>
-                    {grade}
+                  <option key={grade.value} value={grade.value}>
+                    {grade.label}
                   </option>
                 ))}
               </select>
             </div>
             
             <div className="form-group">
-              <label>Contact Number</label>
+              <label>{t('adminStudents.contactNumber')}</label>
               <input
                 type="tel"
                 name="contact_number"
                 value={newStudent.contact_number}
                 onChange={handleStudentChange}
-                placeholder="Contact Number"
+                placeholder={t('adminStudents.contactNumberPlaceholder')}
               />
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label>School</label>
+              <label>{t('adminStudents.school')}</label>
               <select
                 name="school"
                 value={newStudent.school}
@@ -505,10 +515,10 @@ await logAdminAction({
               >
                 <option value="">
                   {schoolsLoading 
-                    ? 'Loading schools...' 
+                    ? t('adminStudents.loadingSchools')
                     : schools.length === 0 
-                      ? 'No schools available' 
-                      : 'Select School'}
+                      ? t('adminStudents.noSchoolsAvailable')
+                      : t('adminStudents.selectSchool')}
                 </option>
                 {schools.map(school => (
                   <option key={school.id} value={school.name}>
@@ -518,7 +528,7 @@ await logAdminAction({
               </select>
               {schools.length === 0 && !schoolsLoading && (
                 <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                  No schools found in database. Add schools first.
+                  {t('adminStudents.noSchoolsFoundAddFirst')}
                 </div>
               )}
             </div>
@@ -526,7 +536,7 @@ await logAdminAction({
 
           <div className="form-row">
             <div className="form-group">
-              <label>Class</label>
+              <label>{t('adminStudents.class')}</label>
               <select
                 name="classId"
                 value={newStudent.classId}
@@ -535,10 +545,10 @@ await logAdminAction({
               >
                 <option value="">
                   {!newStudent.school 
-                    ? 'Select school first' 
+                    ? t('adminStudents.selectSchoolFirst')
                     : getFilteredClasses().length === 0 
-                      ? 'No classes available for selected school'
-                      : 'Select Class'}
+                      ? t('adminStudents.noClassesAvailableForSchool')
+                      : t('adminStudents.selectClass')}
                 </option>
                 {getFilteredClasses().map(cls => (
                   <option key={cls.id} value={cls.id}>
@@ -548,7 +558,7 @@ await logAdminAction({
               </select>
               {newStudent.school && getFilteredClasses().length === 0 && (
                 <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                  No classes found for "{newStudent.school}". Add classes for this school first.
+                  {t('adminStudents.noClassesFoundForSchool', { school: newStudent.school })}
                 </div>
               )}
             </div>
@@ -559,10 +569,10 @@ await logAdminAction({
               <>
                 <div className="edit-mode-info">
                   <div className="edit-indicator">
-                    ✏️ Edit Mode
+                    ✏️ {t('adminStudents.editMode')}
                   </div>
                   <div className="edit-description">
-                    You are currently editing this student. Make your changes and click Save, or Cancel to discard changes.
+                    {t('adminStudents.editModeDescription')}
                   </div>
                 </div>
                 <div className="edit-buttons-row">
@@ -571,7 +581,7 @@ await logAdminAction({
                     className="save-button"
                     disabled={loading}
                   >
-                    {loading ? 'Saving...' : 'Save Changes'}
+                    {loading ? t('adminStudents.saving') + '...' : t('adminStudents.saveChanges')}
                   </button>
                   <button 
                     type="button" 
@@ -579,7 +589,7 @@ await logAdminAction({
                     onClick={handleCancelEdit}
                     disabled={loading}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                 </div>
               </>
@@ -589,7 +599,7 @@ await logAdminAction({
                 className="add-button"
                 disabled={loading}
               >
-                {loading ? 'Adding...' : 'Add Student'}
+                {loading ? t('adminStudents.adding') + '...' : t('adminStudents.addStudent')}
               </button>
             )}
           </div>
@@ -599,7 +609,7 @@ await logAdminAction({
       {/* Students List Section */}
       <div className="user-list-section">
         <div className="users-list-header">
-          <h3>Students List ({filteredStudents.length})</h3>
+          <h3>{t('adminStudents.studentsList', { count: filteredStudents.length })}</h3>
           <div className="users-search-container">
             <div className="users-search-filter-row">
               <select
@@ -607,26 +617,28 @@ await logAdminAction({
                 onChange={(e) => setSearchFilter(e.target.value)}
                 className="users-filter-select"
               >
-                <option value="all">All Fields</option>
-                <option value="id">Student ID</option>
-                <option value="name">Full Name</option>
-                <option value="grade">Grade</option>
-                <option value="contact">Contact</option>
-                <option value="school">School</option>
-                <option value="class">Class</option>
-                <option value="added">Added Date</option>
+                <option value="all">{t('adminStudents.allFields')}</option>
+                <option value="id">{t('adminStudents.studentId')}</option>
+                <option value="name">{t('adminStudents.fullName')}</option>
+                <option value="grade">{t('adminStudents.grade')}</option>
+                <option value="contact">{t('adminStudents.contact')}</option>
+                <option value="school">{t('adminStudents.school')}</option>
+                <option value="class">{t('adminStudents.class')}</option>
+                <option value="added">{t('adminStudents.addedDate')}</option>
               </select>
               
               <input
                 type="text"
-                placeholder={`Search ${searchFilter === 'all' ? 'all fields' : 
-                  searchFilter === 'id' ? 'student ID' :
-                  searchFilter === 'name' ? 'full name' :
-                  searchFilter === 'grade' ? 'grade' :
-                  searchFilter === 'contact' ? 'contact number' :
-                  searchFilter === 'school' ? 'school' :
-                  searchFilter === 'class' ? 'class' :
-                  searchFilter === 'added' ? 'date' : 'students'}...`}
+                placeholder={t('adminStudents.searchPlaceholder', { 
+                  field: searchFilter === 'all' ? t('adminStudents.allFields').toLowerCase() : 
+                    searchFilter === 'id' ? t('adminStudents.studentId').toLowerCase() :
+                    searchFilter === 'name' ? t('adminStudents.fullName').toLowerCase() :
+                    searchFilter === 'grade' ? t('adminStudents.grade').toLowerCase() :
+                    searchFilter === 'contact' ? t('adminStudents.contactNumber').toLowerCase() :
+                    searchFilter === 'school' ? t('adminStudents.school').toLowerCase() :
+                    searchFilter === 'class' ? t('adminStudents.class').toLowerCase() :
+                    searchFilter === 'added' ? t('adminStudents.addedDate').toLowerCase() : 'students'
+                })}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="users-search-input"
@@ -636,7 +648,7 @@ await logAdminAction({
                 <button 
                   onClick={clearSearch}
                   className="users-clear-search-button"
-                  title="Clear search"
+                  title={t('adminStudents.clearSearch')}
                 >
                   ×
                 </button>
@@ -655,43 +667,46 @@ await logAdminAction({
               className="refresh-button"
               disabled={loading}
             >
-              {loading ? 'Refreshing...' : '↻ Refresh'}
+              {loading ? t('adminStudents.refreshing') + '...' : '↻ ' + t('adminStudents.refresh')}
             </button>
           </div>
         </div>
 
         {(searchQuery || searchFilter !== 'all') && (
           <div className="search-results-info">
-            Showing {filteredStudents.length} of {(students || []).length} students
-            {searchQuery && ` matching "${searchQuery}"`}
-            {searchFilter !== 'all' && ` in ${
-              searchFilter === 'id' ? 'student ID' :
-              searchFilter === 'name' ? 'full name' :
-              searchFilter === 'grade' ? 'grade' :
-              searchFilter === 'contact' ? 'contact number' :
-              searchFilter === 'school' ? 'school' :
-              searchFilter === 'class' ? 'class' :
-              searchFilter === 'added' ? 'added date' : searchFilter
-            }`}
+            {t('adminStudents.showingResults', { 
+              filtered: filteredStudents.length, 
+              total: (students || []).length,
+              query: searchQuery,
+              field: searchFilter !== 'all' ? (
+                searchFilter === 'id' ? t('adminStudents.studentId').toLowerCase() :
+                searchFilter === 'name' ? t('adminStudents.fullName').toLowerCase() :
+                searchFilter === 'grade' ? t('adminStudents.grade').toLowerCase() :
+                searchFilter === 'contact' ? t('adminStudents.contactNumber').toLowerCase() :
+                searchFilter === 'school' ? t('adminStudents.school').toLowerCase() :
+                searchFilter === 'class' ? t('adminStudents.class').toLowerCase() :
+                searchFilter === 'added' ? t('adminStudents.addedDate').toLowerCase() : searchFilter
+              ) : ''
+            })}
           </div>
         )}
         
         {loading ? (
-          <div className="loading-users">Loading students...</div>
+          <div className="loading-users">{t('adminStudents.loadingStudents')}</div>
         ) : (
           <div className="users-table-wrapper">
             {filteredStudents.length > 0 ? (
               <table className="users-table">
                 <thead>
                   <tr>
-                    <th>Student ID</th>
-                    <th>Full Name</th>
-                    <th>Grade</th>
-                    <th>Contact</th>
-                    <th>School</th>
-                    <th>Class</th>
-                    <th>Added</th>
-                    <th>Actions</th>
+                    <th>{t('adminStudents.studentId')}</th>
+                    <th>{t('adminStudents.fullName')}</th>
+                    <th>{t('adminStudents.grade')}</th>
+                    <th>{t('adminStudents.contact')}</th>
+                    <th>{t('adminStudents.school')}</th>
+                    <th>{t('adminStudents.class')}</th>
+                    <th>{t('adminStudents.added')}</th>
+                    <th>{t('adminStudents.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -710,7 +725,7 @@ await logAdminAction({
                         <td>
                           {studentClass 
                             ? studentClass.className
-                            : 'Unknown'}
+                            : t('adminStudents.unknown')}
                         </td>
                         <td>{formatDate(student.createdAt)}</td>
                         <td>
@@ -720,14 +735,14 @@ await logAdminAction({
                               onClick={() => handleEditStudent(student)}
                               disabled={loading}
                             >
-                              Edit
+                              {t('common.edit')}
                             </button>
                             <button 
                               className="delete-button"
                               onClick={() => handleDeleteStudent(student.id)}
                               disabled={loading}
                             >
-                              Delete
+                              {t('common.delete')}
                             </button>
                           </div>
                         </td>
@@ -739,8 +754,8 @@ await logAdminAction({
             ) : (
               <div className="no-users">
                 {searchQuery || searchFilter !== 'all' 
-                  ? `No students match your search criteria.` 
-                  : 'No students found. Add your first student.'}
+                  ? t('adminStudents.noStudentsMatchSearch')
+                  : t('adminStudents.noStudentsFound')}
               </div>
             )}
           </div>

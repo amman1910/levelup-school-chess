@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { db, storage } from '../firebase';
-import { doc, setDoc, deleteDoc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, updateDoc, collection, getDocs, query, where, addDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { logAdminAction } from '../utils/adminLogger';
 import './ManageUsers.css'; // Import your CSS styles
@@ -19,6 +20,8 @@ import './ManageUsers.css'; // Import your CSS styles
  * - fetchClasses: Optional function to refresh classes from database
  */
 const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error, success, fetchClasses }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+  
   // Debug logs
   console.log('ManageClasses props:', { 
     classes: Array.isArray(classes) ? `Array(${classes.length})` : classes,
@@ -53,6 +56,31 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
   const [searchFilter, setSearchFilter] = useState('all');
   const [editingClass, setEditingClass] = useState(null);
 
+  // פונקציה לרישום פעולות ב-adminLogs
+  const logAdminActionLocal = async (actionType, description, targetType, targetId = null) => {
+    try {
+      // קבלת פרטי המשתמש הנוכחי
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const adminName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'Unknown Admin';
+
+      const logEntry = {
+        actionType,
+        adminName,
+        description,
+        targetType,
+        timestamp: new Date(),
+        targetId: targetId || null,
+        adminId: currentUser.uid || currentUser.id || null
+      };
+
+      await addDoc(collection(db, 'adminLogs'), logEntry);
+      console.log('Admin action logged:', logEntry);
+    } catch (err) {
+      console.error('Error logging admin action:', err);
+      // אל תעצור את הפעולה אם הלוג נכשל
+    }
+  };
+
   // Fetch schools from database
   const fetchSchools = async () => {
     setSchoolsLoading(true);
@@ -62,7 +90,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       setSchools(schoolsData);
     } catch (err) {
       console.error('Error fetching schools:', err);
-      if (typeof error === 'function') error('Failed to load schools data');
+      if (typeof error === 'function') error(t('adminClasses.failedToLoadSchools'));
     } finally {
       setSchoolsLoading(false);
     }
@@ -77,7 +105,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       setStudents(studentsData);
     } catch (err) {
       console.error('Error fetching students:', err);
-      if (typeof error === 'function') error('Failed to load students data');
+      if (typeof error === 'function') error(t('adminClasses.failedToLoadStudents'));
     } finally {
       setStudentsLoading(false);
     }
@@ -198,7 +226,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       return downloadURL;
     } catch (error) {
       console.error('Error uploading file:', error);
-      if (typeof error === 'function') error('Failed to upload syllabus file');
+      if (typeof error === 'function') error(t('adminClasses.failedToUploadSyllabus'));
       return null;
     } finally {
       setFileUploading(false);
@@ -227,7 +255,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     try {
       // בדיקת שדות חובה
       if (!newClass.className || !newClass.school || !newClass.assignedTrainer) {
-        if (typeof error === 'function') error('Please fill all required fields: Class Name, School, and Assigned Trainer');
+        if (typeof error === 'function') error(t('adminClasses.fillRequiredFields'));
         setLoading(false);
         return;
       }
@@ -238,7 +266,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       );
       
       if (existingClass) {
-        if (typeof error === 'function') error(`A class named "${newClass.className}" already exists in "${newClass.school}". Please choose a different class name or school.`);
+        if (typeof error === 'function') error(t('adminClasses.classAlreadyExists', { className: newClass.className, school: newClass.school }));
         setLoading(false);
         return;
       }
@@ -269,16 +297,14 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
 
       await setDoc(doc(db, "classes", randomId), classData);
 
-      const currentAdmin = JSON.parse(localStorage.getItem('user'));
-      await logAdminAction({
-        admin: currentAdmin,
-        actionType: 'add-class',
-        targetType: 'class',
-        targetId: randomId,
-        description: `Added class "${classData.className}" at ${classData.school}`
-      });
+      await logAdminActionLocal(
+        'add-class',
+        `Added class "${classData.className}" at ${classData.school}`,
+        'class',
+        randomId
+      );
 
-      if (typeof success === 'function') success('Class added successfully!');
+      if (typeof success === 'function') success(t('adminClasses.classAddedSuccessfully'));
       
       // עדכון מקומי של הרשימה
       if (setClasses && Array.isArray(classes)) {
@@ -321,7 +347,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       classDescription = `Deleted class "${classToDelete.className}" from ${classToDelete.school}`;
     }
     
-    if (!window.confirm("Are you sure you want to delete this class? This will also delete all related sessions.")) return;
+    if (!window.confirm(t('adminClasses.confirmDeleteClass'))) return;
     setLoading(true);
     if (typeof error === 'function') error('');
     if (typeof success === 'function') success('');
@@ -334,16 +360,14 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       // מחיקת הכיתה עצמה
       await deleteDoc(doc(db, "classes", classId));
 
-      const currentAdmin = JSON.parse(localStorage.getItem('user'));
-      await logAdminAction({
-        admin: currentAdmin,
-        actionType: 'delete-class',
-        targetType: 'class',
-        targetId: classId,
-        description: classDescription
-      });
+      await logAdminActionLocal(
+        'delete-class',
+        classDescription,
+        'class',
+        classId
+      );
       
-      if (typeof success === 'function') success('Class deleted successfully');
+      if (typeof success === 'function') success(t('adminClasses.classDeletedSuccessfully'));
       
       // עדכון מקומי של הרשימה
       if (setClasses && Array.isArray(classes)) {
@@ -356,7 +380,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       }
     } catch (err) {
       console.error("Error deleting class:", err);
-      if (typeof error === 'function') error('Failed to delete class: ' + err.message);
+      if (typeof error === 'function') error(t('adminClasses.failedToDeleteClass') + ': ' + err.message);
     }
     setLoading(false);
   };
@@ -404,7 +428,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     try {
       // בדיקת שדות חובה
       if (!newClass.className || !newClass.school || !newClass.assignedTrainer) {
-        if (typeof error === 'function') error('Please fill all required fields: Class Name, School, and Assigned Trainer');
+        if (typeof error === 'function') error(t('adminClasses.fillRequiredFields'));
         setLoading(false);
         return;
       }
@@ -417,7 +441,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       );
       
       if (existingClass) {
-        if (typeof error === 'function') error(`A class named "${newClass.className}" already exists in "${newClass.school}". Please choose a different class name or school.`);
+        if (typeof error === 'function') error(t('adminClasses.classAlreadyExists', { className: newClass.className, school: newClass.school }));
         setLoading(false);
         return;
       }
@@ -451,16 +475,15 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       };
 
       await updateDoc(doc(db, "classes", editingClass), updatedData);
-      const currentAdmin = JSON.parse(localStorage.getItem('user'));
-      await logAdminAction({
-        admin: currentAdmin,
-        actionType: 'update-class',
-        targetType: 'class',
-        targetId: editingClass,
-        description: `Updated class "${updatedData.className}" at ${updatedData.school}`
-      });
+      
+      await logAdminActionLocal(
+        'update-class',
+        `Updated class "${updatedData.className}" at ${updatedData.school}`,
+        'class',
+        editingClass
+      );
 
-      if (typeof success === 'function') success('Class updated successfully!');
+      if (typeof success === 'function') success(t('adminClasses.classUpdatedSuccessfully'));
       
       // עדכון מקומי של הרשימה
       if (setClasses && Array.isArray(classes)) {
@@ -608,40 +631,40 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     <div className="user-management-container">
       {/* Add Class Section */}
       <div className="add-user-section">
-        <h2>{editingClass ? 'Edit Class' : 'Add New Class'}</h2>
+        <h2>{editingClass ? t('adminClasses.editClass') : t('adminClasses.addNewClass')}</h2>
         
         <form onSubmit={editingClass ? handleUpdateClass : handleAddClass} className="add-user-form">
           <div className="form-row">
             <div className="form-group">
-              <label>Class Name*</label>
+              <label>{t('adminClasses.classNameRequired')}</label>
               <input
                 type="text"
                 name="className"
                 value={newClass.className}
                 onChange={handleClassChange}
-                placeholder="Class Name"
+                placeholder={t('adminClasses.classNamePlaceholder')}
                 required
               />
             </div>
             
             <div className="form-group">
-              <label>Level*</label>
+              <label>{t('adminClasses.levelRequired')}</label>
               <select
                 name="level"
                 value={newClass.level}
                 onChange={handleClassChange}
                 required
               >
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
+                <option value="beginner">{t('adminClasses.beginner')}</option>
+                <option value="intermediate">{t('adminClasses.intermediate')}</option>
+                <option value="advanced">{t('adminClasses.advanced')}</option>
               </select>
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label>School*</label>
+              <label>{t('adminClasses.schoolRequired')}</label>
               <select
                 name="school"
                 value={newClass.school}
@@ -650,10 +673,10 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
               >
                 <option value="">
                   {schoolsLoading 
-                    ? 'Loading schools...' 
+                    ? t('adminClasses.loadingSchools')
                     : schools.length === 0 
-                      ? 'No schools available' 
-                      : 'Select School'}
+                      ? t('adminClasses.noSchoolsAvailable')
+                      : t('adminClasses.selectSchool')}
                 </option>
                 {schools.map(school => (
                   <option key={school.id} value={school.name}>
@@ -663,20 +686,20 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
               </select>
               {schools.length === 0 && !schoolsLoading && (
                 <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                  No schools found in database. Add schools first.
+                  {t('adminClasses.noSchoolsFoundAddFirst')}
                 </div>
               )}
             </div>
             
             <div className="form-group">
-              <label>Assigned Trainer*</label>
+              <label>{t('adminClasses.assignedTrainerRequired')}</label>
               <select
                 name="assignedTrainer"
                 value={newClass.assignedTrainer}
                 onChange={handleClassChange}
                 required
               >
-                <option value="">Select Trainer</option>
+                <option value="">{t('adminClasses.selectTrainer')}</option>
                 {(users || []).filter(u => u.role === 'trainer').map(trainer => (
                   <option key={trainer.id} value={trainer.id}>
                     {trainer.firstName} {trainer.lastName}
@@ -688,7 +711,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
 
           <div className="form-row">
             <div className="form-group">
-              <label>Syllabus File</label>
+              <label>{t('adminClasses.syllabusFile')}</label>
               <input
                 type="file"
                 name="syllabus"
@@ -713,8 +736,8 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
               {editingClass && newClass.syllabus && (
                 <div className="current-file-info">
                   <small style={{ color: '#666', fontSize: '11px' }}>
-                    Current: <a href={newClass.syllabus} target="_blank" rel="noopener noreferrer" style={{ color: '#5e3c8f' }}>
-                      View Current Syllabus
+                    {t('adminClasses.current')}: <a href={newClass.syllabus} target="_blank" rel="noopener noreferrer" style={{ color: '#5e3c8f' }}>
+                      {t('adminClasses.viewCurrentSyllabus')}
                     </a>
                   </small>
                 </div>
@@ -722,14 +745,14 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
               {selectedFile && (
                 <div className="selected-file-info">
                   <small style={{ color: '#5e3c8f', fontSize: '11px' }}>
-                    Selected: {selectedFile.name}
+                    {t('adminClasses.selected')}: {selectedFile.name}
                   </small>
                 </div>
               )}
             </div>
             
             <div className="form-group">
-              <label>Students</label>
+              <label>{t('adminClasses.students')}</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <button
                   type="button"
@@ -746,12 +769,12 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
                   }}
                   disabled={studentsLoading}
                 >
-                  {studentsLoading ? 'Loading...' : 'CHOOSE'}
+                  {studentsLoading ? t('common.loading') + '...' : t('adminClasses.choose')}
                 </button>
                 <span style={{ fontSize: '12px', color: '#666' }}>
                   {selectedStudents.length > 0 
-                    ? `${selectedStudents.length} student(s) selected` 
-                    : 'No students selected'}
+                    ? t('adminClasses.studentsSelected', { count: selectedStudents.length })
+                    : t('adminClasses.noStudentsSelected')}
                 </span>
               </div>
             </div>
@@ -762,10 +785,10 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
               <>
                 <div className="edit-mode-info">
                   <div className="edit-indicator">
-                    ✏️ Edit Mode
+                    ✏️ {t('adminClasses.editMode')}
                   </div>
                   <div className="edit-description">
-                    You are currently editing this class. Make your changes and click Save, or Cancel to discard changes.
+                    {t('adminClasses.editModeDescription')}
                   </div>
                 </div>
                 <div className="edit-buttons-row">
@@ -774,7 +797,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
                     className="save-button"
                     disabled={loading || fileUploading}
                   >
-                    {loading || fileUploading ? (fileUploading ? 'Uploading...' : 'Saving...') : 'Save Changes'}
+                    {loading || fileUploading ? (fileUploading ? t('adminClasses.uploading') + '...' : t('adminClasses.saving') + '...') : t('common.save')}
                   </button>
                   <button 
                     type="button" 
@@ -782,7 +805,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
                     onClick={handleCancelEdit}
                     disabled={loading || fileUploading}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                 </div>
               </>
@@ -792,7 +815,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
                 className="add-button"
                 disabled={loading || fileUploading}
               >
-                {loading || fileUploading ? (fileUploading ? 'Uploading...' : 'Adding...') : 'Add Class'}
+                {loading || fileUploading ? (fileUploading ? t('adminClasses.uploading') + '...' : t('adminClasses.adding') + '...') : t('adminClasses.addClass')}
               </button>
             )}
           </div>
@@ -802,7 +825,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       {/* Classes List Section */}
       <div className="user-list-section">
         <div className="users-list-header">
-          <h3>Classes List ({filteredClasses.length})</h3>
+          <h3>{t('adminClasses.classesList', { count: filteredClasses.length })}</h3>
           <div className="users-search-container">
             <div className="users-search-filter-row">
               <select
@@ -810,22 +833,24 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
                 onChange={(e) => setSearchFilter(e.target.value)}
                 className="users-filter-select"
               >
-                <option value="all">All Fields</option>
-                <option value="className">Class Name</option>
-                <option value="school">School</option>
-                <option value="level">Level</option>
-                <option value="trainer">Assigned Trainer</option>
-                <option value="added">Added Date</option>
+                <option value="all">{t('adminClasses.allFields')}</option>
+                <option value="className">{t('adminClasses.className')}</option>
+                <option value="school">{t('adminClasses.school')}</option>
+                <option value="level">{t('adminClasses.level')}</option>
+                <option value="trainer">{t('adminClasses.assignedTrainer')}</option>
+                <option value="added">{t('adminClasses.addedDate')}</option>
               </select>
               
               <input
                 type="text"
-                placeholder={`Search ${searchFilter === 'all' ? 'all fields' : 
-                  searchFilter === 'className' ? 'class name' :
-                  searchFilter === 'school' ? 'school' :
-                  searchFilter === 'level' ? 'level' :
-                  searchFilter === 'trainer' ? 'trainer' :
-                  searchFilter === 'added' ? 'date' : 'classes'}...`}
+                placeholder={t('adminClasses.searchPlaceholder', { 
+                  field: searchFilter === 'all' ? t('adminClasses.allFields').toLowerCase() : 
+                    searchFilter === 'className' ? t('adminClasses.className').toLowerCase() :
+                    searchFilter === 'school' ? t('adminClasses.school').toLowerCase() :
+                    searchFilter === 'level' ? t('adminClasses.level').toLowerCase() :
+                    searchFilter === 'trainer' ? t('adminClasses.trainer').toLowerCase() :
+                    searchFilter === 'added' ? t('adminClasses.date').toLowerCase() : t('adminClasses.classes').toLowerCase()
+                })}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="users-search-input"
@@ -835,7 +860,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
                 <button 
                   onClick={clearSearch}
                   className="users-clear-search-button"
-                  title="Clear search"
+                  title={t('adminClasses.clearSearch')}
                 >
                   ×
                 </button>
@@ -855,39 +880,42 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
               className="refresh-button"
               disabled={loading}
             >
-              {loading ? 'Refreshing...' : '↻ Refresh'}
+              {loading ? t('adminClasses.refreshing') + '...' : '↻ ' + t('admin.refresh')}
             </button>
           </div>
         </div>
 
         {(searchQuery || searchFilter !== 'all') && (
           <div className="search-results-info">
-            Showing {filteredClasses.length} of {(classes || []).length} classes
-            {searchQuery && ` matching "${searchQuery}"`}
-            {searchFilter !== 'all' && ` in ${
-              searchFilter === 'className' ? 'class name' :
-              searchFilter === 'school' ? 'school' :
-              searchFilter === 'level' ? 'level' :
-              searchFilter === 'trainer' ? 'assigned trainer' :
-              searchFilter === 'added' ? 'added date' : searchFilter
-            }`}
+            {t('adminClasses.showingResults', { 
+              filtered: filteredClasses.length, 
+              total: (classes || []).length,
+              query: searchQuery,
+              field: searchFilter !== 'all' ? (
+                searchFilter === 'className' ? t('adminClasses.className').toLowerCase() :
+                searchFilter === 'school' ? t('adminClasses.school').toLowerCase() :
+                searchFilter === 'level' ? t('adminClasses.level').toLowerCase() :
+                searchFilter === 'trainer' ? t('adminClasses.assignedTrainer').toLowerCase() :
+                searchFilter === 'added' ? t('adminClasses.addedDate').toLowerCase() : searchFilter
+              ) : ''
+            })}
           </div>
         )}
         
         {loading ? (
-          <div className="loading-users">Loading classes...</div>
+          <div className="loading-users">{t('adminClasses.loadingClasses')}</div>
         ) : (
           <div className="users-table-wrapper">
             {filteredClasses.length > 0 ? (
               <table className="users-table">
                 <thead>
                   <tr>
-                    <th>Class Name</th>
-                    <th>School</th>
-                    <th>Level</th>
-                    <th>Assigned Trainer</th>
-                    <th>Added</th>
-                    <th>Actions</th>
+                    <th>{t('adminClasses.className')}</th>
+                    <th>{t('adminClasses.school')}</th>
+                    <th>{t('adminClasses.level')}</th>
+                    <th>{t('adminClasses.assignedTrainer')}</th>
+                    <th>{t('adminClasses.added')}</th>
+                    <th>{t('adminClasses.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -902,7 +930,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
                         <td>{cls.school || '-'}</td>
                         <td>
                           <span className={`role-badge ${cls.level}`}>
-                            {cls.level}
+                            {t(`adminClasses.${cls.level}`)}
                           </span>
                         </td>
                         <td>
@@ -918,14 +946,14 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
                               onClick={() => handleEditClass(cls)}
                               disabled={loading}
                             >
-                              Edit
+                              {t('common.edit')}
                             </button>
                             <button 
                               className="delete-button"
                               onClick={() => handleDeleteClass(cls.id)}
                               disabled={loading}
                             >
-                              Delete
+                              {t('common.delete')}
                             </button>
                           </div>
                         </td>
@@ -937,8 +965,8 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
             ) : (
               <div className="no-users">
                 {searchQuery || searchFilter !== 'all' 
-                  ? `No classes match your search criteria.` 
-                  : 'No classes found. Add your first class.'}
+                  ? t('adminClasses.noClassesMatchSearch')
+                  : t('adminClasses.noClassesFound')}
               </div>
             )}
           </div>
@@ -975,14 +1003,14 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
               borderBottom: '2px solid #e9c44c',
               paddingBottom: '8px'
             }}>
-              Select Students
+              {t('adminClasses.selectStudents')}
             </h3>
             
             {studentsLoading ? (
-              <div style={{ textAlign: 'center', padding: '20px' }}>Loading students...</div>
+              <div style={{ textAlign: 'center', padding: '20px' }}>{t('adminClasses.loadingStudents')}</div>
             ) : students.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
-                No students found in database.
+                {t('adminClasses.noStudentsFoundInDatabase')}
               </div>
             ) : (
               <div style={{ maxHeight: '300px', overflow: 'auto', marginBottom: '15px' }}>
@@ -1023,7 +1051,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
                   fontWeight: '600'
                 }}
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={saveSelectedStudents}
@@ -1038,7 +1066,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
                   fontWeight: '600'
                 }}
               >
-                Save ({selectedStudents.length})
+                {t('adminClasses.saveStudents', { count: selectedStudents.length })}
               </button>
             </div>
           </div>

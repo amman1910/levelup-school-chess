@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { db } from '../firebase';
 import { doc, setDoc, deleteDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
 import { logAdminAction } from '../utils/adminLogger';
@@ -15,6 +16,8 @@ import './ManageUsers.css'; // Import your CSS styles
  * - success: Function to set success messages
  */
 const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+  
   // Debug logs
   console.log('ManageLessons props:', { 
     classes: Array.isArray(classes) ? `Array(${classes.length})` : classes,
@@ -51,7 +54,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
       setSessions(sessionsData);
     } catch (err) {
       console.error('Error fetching sessions:', err);
-      if (typeof error === 'function') error('Failed to load sessions data');
+      if (typeof error === 'function') error(t('adminSessions.failedToLoadSessions'));
     } finally {
       setSessionsLoading(false);
     }
@@ -66,7 +69,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
       setSchools(schoolsData);
     } catch (err) {
       console.error('Error fetching schools:', err);
-      if (typeof error === 'function') error('Failed to load schools data');
+      if (typeof error === 'function') error(t('adminSessions.failedToLoadSchools'));
     } finally {
       setSchoolsLoading(false);
     }
@@ -141,7 +144,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
     try {
       // בדיקת שדות חובה
       if (!newSession.date || !newSession.schoolId || !newSession.classId || !newSession.topic) {
-        if (typeof error === 'function') error('Please fill all required fields: Date, School, Class, and Topic');
+        if (typeof error === 'function') error(t('adminSessions.fillAllRequiredFields'));
         setLoading(false);
         return;
       }
@@ -173,10 +176,15 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
         const classInfo = classes && Array.isArray(classes)
           ? classes.find(c => c.id === newSession.classId)
           : null;
-        const className = classInfo ? classInfo.className : 'Unknown Class';
+        const className = classInfo ? classInfo.className : t('adminSessions.unknownClass');
         
         if (typeof error === 'function') {
-          error(`A session already exists on ${new Date(newSession.date).toLocaleDateString()} at ${newSession.startTime} for ${className} in ${newSession.schoolId}. Please choose a different date, time, or class.`);
+          error(t('adminSessions.sessionAlreadyExists', {
+            date: new Date(newSession.date).toLocaleDateString(),
+            time: newSession.startTime,
+            className: className,
+            school: newSession.schoolId
+          }));
         }
         setLoading(false);
         return;
@@ -207,7 +215,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
       const classInfo = classes && Array.isArray(classes)
         ? classes.find(c => c.id === newSession.classId)
         : null;
-      const className = classInfo ? classInfo.className : 'Unknown Class';
+      const className = classInfo ? classInfo.className : t('adminSessions.unknownClass');
       
       const admin = JSON.parse(localStorage.getItem('user'));
       await logAdminAction({
@@ -218,7 +226,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
         description: `Added session for class "${className}" on ${newSession.date}`
       });
 
-      if (typeof success === 'function') success('Session added successfully!');
+      if (typeof success === 'function') success(t('adminSessions.sessionAddedSuccessfully'));
       
       // עדכון מקומי של הרשימה
       setSessions([...sessions, { ...sessionData, id: randomId }]);
@@ -250,12 +258,12 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
       const classInfo = classes && Array.isArray(classes)
         ? classes.find(c => c.id === sessionToDelete.classId)
         : null;
-      const className = classInfo ? classInfo.className : 'Unknown Class';
+      const className = classInfo ? classInfo.className : t('adminSessions.unknownClass');
       const sessionDate = formatDate(sessionToDelete.date);
       sessionDescription = `Deleted session for class "${className}" on ${sessionDate}`;
     }
     
-    if (!window.confirm("Are you sure you want to delete this session?")) return;
+    if (!window.confirm(t('adminSessions.confirmDeleteSession'))) return;
     setLoading(true);
     if (typeof error === 'function') error('');
     if (typeof success === 'function') success('');
@@ -271,7 +279,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
         description: sessionDescription
       });
       
-      if (typeof success === 'function') success('Session deleted successfully');
+      if (typeof success === 'function') success(t('adminSessions.sessionDeletedSuccessfully'));
       
       // עדכון מקומי של הרשימה
       setSessions(sessions.filter(session => session.id !== sessionId));
@@ -279,7 +287,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
       fetchSessions();
     } catch (err) {
       console.error("Error deleting session:", err);
-      if (typeof error === 'function') error('Failed to delete session: ' + err.message);
+      if (typeof error === 'function') error(t('adminSessions.failedToDeleteSession') + ': ' + err.message);
     }
     setLoading(false);
   };
@@ -326,7 +334,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
     try {
       // בדיקת שדות חובה
       if (!newSession.date || !newSession.schoolId || !newSession.classId || !newSession.topic) {
-        if (typeof error === 'function') error('Please fill all required fields: Date, School, Class, and Topic');
+        if (typeof error === 'function') error(t('adminSessions.fillAllRequiredFields'));
         setLoading(false);
         return;
       }
@@ -361,10 +369,15 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
         const classInfo = classes && Array.isArray(classes)
           ? classes.find(c => c.id === newSession.classId)
           : null;
-        const className = classInfo ? classInfo.className : 'Unknown Class';
+        const className = classInfo ? classInfo.className : t('adminSessions.unknownClass');
         
         if (typeof error === 'function') {
-          error(`A session already exists on ${new Date(newSession.date).toLocaleDateString()} at ${newSession.startTime} for ${className} in ${newSession.schoolId}. Please choose a different date, time, or class.`);
+          error(t('adminSessions.sessionAlreadyExists', {
+            date: new Date(newSession.date).toLocaleDateString(),
+            time: newSession.startTime,
+            className: className,
+            school: newSession.schoolId
+          }));
         }
         setLoading(false);
         return;
@@ -392,7 +405,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
       const classInfo = classes && Array.isArray(classes)
         ? classes.find(c => c.id === newSession.classId)
         : null;
-      const className = classInfo ? classInfo.className : 'Unknown Class';
+      const className = classInfo ? classInfo.className : t('adminSessions.unknownClass');
       
       const admin = JSON.parse(localStorage.getItem('user'));
       await logAdminAction({
@@ -403,7 +416,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
         description: `Updated session for class "${className}" on ${newSession.date}`
       });
 
-      if (typeof success === 'function') success('Session updated successfully!');
+      if (typeof success === 'function') success(t('adminSessions.sessionUpdatedSuccessfully'));
       
       // עדכון מקומי של הרשימה
       setSessions(sessions.map(session => 
@@ -473,7 +486,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
             const className = classInfo ? classInfo.className.toLowerCase() : '';
             return className.includes(query);
           case 'status':
-            const statusText = session.status === true ? 'completed' : 'planned';
+            const statusText = session.status === true ? t('adminSessions.completed').toLowerCase() : t('adminSessions.planned').toLowerCase();
             return statusText.includes(query);
           case 'date':
             const dateStr = formatDate(session.date).toLowerCase();
@@ -489,7 +502,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
             const className2 = classInfo2 ? classInfo2.className.toLowerCase() : '';
             const dateStr2 = formatDate(session.date).toLowerCase();
             const addedDateStr2 = formatDate(session.createdAt).toLowerCase();
-            const statusText2 = session.status === true ? 'completed' : 'planned';
+            const statusText2 = session.status === true ? t('adminSessions.completed').toLowerCase() : t('adminSessions.planned').toLowerCase();
             
             return (
               (session.topic || '').toLowerCase().includes(query) ||
@@ -541,12 +554,12 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
     <div className="user-management-container">
       {/* Add Session Section */}
       <div className="add-user-section">
-        <h2>{editingSession ? 'Edit Session' : 'Add New Session'}</h2>
+        <h2>{editingSession ? t('adminSessions.editSession') : t('adminSessions.addNewSession')}</h2>
         
         <form onSubmit={editingSession ? handleUpdateSession : handleAddSession} className="add-user-form">
           <div className="form-row">
             <div className="form-group">
-              <label>Date*</label>
+              <label>{t('adminSessions.dateRequired')}</label>
               <input
                 type="date"
                 name="date"
@@ -557,7 +570,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
             </div>
             
             <div className="form-group">
-              <label>Start Time*</label>
+              <label>{t('adminSessions.startTimeRequired')}</label>
               <input
                 type="time"
                 name="startTime"
@@ -570,7 +583,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
 
           <div className="form-row">
             <div className="form-group">
-              <label>School*</label>
+              <label>{t('adminSessions.schoolRequired')}</label>
               <select
                 name="schoolId"
                 value={newSession.schoolId}
@@ -579,10 +592,10 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
               >
                 <option value="">
                   {schoolsLoading 
-                    ? 'Loading schools...' 
+                    ? t('adminSessions.loadingSchools')
                     : schools.length === 0 
-                      ? 'No schools available' 
-                      : 'Select School'}
+                      ? t('adminSessions.noSchoolsAvailable')
+                      : t('adminSessions.selectSchool')}
                 </option>
                 {schools.map(school => (
                   <option key={school.id} value={school.name}>
@@ -592,13 +605,13 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
               </select>
               {schools.length === 0 && !schoolsLoading && (
                 <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                  No schools found in database. Add schools first.
+                  {t('adminSessions.noSchoolsFoundAddFirst')}
                 </div>
               )}
             </div>
             
             <div className="form-group">
-              <label>Class*</label>
+              <label>{t('adminSessions.classRequired')}</label>
               <select
                 name="classId"
                 value={newSession.classId}
@@ -608,10 +621,10 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
               >
                 <option value="">
                   {!newSession.schoolId 
-                    ? 'Select school first' 
+                    ? t('adminSessions.selectSchoolFirst')
                     : getFilteredClasses().length === 0 
-                      ? 'No classes available for selected school'
-                      : 'Select Class'}
+                      ? t('adminSessions.noClassesAvailableForSchool')
+                      : t('adminSessions.selectClass')}
                 </option>
                 {getFilteredClasses().map(cls => (
                   <option key={cls.id} value={cls.id}>
@@ -621,7 +634,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
               </select>
               {newSession.schoolId && getFilteredClasses().length === 0 && (
                 <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                  No classes found for "{newSession.schoolId}". Add classes for this school first.
+                  {t('adminSessions.noClassesFoundForSchool', { school: newSession.schoolId })}
                 </div>
               )}
             </div>
@@ -629,29 +642,29 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
 
           <div className="form-row">
             <div className="form-group">
-              <label>Duration (minutes)*</label>
+              <label>{t('adminSessions.durationMinutesRequired')}</label>
               <select
                 name="duration"
                 value={newSession.duration}
                 onChange={handleSessionChange}
                 required
               >
-                <option value={30}>30 minutes</option>
-                <option value={45}>45 minutes</option>
-                <option value={60}>60 minutes</option>
-                <option value={90}>90 minutes</option>
-                <option value={120}>120 minutes</option>
+                <option value={30}>{t('adminSessions.30minutes')}</option>
+                <option value={45}>{t('adminSessions.45minutes')}</option>
+                <option value={60}>{t('adminSessions.60minutes')}</option>
+                <option value={90}>{t('adminSessions.90minutes')}</option>
+                <option value={120}>{t('adminSessions.120minutes')}</option>
               </select>
             </div>
             
             <div className="form-group">
-              <label>Topic*</label>
+              <label>{t('adminSessions.topicRequired')}</label>
               <input
                 type="text"
                 name="topic"
                 value={newSession.topic}
                 onChange={handleSessionChange}
-                placeholder="Session topic"
+                placeholder={t('adminSessions.sessionTopicPlaceholder')}
                 required
               />
             </div>
@@ -659,15 +672,15 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
 
           <div className="form-row">
             <div className="form-group">
-              <label>Status*</label>
+              <label>{t('adminSessions.statusRequired')}</label>
               <select
                 name="status"
                 value={newSession.status}
                 onChange={(e) => setNewSession({...newSession, status: e.target.value === 'true'})}
                 required
               >
-                <option value={false}>Planned</option>
-                <option value={true}>Completed</option>
+                <option value={false}>{t('adminSessions.planned')}</option>
+                <option value={true}>{t('adminSessions.completed')}</option>
               </select>
             </div>
           </div>
@@ -677,10 +690,10 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
               <>
                 <div className="edit-mode-info">
                   <div className="edit-indicator">
-                    ✏️ Edit Mode
+                    ✏️ {t('adminSessions.editMode')}
                   </div>
                   <div className="edit-description">
-                    You are currently editing this session. Make your changes and click Save, or Cancel to discard changes.
+                    {t('adminSessions.editModeDescription')}
                   </div>
                 </div>
                 <div className="edit-buttons-row">
@@ -689,7 +702,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
                     className="save-button"
                     disabled={loading || sessionsLoading}
                   >
-                    {loading || sessionsLoading ? 'Saving...' : 'Save Changes'}
+                    {loading || sessionsLoading ? t('adminSessions.saving') + '...' : t('adminSessions.saveChanges')}
                   </button>
                   <button 
                     type="button" 
@@ -697,7 +710,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
                     onClick={handleCancelEdit}
                     disabled={loading || sessionsLoading}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                 </div>
               </>
@@ -707,7 +720,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
                 className="add-button"
                 disabled={loading || sessionsLoading}
               >
-                {loading || sessionsLoading ? 'Adding...' : 'Add Session'}
+                {loading || sessionsLoading ? t('adminSessions.adding') + '...' : t('adminSessions.addSession')}
               </button>
             )}
           </div>
@@ -717,7 +730,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
       {/* Sessions List Section */}
       <div className="user-list-section">
         <div className="users-list-header">
-          <h3>Sessions List ({filteredSessions.length})</h3>
+          <h3>{t('adminSessions.sessionsList', { count: filteredSessions.length })}</h3>
           <div className="users-search-container">
             <div className="users-search-filter-row">
               <select
@@ -725,24 +738,26 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
                 onChange={(e) => setSearchFilter(e.target.value)}
                 className="users-filter-select"
               >
-                <option value="all">All Fields</option>
-                <option value="topic">Topic</option>
-                <option value="school">School</option>
-                <option value="class">Class</option>
-                <option value="status">Status</option>
-                <option value="date">Session Date</option>
-                <option value="added">Added Date</option>
+                <option value="all">{t('adminSessions.allFields')}</option>
+                <option value="topic">{t('adminSessions.topic')}</option>
+                <option value="school">{t('adminSessions.school')}</option>
+                <option value="class">{t('adminSessions.class')}</option>
+                <option value="status">{t('adminSessions.status')}</option>
+                <option value="date">{t('adminSessions.sessionDate')}</option>
+                <option value="added">{t('adminSessions.addedDate')}</option>
               </select>
               
               <input
                 type="text"
-                placeholder={`Search ${searchFilter === 'all' ? 'all fields' : 
-                  searchFilter === 'topic' ? 'topic' :
-                  searchFilter === 'school' ? 'school' :
-                  searchFilter === 'class' ? 'class' :
-                  searchFilter === 'status' ? 'status' :
-                  searchFilter === 'date' ? 'session date' :
-                  searchFilter === 'added' ? 'added date' : 'sessions'}...`}
+                placeholder={t('adminSessions.searchPlaceholder', { 
+                  field: searchFilter === 'all' ? t('adminSessions.allFields').toLowerCase() : 
+                    searchFilter === 'topic' ? t('adminSessions.topic').toLowerCase() :
+                    searchFilter === 'school' ? t('adminSessions.school').toLowerCase() :
+                    searchFilter === 'class' ? t('adminSessions.class').toLowerCase() :
+                    searchFilter === 'status' ? t('adminSessions.status').toLowerCase() :
+                    searchFilter === 'date' ? t('adminSessions.sessionDate').toLowerCase() :
+                    searchFilter === 'added' ? t('adminSessions.addedDate').toLowerCase() : 'sessions'
+                })}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="users-search-input"
@@ -752,7 +767,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
                 <button 
                   onClick={clearSearch}
                   className="users-clear-search-button"
-                  title="Clear search"
+                  title={t('adminSessions.clearSearch')}
                 >
                   ×
                 </button>
@@ -767,43 +782,46 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
               className="refresh-button"
               disabled={loading || sessionsLoading}
             >
-              {loading || sessionsLoading ? 'Refreshing...' : '↻ Refresh'}
+              {loading || sessionsLoading ? t('adminSessions.refreshing') + '...' : '↻ ' + t('adminSessions.refresh')}
             </button>
           </div>
         </div>
 
         {(searchQuery || searchFilter !== 'all') && (
           <div className="search-results-info">
-            Showing {filteredSessions.length} of {(sessions || []).length} sessions
-            {searchQuery && ` matching "${searchQuery}"`}
-            {searchFilter !== 'all' && ` in ${
-              searchFilter === 'topic' ? 'topic' :
-              searchFilter === 'school' ? 'school' :
-              searchFilter === 'class' ? 'class' :
-              searchFilter === 'status' ? 'status' :
-              searchFilter === 'date' ? 'session date' :
-              searchFilter === 'added' ? 'added date' : searchFilter
-            }`}
+            {t('adminSessions.showingResults', { 
+              filtered: filteredSessions.length, 
+              total: (sessions || []).length,
+              query: searchQuery,
+              field: searchFilter !== 'all' ? (
+                searchFilter === 'topic' ? t('adminSessions.topic').toLowerCase() :
+                searchFilter === 'school' ? t('adminSessions.school').toLowerCase() :
+                searchFilter === 'class' ? t('adminSessions.class').toLowerCase() :
+                searchFilter === 'status' ? t('adminSessions.status').toLowerCase() :
+                searchFilter === 'date' ? t('adminSessions.sessionDate').toLowerCase() :
+                searchFilter === 'added' ? t('adminSessions.addedDate').toLowerCase() : searchFilter
+              ) : ''
+            })}
           </div>
         )}
         
         {loading || sessionsLoading ? (
-          <div className="loading-users">Loading sessions...</div>
+          <div className="loading-users">{t('adminSessions.loadingSessions')}</div>
         ) : (
           <div className="users-table-wrapper">
             {filteredSessions.length > 0 ? (
               <table className="users-table">
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>School</th>
-                    <th>Class</th>
-                    <th>Topic</th>
-                    <th>Duration</th>
-                    <th>Status</th>
-                    <th>Added</th>
-                    <th>Actions</th>
+                    <th>{t('adminSessions.date')}</th>
+                    <th>{t('adminSessions.time')}</th>
+                    <th>{t('adminSessions.school')}</th>
+                    <th>{t('adminSessions.class')}</th>
+                    <th>{t('adminSessions.topic')}</th>
+                    <th>{t('adminSessions.duration')}</th>
+                    <th>{t('adminSessions.status')}</th>
+                    <th>{t('adminSessions.added')}</th>
+                    <th>{t('adminSessions.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -820,13 +838,13 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
                         <td>
                           {classInfo 
                             ? `${classInfo.className} (${classInfo.level})` 
-                            : 'Unknown Class'}
+                            : t('adminSessions.unknownClass')}
                         </td>
                         <td>{session.topic}</td>
-                        <td>{session.duration} min</td>
+                        <td>{session.duration} {t('adminSessions.minutes')}</td>
                         <td>
                           <span className={`role-badge ${session.status === true ? 'completed' : 'planned'}`}>
-                            {session.status === true ? 'Completed' : 'Planned'}
+                            {session.status === true ? t('adminSessions.completed') : t('adminSessions.planned')}
                           </span>
                         </td>
                         <td>{formatDate(session.createdAt)}</td>
@@ -837,14 +855,14 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
                               onClick={() => handleEditSession(session)}
                               disabled={loading || sessionsLoading}
                             >
-                              Edit
+                              {t('common.edit')}
                             </button>
                             <button 
                               className="delete-button"
                               onClick={() => handleDeleteSession(session.id)}
                               disabled={loading || sessionsLoading}
                             >
-                              Delete
+                              {t('common.delete')}
                             </button>
                           </div>
                         </td>
@@ -856,8 +874,8 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
             ) : (
               <div className="no-users">
                 {searchQuery || searchFilter !== 'all' 
-                  ? `No sessions match your search criteria.` 
-                  : 'No sessions found. Add your first session.'}
+                  ? t('adminSessions.noSessionsMatchSearch')
+                  : t('adminSessions.noSessionsFound')}
               </div>
             )}
           </div>

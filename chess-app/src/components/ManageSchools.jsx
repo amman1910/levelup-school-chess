@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { db } from '../firebase';
 import { doc, addDoc, deleteDoc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { logAdminAction } from '../utils/adminLogger';
 
 const ManageSchools = ({ schools, setSchools, loading, setLoading, error, success, setError, setSuccess, fetchSchools }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+  
   // Debug logs
   console.log('ManageSchools props:', { 
     schools: Array.isArray(schools) ? `Array(${schools.length})` : schools,
@@ -76,7 +79,7 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
     try {
       if (!newSchool.name.trim()) {
         console.log('Validation failed - calling error function');
-        errorFunction('Please fill the required field: School Name');
+        errorFunction(t('adminSchools.fillRequiredField'));
         setLoading(false);
         return;
       }
@@ -87,7 +90,7 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
       );
       if (existingSchoolByName && (!isEditing || existingSchoolByName.id !== editingSchool)) {
         console.log('School name exists - calling error function');
-        errorFunction(`A school with the name "${newSchool.name}" already exists. Please choose a different name.`);
+        errorFunction(t('adminSchools.schoolNameExists', { name: newSchool.name }));
         setLoading(false);
         return;
       }
@@ -111,7 +114,7 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
         });
         
         console.log('School updated successfully - calling success function');
-        successFunction('School updated successfully!');
+        successFunction(t('adminSchools.schoolUpdatedSuccessfully'));
       } else {
         const docRef = await addDoc(collection(db, "schools"), {
           name: newSchool.name.trim(),
@@ -131,7 +134,7 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
         });
         
         console.log('School added successfully - calling success function');
-        successFunction('School added successfully!');
+        successFunction(t('adminSchools.schoolAddedSuccessfully'));
       }
 
       // Update local state
@@ -180,13 +183,13 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
     // קבלת פרטי בית הספר לפני המחיקה
     const schoolToDelete = schools.find(school => school.id === schoolId);
     if (!schoolToDelete) {
-      errorFunction('School not found');
+      errorFunction(t('adminSchools.schoolNotFound'));
       return;
     }
 
     const schoolName = schoolToDelete.name;
     
-    if (!window.confirm(`Are you sure you want to delete "${schoolName}"?\n\nThis will also delete:\n- All classes associated with this school\n- All sessions associated with this school\n\nThis action cannot be undone.`)) {
+    if (!window.confirm(t('adminSchools.confirmDeleteSchool', { schoolName }))) {
       return;
     }
     
@@ -249,7 +252,7 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
 
       console.log('School deleted successfully - calling success function');
       // הודעת הצלחה פשוטה
-      successFunction(`School "${schoolName}" deleted successfully`);
+      successFunction(t('adminSchools.schoolDeletedSuccessfully', { name: schoolName }));
       
       // Update local state
       if (setSchools && Array.isArray(schools)) {
@@ -264,7 +267,7 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
     } catch (err) {
       console.error("Error deleting school:", err);
       console.log('Caught delete error - calling error function');
-      errorFunction('Failed to delete school: ' + err.message);
+      errorFunction(t('adminSchools.failedToDeleteSchool') + ': ' + err.message);
     }
     setLoading(false);
   };
@@ -385,54 +388,54 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
     <div className="user-management-container">
       {/* Add School Section */}
       <div className="add-user-section">
-        <h2>{isEditing ? 'Edit School' : 'Add New School'}</h2>
+        <h2>{isEditing ? t('adminSchools.editSchool') : t('adminSchools.addNewSchool')}</h2>
         
         <form onSubmit={handleAddSchool} className="add-user-form">
           <div className="form-row">
             <div className="form-group">
-              <label>School Name*</label>
+              <label>{t('adminSchools.schoolNameRequired')}</label>
               <input
                 type="text"
                 name="name"
                 value={newSchool.name}
                 onChange={handleSchoolChange}
-                placeholder="School Name"
+                placeholder={t('adminSchools.schoolNamePlaceholder')}
                 required
               />
             </div>
             
             <div className="form-group">
-              <label>Address</label>
+              <label>{t('adminSchools.address')}</label>
               <input
                 type="text"
                 name="address"
                 value={newSchool.address}
                 onChange={handleSchoolChange}
-                placeholder="School Address"
+                placeholder={t('adminSchools.schoolAddressPlaceholder')}
               />
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label>Contact Person</label>
+              <label>{t('adminSchools.contactPerson')}</label>
               <input
                 type="text"
                 name="contact_person"
                 value={newSchool.contact_person}
                 onChange={handleSchoolChange}
-                placeholder="Contact Person Name"
+                placeholder={t('adminSchools.contactPersonPlaceholder')}
               />
             </div>
             
             <div className="form-group">
-              <label>Phone</label>
+              <label>{t('adminSchools.phone')}</label>
               <input
                 type="tel"
                 name="phone"
                 value={newSchool.phone}
                 onChange={handleSchoolChange}
-                placeholder="Phone Number"
+                placeholder={t('adminSchools.phoneNumberPlaceholder')}
               />
             </div>
           </div>
@@ -442,10 +445,10 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
               <>
                 <div className="edit-mode-info">
                   <div className="edit-indicator">
-                    ✏️ Edit Mode
+                    ✏️ {t('adminSchools.editMode')}
                   </div>
                   <div className="edit-description">
-                    You are currently editing this school. Make your changes and click Save, or Cancel to discard changes.
+                    {t('adminSchools.editModeDescription')}
                   </div>
                 </div>
                 <div className="edit-buttons-row">
@@ -454,7 +457,7 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
                     className="save-button"
                     disabled={loading}
                   >
-                    {loading ? 'Saving...' : 'Save Changes'}
+                    {loading ? t('adminSchools.saving') + '...' : t('adminSchools.saveChanges')}
                   </button>
                   <button 
                     type="button" 
@@ -462,7 +465,7 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
                     onClick={handleCancelEdit}
                     disabled={loading}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                 </div>
               </>
@@ -472,7 +475,7 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
                 className="add-button"
                 disabled={loading}
               >
-                {loading ? 'Adding...' : 'Add School'}
+                {loading ? t('adminSchools.adding') + '...' : t('adminSchools.addSchool')}
               </button>
             )}
           </div>
@@ -482,7 +485,7 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
       {/* Schools List Section */}
       <div className="user-list-section">
         <div className="users-list-header">
-          <h3>Schools List ({filteredSchools.length})</h3>
+          <h3>{t('adminSchools.schoolsList', { count: filteredSchools.length })}</h3>
           <div className="users-search-container">
             <div className="users-search-filter-row">
               <select
@@ -490,22 +493,24 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
                 onChange={(e) => setSearchFilter(e.target.value)}
                 className="users-filter-select"
               >
-                <option value="all">All Fields</option>
-                <option value="name">School Name</option>
-                <option value="address">Address</option>
-                <option value="contact">Contact Person</option>
-                <option value="phone">Phone</option>
-                <option value="added">Added Date</option>
+                <option value="all">{t('adminSchools.allFields')}</option>
+                <option value="name">{t('adminSchools.schoolName')}</option>
+                <option value="address">{t('adminSchools.address')}</option>
+                <option value="contact">{t('adminSchools.contactPerson')}</option>
+                <option value="phone">{t('adminSchools.phone')}</option>
+                <option value="added">{t('adminSchools.addedDate')}</option>
               </select>
               
               <input
                 type="text"
-                placeholder={`Search ${searchFilter === 'all' ? 'all fields' : 
-                  searchFilter === 'name' ? 'school name' :
-                  searchFilter === 'address' ? 'address' :
-                  searchFilter === 'contact' ? 'contact person' :
-                  searchFilter === 'phone' ? 'phone' :
-                  searchFilter === 'added' ? 'date' : 'schools'}...`}
+                placeholder={t('adminSchools.searchPlaceholder', { 
+                  field: searchFilter === 'all' ? t('adminSchools.allFields').toLowerCase() : 
+                    searchFilter === 'name' ? t('adminSchools.schoolName').toLowerCase() :
+                    searchFilter === 'address' ? t('adminSchools.address').toLowerCase() :
+                    searchFilter === 'contact' ? t('adminSchools.contactPerson').toLowerCase() :
+                    searchFilter === 'phone' ? t('adminSchools.phone').toLowerCase() :
+                    searchFilter === 'added' ? t('adminSchools.addedDate').toLowerCase() : 'schools'
+                })}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="users-search-input"
@@ -515,7 +520,7 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
                 <button 
                   onClick={clearSearch}
                   className="users-clear-search-button"
-                  title="Clear search"
+                  title={t('adminSchools.clearSearch')}
                 >
                   ×
                 </button>
@@ -533,39 +538,42 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
               className="refresh-button"
               disabled={loading}
             >
-              {loading ? 'Refreshing...' : '↻ Refresh'}
+              {loading ? t('adminSchools.refreshing') + '...' : '↻ ' + t('adminSchools.refresh')}
             </button>
           </div>
         </div>
 
         {(searchQuery || searchFilter !== 'all') && (
           <div className="search-results-info">
-            Showing {filteredSchools.length} of {(schools || []).length} schools
-            {searchQuery && ` matching "${searchQuery}"`}
-            {searchFilter !== 'all' && ` in ${
-              searchFilter === 'name' ? 'school name' :
-              searchFilter === 'address' ? 'address' :
-              searchFilter === 'contact' ? 'contact person' :
-              searchFilter === 'phone' ? 'phone' :
-              searchFilter === 'added' ? 'added date' : searchFilter
-            }`}
+            {t('adminSchools.showingResults', { 
+              filtered: filteredSchools.length, 
+              total: (schools || []).length,
+              query: searchQuery,
+              field: searchFilter !== 'all' ? (
+                searchFilter === 'name' ? t('adminSchools.schoolName').toLowerCase() :
+                searchFilter === 'address' ? t('adminSchools.address').toLowerCase() :
+                searchFilter === 'contact' ? t('adminSchools.contactPerson').toLowerCase() :
+                searchFilter === 'phone' ? t('adminSchools.phone').toLowerCase() :
+                searchFilter === 'added' ? t('adminSchools.addedDate').toLowerCase() : searchFilter
+              ) : ''
+            })}
           </div>
         )}
         
         {loading ? (
-          <div className="loading-users">Loading schools...</div>
+          <div className="loading-users">{t('adminSchools.loadingSchools')}</div>
         ) : (
           <div className="users-table-wrapper">
             {filteredSchools.length > 0 ? (
               <table className="users-table">
                 <thead>
                   <tr>
-                    <th>School Name</th>
-                    <th>Address</th>
-                    <th>Contact Person</th>
-                    <th>Phone</th>
-                    <th>Added</th>
-                    <th>Actions</th>
+                    <th>{t('adminSchools.schoolName')}</th>
+                    <th>{t('adminSchools.address')}</th>
+                    <th>{t('adminSchools.contactPerson')}</th>
+                    <th>{t('adminSchools.phone')}</th>
+                    <th>{t('adminSchools.added')}</th>
+                    <th>{t('adminSchools.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -583,14 +591,14 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
                             onClick={() => handleEditSchool(school)}
                             disabled={loading}
                           >
-                            Edit
+                            {t('common.edit')}
                           </button>
                           <button 
                             className="delete-button"
                             onClick={() => handleDeleteSchool(school.id)}
                             disabled={loading}
                           >
-                            Delete
+                            {t('common.delete')}
                           </button>
                         </div>
                       </td>
@@ -601,8 +609,8 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
             ) : (
               <div className="no-users">
                 {searchQuery || searchFilter !== 'all' 
-                  ? `No schools match your search criteria.` 
-                  : 'No schools found. Add your first school.'}
+                  ? t('adminSchools.noSchoolsMatchSearch')
+                  : t('adminSchools.noSchoolsFound')}
               </div>
             )}
           </div>
