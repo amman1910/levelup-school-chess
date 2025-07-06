@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { db } from '../firebase';
 import { collection, getDocs, query, where, onSnapshot } from 'firebase/firestore';
 import Dashboard from './AdminDashboard';
@@ -17,16 +18,16 @@ import AdminTrainerAnalytics from './AdminTrainerAnalytics';
 import AdminTrainerSessions from './AdminTrainerSessions';
 import AdminGroupAnalytics from './AdminGroupAnalytics';
 import AdminAttendanceTrends from './AdminAttendanceTrends';
-
-
 import AdminActivityLog from './AdminActivityLog';
 import AdminProfile from './AdminProfile';
+import LanguageSwitcher from './LanguageSwitcher'; // הוספת מתג השפות
 import chessLogo from './chessLogo.png';
 import chessLogo3 from './chessLogo3.png'; 
 
 import './AdminArea.css';
 
 const AdminArea = () => {
+  const { t, i18n } = useTranslation(); // הוספת i18n לשליטה בשפה
   const [user, setUser] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [pendingRegistrationsCount, setPendingRegistrationsCount] = useState(0);
@@ -40,6 +41,15 @@ const AdminArea = () => {
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+
+  // הגדרת ערבית כשפת ברירת מחדל
+  useEffect(() => {
+    // בדוק אם לא נשמרה העדפת שפה בlocal storage
+    const savedLanguage = localStorage.getItem('i18nextLng');
+    if (!savedLanguage || savedLanguage === 'en-US' || savedLanguage === 'en') {
+      i18n.changeLanguage('ar');
+    }
+  }, [i18n]);
 
   // ניקוי הודעות כשמשנים route - הפתרון העיקרי!
   useEffect(() => {
@@ -70,14 +80,13 @@ const AdminArea = () => {
     setUser(userData);
   }, [navigate]);
   
-
   const fetchUsers = async () => {
     try {
       const usersSnapshot = await getDocs(collection(db, "users"));
       setUsers(usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     } catch (err) {
       console.error('Error fetching users:', err);
-      setError('Failed to load users data');
+      setError(t('admin.failedToLoad')); // שימוש בתרגום
     }
   };
 
@@ -87,7 +96,7 @@ const AdminArea = () => {
       setClasses(classesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     } catch (err) {
       console.error('Error fetching classes:', err);
-      setError('Failed to load classes data');
+      setError(t('admin.failedToLoad'));
     }
   };
 
@@ -97,7 +106,7 @@ const AdminArea = () => {
       setStudents(studentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     } catch (err) {
       console.error('Error fetching students:', err);
-      setError('Failed to load students data');
+      setError(t('admin.failedToLoad'));
     }
   };
 
@@ -107,7 +116,7 @@ const AdminArea = () => {
       setSchools(schoolsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     } catch (err) {
       console.error('Error fetching schools:', err);
-      setError('Failed to load schools data');
+      setError(t('admin.failedToLoad'));
     }
   };
 
@@ -117,7 +126,7 @@ const AdminArea = () => {
       setSessions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     } catch (err) {
       console.error('Error fetching sessions:', err);
-      setError('Failed to load sessions data');
+      setError(t('admin.failedToLoad'));
     }
   };
 
@@ -126,7 +135,7 @@ const AdminArea = () => {
     try {
       await Promise.all([fetchUsers(), fetchClasses(), fetchStudents(), fetchSchools(), fetchSessions()]);
     } catch (err) {
-      setError('Failed to load data');
+      setError(t('admin.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -146,11 +155,9 @@ const AdminArea = () => {
       return;
     }
 
-    // Use uid for the query since that's what's stored in notifications
     const userId = user.uid;
     console.log('Setting up unread notifications listener for admin ID:', userId);
 
-    // Query for unread messages where admin is RECEIVER
     const q = query(
       collection(db, 'notifications'),
       where('receiverId', '==', userId),
@@ -180,7 +187,6 @@ const AdminArea = () => {
 
     console.log('Setting up pending registration forms listener');
 
-    // Query for all registration forms and filter pending ones
     const q = query(collection(db, 'registrationForm'));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -214,31 +220,31 @@ const AdminArea = () => {
   };
 
   const getPageTitle = () => {
-    if (location.pathname.includes('dashboard')) return 'Admin Dashboard';
-    if (location.pathname.includes('manage-users')) return 'User Management';
-    if (location.pathname.includes('trainer-monitoring')) return 'Performance & Analytics';
-    if (location.pathname.includes('manage-classes')) return 'Class Management';
-    if (location.pathname.includes('manage-students')) return 'Student Management';
-    if (location.pathname.includes('manage-schools')) return 'School Management';
-    if (location.pathname.includes('manage-lessons')) return 'Lesson Management';
-    if (location.pathname.includes('manage-materials')) return 'Materials Management';
-    if (location.pathname.includes('edit-homepage')) return 'Homepage Editor';
-    if (location.pathname.includes('notifications')) return 'Notifications';
-    if (location.pathname.includes('registration-requests')) return 'Registration Requests';
-    if (location.pathname.includes('my-profile')) return 'My Profile';
-    return 'Admin Area';
+    if (location.pathname.includes('dashboard')) return t('admin.dashboard');
+    if (location.pathname.includes('manage-users')) return t('admin.manageUsers');
+    if (location.pathname.includes('trainer-monitoring')) return t('admin.analytics');
+    if (location.pathname.includes('manage-classes')) return t('admin.manageClasses');
+    if (location.pathname.includes('manage-students')) return t('admin.manageStudents');
+    if (location.pathname.includes('manage-schools')) return t('admin.manageSchools');
+    if (location.pathname.includes('manage-lessons')) return t('admin.manageSessions');
+    if (location.pathname.includes('manage-materials')) return t('admin.manageMaterials');
+    if (location.pathname.includes('edit-homepage')) return t('admin.editHomepage');
+    if (location.pathname.includes('notifications')) return t('admin.notifications');
+    if (location.pathname.includes('registration-requests')) return t('admin.registrationRequests');
+    if (location.pathname.includes('my-profile')) return t('admin.myProfile');
+    return t('admin.area');
   };
 
   const handleRefresh = async () => {
     setError('');
     setSuccess('');
     await fetchAllData();
-    setSuccess('Data refreshed successfully');
+    setSuccess(t('admin.dataRefreshed')); // שימוש בתרגום
     setTimeout(() => setSuccess(''), 3000);
   };
 
   if (!user) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading">{t('common.loading')}</div>;
   }
 
   return (
@@ -254,37 +260,37 @@ const AdminArea = () => {
         
         <nav className="admin-nav">
           <NavLink to="/admin-area/dashboard" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Dashboard
+            {t('admin.dashboard')}
           </NavLink>
           <NavLink to="/admin-area/manage-users" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Manage Users
+            {t('admin.manageUsers')}
           </NavLink>
           <NavLink to="/admin-area/manage-schools" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Manage Schools
+            {t('admin.manageSchools')}
           </NavLink>
           <NavLink to="/admin-area/manage-classes" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Manage Classes
+            {t('admin.manageClasses')}
           </NavLink>
           <NavLink to="/admin-area/manage-students" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Manage Students
+            {t('admin.manageStudents')}
           </NavLink>
           <NavLink to="/admin-area/manage-lessons" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Manage Sessions
+            {t('admin.manageSessions')}
           </NavLink>
           <NavLink to="/admin-area/manage-materials" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Manage Materials
+            {t('admin.manageMaterials')}
           </NavLink>
           <NavLink to="/admin-area/trainer-monitoring" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Performance & Analytics
+            {t('admin.analytics')}
           </NavLink>
           <NavLink to="/admin-area/edit-homepage" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            Edit Homepage
+            {t('admin.editHomepage')}
           </NavLink>
           <NavLink 
             to="/admin-area/notifications" 
             className={({ isActive }) => `admin-link ${isActive ? 'active' : ''} notifications-link`}
           >
-            Notifications
+            {t('admin.notifications')}
             {unreadCount > 0 && (
               <span className="notification-badge">{unreadCount}</span>
             )}
@@ -293,14 +299,17 @@ const AdminArea = () => {
             to="/admin-area/registration-requests" 
             className={({ isActive }) => `admin-link ${isActive ? 'active' : ''} registration-link`}
           >
-            Registration Requests
+            {t('admin.registrationRequests')}
             {pendingRegistrationsCount > 0 && (
               <span className="notification-badge">{pendingRegistrationsCount}</span>
             )}
           </NavLink>
           <NavLink to="/admin-area/my-profile" className={({ isActive }) => `admin-link ${isActive ? 'active' : ''}`}>
-            My Profile
+            {t('admin.myProfile')}
           </NavLink>
+          
+          {/* הוספת מתג השפות */}
+          <LanguageSwitcher />
           
           {/* הוספת הלוגו מתחת לProfile */}
           <div className="nav-logo-container">
@@ -311,14 +320,14 @@ const AdminArea = () => {
         <div className="admin-footer">
           <div className="user-info">
             <div className="user-email">{user.email}</div>
-            <div className="user-role">Administrator</div>
+            <div className="user-role">{t('admin.administrator')}</div>
           </div>
           <button 
             onClick={handleLogout} 
             className="logout-button"
             disabled={loading}
           >
-            Logout
+            {t('common.logout')}
           </button>
         </div>
       </div>
@@ -331,7 +340,7 @@ const AdminArea = () => {
             className="refresh-button"
             disabled={loading}
           >
-            {loading ? 'Refreshing...' : '↻ Refresh Data'}
+            {loading ? t('admin.refreshing') : `↻ ${t('common.refresh')}`}
           </button>
         </div>
         
@@ -468,7 +477,7 @@ const AdminArea = () => {
                   setLoading={setLoading}
                   error={setError}
                   success={setSuccess}
-                  onUnreadCountChange={setUnreadCount} // Note: unread count is now managed by AdminArea real-time listener
+                  onUnreadCountChange={setUnreadCount}
                 />
               } 
             />
@@ -522,8 +531,6 @@ const AdminArea = () => {
                 />
               } 
             />
-           
-
             <Route
               path="analytics/activity-log"
               element={<AdminActivityLog />}
