@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { 
   collection, 
   getDocs, 
@@ -6,12 +7,14 @@ import {
   doc, 
   orderBy, 
   query,
-  serverTimestamp 
+  serverTimestamp,
+  addDoc
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import './AdminRegistrationForms.css';
 
 const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
   const [registrationForms, setRegistrationForms] = useState([]);
   const [filteredForms, setFilteredForms] = useState([]);
   const [selectedForm, setSelectedForm] = useState(null);
@@ -19,6 +22,31 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
   const [filterStatus, setFilterStatus] = useState('all'); // all, pending, completed
   const [searchQuery, setSearchQuery] = useState('');
   const [processingId, setProcessingId] = useState(null);
+
+  // פונקציה לרישום פעולות ב-adminLogs
+  const logAdminAction = async (actionType, description, targetType, targetId = null) => {
+    try {
+      // קבלת פרטי המשתמש הנוכחי
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const adminName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'Unknown Admin';
+
+      const logEntry = {
+        actionType,
+        adminName,
+        description,
+        targetType,
+        timestamp: new Date(),
+        targetId: targetId || null,
+        adminId: currentUser.uid || currentUser.id || null
+      };
+
+      await addDoc(collection(db, 'adminLogs'), logEntry);
+      console.log('Admin action logged:', logEntry);
+    } catch (err) {
+      console.error('Error logging admin action:', err);
+      // אל תעצור את הפעולה אם הלוג נכשל
+    }
+  };
 
   // Fetch registration forms from Firebase with smart sorting
   const fetchRegistrationForms = async () => {
@@ -51,7 +79,7 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
       console.log('Fetched registration forms:', sortedForms.length);
     } catch (err) {
       console.error('Error fetching registration forms:', err);
-      error('Failed to load registration forms');
+      error(t('adminRegistration.failedToLoadForms'));
     } finally {
       setLoading(false);
     }
@@ -63,7 +91,7 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
   };
 
   const getStatusDisplay = (form) => {
-    return isFormPending(form) ? 'Pending Review' : 'Completed';
+    return isFormPending(form) ? t('adminRegistration.pendingReview') : t('adminRegistration.completed');
   };
 
   const getStatusClass = (form) => {
@@ -98,7 +126,7 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
 
   const processForm = async (formId) => {
     if (!adminNote.trim()) {
-      error('Please add a note before processing the form');
+      error(t('adminRegistration.pleaseAddNote'));
       return;
     }
 
@@ -110,6 +138,17 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
         processedAt: serverTimestamp(),
         processedBy: JSON.parse(localStorage.getItem('user'))?.email || 'Unknown Admin'
       });
+
+      // רישום פעולה ב-adminLogs
+      const formToProcess = registrationForms.find(form => form.id === formId);
+      if (formToProcess) {
+        await logAdminAction(
+          'process-registration',
+          `Processed registration form for student "${formToProcess.studentName}"`,
+          'registration',
+          formId
+        );
+      }
 
       // Update local state
       setRegistrationForms(prev => 
@@ -128,10 +167,10 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
 
       setSelectedForm(null);
       setAdminNote('');
-      success('Registration form processed successfully');
+      success(t('adminRegistration.formProcessedSuccessfully'));
     } catch (err) {
       console.error('Error processing form:', err);
-      error('Failed to process registration form');
+      error(t('adminRegistration.failedToProcessForm'));
     } finally {
       setProcessingId(null);
     }
@@ -139,7 +178,7 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
 
   // Format date for display
   const formatDate = (timestamp) => {
-    if (!timestamp) return 'Unknown date';
+    if (!timestamp) return t('adminRegistration.unknownDate');
     
     let date;
     if (timestamp.toDate) {
@@ -173,15 +212,15 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
             <div className="forms-stats">
               <div className="stat-card total">
                 <div className="stat-number">{registrationForms.length}</div>
-                <div className="stat-label">Total Forms</div>
+                <div className="stat-label">{t('adminRegistration.totalForms')}</div>
               </div>
               <div className="stat-card pending">
                 <div className="stat-number">{pendingFormsCount}</div>
-                <div className="stat-label">Pending Review</div>
+                <div className="stat-label">{t('adminRegistration.pendingReview')}</div>
               </div>
               <div className="stat-card completed">
                 <div className="stat-number">{registrationForms.length - pendingFormsCount}</div>
-                <div className="stat-label">Completed</div>
+                <div className="stat-label">{t('adminRegistration.completed')}</div>
               </div>
             </div>
 
@@ -190,7 +229,7 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
               className="refresh-forms-btn"
               disabled={loading}
             >
-              {loading ? 'Refreshing...' : '↻ Refresh'}
+              {loading ? t('adminRegistration.refreshing') + '...' : '↻ ' + t('adminRegistration.refresh')}
             </button>
           </div>
 
@@ -200,19 +239,19 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
                 className={`filter-tab ${filterStatus === 'all' ? 'active' : ''}`}
                 onClick={() => setFilterStatus('all')}
               >
-                All Forms ({registrationForms.length})
+                {t('adminRegistration.allForms')} ({registrationForms.length})
               </button>
               <button 
                 className={`filter-tab ${filterStatus === 'pending' ? 'active' : ''}`}
                 onClick={() => setFilterStatus('pending')}
               >
-                Pending ({pendingFormsCount})
+                {t('adminRegistration.pending')} ({pendingFormsCount})
               </button>
               <button 
                 className={`filter-tab ${filterStatus === 'completed' ? 'active' : ''}`}
                 onClick={() => setFilterStatus('completed')}
               >
-                Completed ({registrationForms.length - pendingFormsCount})
+                {t('adminRegistration.completed')} ({registrationForms.length - pendingFormsCount})
               </button>
             </div>
 
@@ -220,7 +259,7 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
               <div className="search-bar">
                 <input
                   type="text"
-                  placeholder="Search by student name, parent contact, or school..."
+                  placeholder={t('adminRegistration.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="search-input"
@@ -229,7 +268,7 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
                   <button 
                     className="search-clear"
                     onClick={clearSearch}
-                    title="Clear search"
+                    title={t('adminRegistration.clearSearch')}
                   >
                     ×
                   </button>
@@ -239,8 +278,8 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
               {searchQuery && (
                 <div className="search-results-info">
                   {filteredForms.length === 0 
-                    ? "No forms found matching your search" 
-                    : `Found ${filteredForms.length} form${filteredForms.length === 1 ? '' : 's'}`
+                    ? t('adminRegistration.noFormsFound')
+                    : t('adminRegistration.foundForms', { count: filteredForms.length })
                   }
                 </div>
               )}
@@ -251,22 +290,22 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
           {loading ? (
             <div className="loading-state">
               <div className="loading-spinner"></div>
-              <p>Loading registration forms...</p>
+              <p>{t('adminRegistration.loadingForms')}</p>
             </div>
           ) : filteredForms.length === 0 ? (
             <div className="empty-state">
               {searchQuery ? (
                 <>
-                  <h3>No forms found</h3>
-                  <p>No registration forms match your search criteria.</p>
+                  <h3>{t('adminRegistration.noFormsFound')}</h3>
+                  <p>{t('adminRegistration.noFormsMatchSearch')}</p>
                   <button onClick={clearSearch} className="clear-search-btn">
-                    Clear search
+                    {t('adminRegistration.clearSearch')}
                   </button>
                 </>
               ) : (
                 <>
-                  <h3>No registration forms</h3>
-                  <p>No registration forms have been submitted yet.</p>
+                  <h3>{t('adminRegistration.noRegistrationForms')}</h3>
+                  <p>{t('adminRegistration.noFormsSubmitted')}</p>
                 </>
               )}
             </div>
@@ -284,7 +323,7 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
                     </div>
                   )}
                   <div className="form-card-header">
-                    <h3 className="student-name">{form.studentName || 'Unknown Student'}</h3>
+                    <h3 className="student-name">{form.studentName || t('adminRegistration.unknownStudent')}</h3>
                     <span className={`status-badge ${getStatusClass(form)}`}>
                       {getStatusDisplay(form)}
                     </span>
@@ -292,22 +331,22 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
                   
                   <div className="form-card-details">
                     <div className="detail-row">
-                      <span className="detail-label">School:</span>
-                      <span className="detail-value">{form.studentSchool || 'Not provided'}</span>
+                      <span className="detail-label">{t('adminRegistration.school')}:</span>
+                      <span className="detail-value">{form.studentSchool || t('adminRegistration.notProvided')}</span>
                     </div>
                     <div className="detail-row">
-                      <span className="detail-label">Parent Contact:</span>
-                      <span className="detail-value">{form.parentContact || 'Not provided'}</span>
+                      <span className="detail-label">{t('adminRegistration.parentContact')}:</span>
+                      <span className="detail-value">{form.parentContact || t('adminRegistration.notProvided')}</span>
                     </div>
                     <div className="detail-row">
-                      <span className="detail-label">Submitted:</span>
+                      <span className="detail-label">{t('adminRegistration.submitted')}:</span>
                       <span className="detail-value">{formatDate(form.submittedAt)}</span>
                     </div>
                   </div>
 
                   <div className="form-card-footer">
                     <button className="view-details-btn">
-                      View Details & Process →
+                      {t('adminRegistration.viewDetailsAndProcess')} →
                     </button>
                   </div>
                 </div>
@@ -326,15 +365,15 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
                 setAdminNote('');
               }}
             >
-              ← Back to Forms List
+              ← {t('adminRegistration.backToFormsList')}
             </button>
-            <h2>Registration Form Details</h2>
+            <h2>{t('adminRegistration.registrationFormDetails')}</h2>
           </div>
 
           <div className="form-details-content">
             <div className="form-details-card">
               <div className="form-details-header-info">
-                <h3>{selectedForm.studentName || 'Unknown Student'}</h3>
+                <h3>{selectedForm.studentName || t('adminRegistration.unknownStudent')}</h3>
                 <span className={`status-badge ${getStatusClass(selectedForm)}`}>
                   {getStatusDisplay(selectedForm)}
                 </span>
@@ -342,40 +381,40 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
 
               <div className="form-details-grid">
                 <div className="detail-section">
-                  <h4>Student Information</h4>
+                  <h4>{t('adminRegistration.studentInformation')}</h4>
                   <div className="detail-item">
-                    <span className="label">Full Name:</span>
-                    <span className="value">{selectedForm.studentName || 'Not provided'}</span>
+                    <span className="label">{t('adminRegistration.fullName')}:</span>
+                    <span className="value">{selectedForm.studentName || t('adminRegistration.notProvided')}</span>
                   </div>
                   <div className="detail-item">
-                    <span className="label">School:</span>
-                    <span className="value">{selectedForm.studentSchool || 'Not provided'}</span>
-                  </div>
-                </div>
-
-                <div className="detail-section">
-                  <h4>Contact Information</h4>
-                  <div className="detail-item">
-                    <span className="label">Parent Contact:</span>
-                    <span className="value">{selectedForm.parentContact || 'Not provided'}</span>
+                    <span className="label">{t('adminRegistration.school')}:</span>
+                    <span className="value">{selectedForm.studentSchool || t('adminRegistration.notProvided')}</span>
                   </div>
                 </div>
 
                 <div className="detail-section">
-                  <h4>Submission Details</h4>
+                  <h4>{t('adminRegistration.contactInformation')}</h4>
                   <div className="detail-item">
-                    <span className="label">Submitted Date:</span>
+                    <span className="label">{t('adminRegistration.parentContact')}:</span>
+                    <span className="value">{selectedForm.parentContact || t('adminRegistration.notProvided')}</span>
+                  </div>
+                </div>
+
+                <div className="detail-section">
+                  <h4>{t('adminRegistration.submissionDetails')}</h4>
+                  <div className="detail-item">
+                    <span className="label">{t('adminRegistration.submittedDate')}:</span>
                     <span className="value">{formatDate(selectedForm.submittedAt)}</span>
                   </div>
                   {selectedForm.processedAt && (
                     <>
                       <div className="detail-item">
-                        <span className="label">Processed Date:</span>
+                        <span className="label">{t('adminRegistration.processedDate')}:</span>
                         <span className="value">{formatDate(selectedForm.processedAt)}</span>
                       </div>
                       <div className="detail-item">
-                        <span className="label">Processed By:</span>
-                        <span className="value">{selectedForm.processedBy || 'Unknown'}</span>
+                        <span className="label">{t('adminRegistration.processedBy')}:</span>
+                        <span className="value">{selectedForm.processedBy || t('adminRegistration.unknown')}</span>
                       </div>
                     </>
                   )}
@@ -383,7 +422,7 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
 
                 {selectedForm.adminNote && (
                   <div className="detail-section">
-                    <h4>Admin Notes</h4>
+                    <h4>{t('adminRegistration.adminNotes')}</h4>
                     <div className="admin-note-display">
                       {selectedForm.adminNote}
                     </div>
@@ -393,14 +432,14 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
 
               {isFormPending(selectedForm) && (
                 <div className="process-form-section">
-                  <h4>Process Registration Form</h4>
+                  <h4>{t('adminRegistration.processRegistrationForm')}</h4>
                   <div className="admin-note-input">
-                    <label htmlFor="adminNote">Admin Notes (Required):</label>
+                    <label htmlFor="adminNote">{t('adminRegistration.adminNotesRequired')}:</label>
                     <textarea
                       id="adminNote"
                       value={adminNote}
                       onChange={(e) => setAdminNote(e.target.value)}
-                      placeholder="Add your notes about how this registration was processed..."
+                      placeholder={t('adminRegistration.adminNotesPlaceholder')}
                       rows="4"
                       className="note-textarea"
                     />
@@ -412,7 +451,7 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
                       disabled={!adminNote.trim() || processingId === selectedForm.id}
                       className="process-btn"
                     >
-                      {processingId === selectedForm.id ? 'Processing...' : 'Mark as Completed'}
+                      {processingId === selectedForm.id ? t('adminRegistration.processing') + '...' : t('adminRegistration.markAsCompleted')}
                     </button>
                   </div>
                 </div>

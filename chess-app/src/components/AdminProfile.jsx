@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { User, Mail, Calendar, Hash, Shield, Phone, Edit, X, Lock } from 'lucide-react';
 import { 
   collection, 
@@ -15,6 +16,8 @@ import { db } from '../firebase';
 import './AdminProfile.css';
 
 const AdminProfile = ({ currentUser }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+  
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showEmailModal, setShowEmailModal] = useState(false);
@@ -79,7 +82,7 @@ const AdminProfile = ({ currentUser }) => {
   if (loading) {
     return (
       <div className="profile-loading">
-        <div className="loading-spinner">Loading profile...</div>
+        <div className="loading-spinner">{t('trainerProfile.loadingProfile')}</div>
       </div>
     );
   }
@@ -88,8 +91,8 @@ const AdminProfile = ({ currentUser }) => {
     return (
       <div className="profile-error">
         <div className="error-message">
-          <h3>Profile Not Found</h3>
-          <p>Unable to load your profile information. Please try logging in again.</p>
+          <h3>{t('trainerProfile.profileNotFound')}</h3>
+          <p>{t('trainerProfile.unableToLoad')}</p>
         </div>
       </div>
     );
@@ -103,7 +106,7 @@ const AdminProfile = ({ currentUser }) => {
   console.log('mobileNumber:', userProfile.mobileNumber);
 
   // Construct full name
-  const fullName = `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() || 'Not specified';
+  const fullName = `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() || t('trainerProfile.notSpecified');
   
   // Get user initials for avatar
   const getInitials = (firstName, lastName) => {
@@ -335,7 +338,7 @@ const AdminProfile = ({ currentUser }) => {
               <h1>{fullName}</h1>
               <span className="admin-profile-role">
                 <Shield size={16} />
-                {userProfile.role?.charAt(0).toUpperCase() + userProfile.role?.slice(1) || 'Administrator'}
+                {userProfile.role?.charAt(0).toUpperCase() + userProfile.role?.slice(1) || t('admin.administrator')}
               </span>
             </div>
           </div>
@@ -344,7 +347,7 @@ const AdminProfile = ({ currentUser }) => {
         {/* Profile Content */}
         <div className="admin-profile-content">
           <div className="admin-profile-info-card">
-            <h2 className="admin-card-title">Profile Information</h2>
+            <h2 className="admin-card-title">{t('trainerProfile.profileInformation')}</h2>
             
             <div className="admin-profile-fields">
               <div className="admin-profile-field">
@@ -352,7 +355,7 @@ const AdminProfile = ({ currentUser }) => {
                   <User size={20} />
                 </div>
                 <div className="admin-field-content">
-                  <label className="admin-field-label">Full Name</label>
+                  <label className="admin-field-label">{t('trainerProfile.fullName')}</label>
                   <span className="admin-field-value">{fullName}</span>
                 </div>
               </div>
@@ -362,13 +365,13 @@ const AdminProfile = ({ currentUser }) => {
                   <Mail size={20} />
                 </div>
                 <div className="admin-field-content">
-                  <label className="admin-field-label">Email Address</label>
-                  <span className="admin-field-value">{userProfile.email || 'Not specified'}</span>
+                  <label className="admin-field-label">{t('trainerProfile.emailAddress')}</label>
+                  <span className="admin-field-value">{userProfile.email || t('trainerProfile.notSpecified')}</span>
                 </div>
                 <button 
                   className="admin-change-email-btn"
                   onClick={() => setShowEmailModal(true)}
-                  title="Change Email"
+                  title={t('trainerProfile.changeEmailAddress')}
                 >
                   <Edit size={16} />
                 </button>
@@ -379,8 +382,8 @@ const AdminProfile = ({ currentUser }) => {
                   <Phone size={20} />
                 </div>
                 <div className="admin-field-content">
-                  <label className="admin-field-label">Mobile Number</label>
-                  <span className="admin-field-value">{userProfile.mobileNumber || 'Not specified'}</span>
+                  <label className="admin-field-label">{t('trainerProfile.mobileNumber')}</label>
+                  <span className="admin-field-value">{userProfile.mobileNumber || t('trainerProfile.notSpecified')}</span>
                 </div>
               </div>
 
@@ -389,8 +392,8 @@ const AdminProfile = ({ currentUser }) => {
                   <Calendar size={20} />
                 </div>
                 <div className="admin-field-content">
-                  <label className="admin-field-label">Age</label>
-                  <span className="admin-field-value">{userProfile.age || 'Not specified'}</span>
+                  <label className="admin-field-label">{t('trainerProfile.age')}</label>
+                  <span className="admin-field-value">{userProfile.age || t('trainerProfile.notSpecified')}</span>
                 </div>
               </div>
 
@@ -399,8 +402,8 @@ const AdminProfile = ({ currentUser }) => {
                   <Hash size={20} />
                 </div>
                 <div className="admin-field-content">
-                  <label className="admin-field-label">User ID</label>
-                  <span className="admin-field-value admin-field-id">{userProfile.uid || userProfile.id || 'Not available'}</span>
+                  <label className="admin-field-label">{t('trainerProfile.userId')}</label>
+                  <span className="admin-field-value admin-field-id">{userProfile.uid || userProfile.id || t('trainerProfile.notAvailableId')}</span>
                 </div>
               </div>
 
@@ -409,9 +412,9 @@ const AdminProfile = ({ currentUser }) => {
                   <Shield size={20} />
                 </div>
                 <div className="admin-field-content">
-                  <label className="admin-field-label">Role</label>
+                  <label className="admin-field-label">{t('trainerProfile.role')}</label>
                   <span className="admin-field-value admin-role-badge">
-                    {userProfile.role?.charAt(0).toUpperCase() + userProfile.role?.slice(1) || 'Administrator'}
+                    {userProfile.role?.charAt(0).toUpperCase() + userProfile.role?.slice(1) || t('admin.administrator')}
                   </span>
                 </div>
               </div>
@@ -420,19 +423,19 @@ const AdminProfile = ({ currentUser }) => {
 
           {/* Security Actions Card */}
           <div className="admin-profile-stats-card">
-            <h2 className="admin-card-title">Security Settings</h2>
+            <h2 className="admin-card-title">{t('trainerProfile.securitySettings')}</h2>
             <div className="admin-security-actions">
               <button 
                 className="admin-change-password-btn"
                 onClick={handleChangePassword}
-                title="Change Password"
+                title={t('trainerProfile.changePassword')}
               >
                 <div className="admin-action-icon">
                   <Lock size={20} />
                 </div>
                 <div className="admin-action-content">
-                  <span className="admin-action-label">Change Password</span>
-                  <span className="admin-action-desc">Update your account password</span>
+                  <span className="admin-action-label">{t('trainerProfile.changePassword')}</span>
+                  <span className="admin-action-desc">{t('trainerProfile.updatePassword')}</span>
                 </div>
               </button>
             </div>
@@ -440,15 +443,15 @@ const AdminProfile = ({ currentUser }) => {
 
           {/* Additional Info Card */}
           <div className="admin-profile-stats-card">
-            <h2 className="admin-card-title">Account Information</h2>
+            <h2 className="admin-card-title">{t('trainerProfile.accountInformation')}</h2>
             <div className="admin-stats-grid">
               <div className="admin-stat-item">
                 <div className="admin-stat-icon">
                   <User size={24} />
                 </div>
                 <div className="admin-stat-content">
-                  <span className="admin-stat-label">Account Type</span>
-                  <span className="admin-stat-value">Administrative Account</span>
+                  <span className="admin-stat-label">{t('trainerProfile.accountType')}</span>
+                  <span className="admin-stat-value">{t('admin.administrator')}</span>
                 </div>
               </div>
               
@@ -457,8 +460,8 @@ const AdminProfile = ({ currentUser }) => {
                   <Shield size={24} />
                 </div>
                 <div className="admin-stat-content">
-                  <span className="admin-stat-label">Access Level</span>
-                  <span className="admin-stat-value">Full Administrative Access</span>
+                  <span className="admin-stat-label">{t('trainerProfile.accessLevel')}</span>
+                  <span className="admin-stat-value">{t('admin.dashboard')}</span>
                 </div>
               </div>
 
@@ -467,11 +470,11 @@ const AdminProfile = ({ currentUser }) => {
                   <Calendar size={24} />
                 </div>
                 <div className="admin-stat-content">
-                  <span className="admin-stat-label">Member Since</span>
+                  <span className="admin-stat-label">{t('trainerProfile.memberSince')}</span>
                   <span className="admin-stat-value">
                     {userProfile.createdAt ? 
                       new Date(userProfile.createdAt.seconds * 1000).toLocaleDateString('he-IL') : 
-                      'Unknown'
+                      t('trainerProfile.unknown')
                     }
                   </span>
                 </div>
@@ -482,9 +485,9 @@ const AdminProfile = ({ currentUser }) => {
                   <Phone size={24} />
                 </div>
                 <div className="admin-stat-content">
-                  <span className="admin-stat-label">Contact Status</span>
+                  <span className="admin-stat-label">{t('trainerProfile.contactStatus')}</span>
                   <span className="admin-stat-value">
-                    {userProfile.mobileNumber ? 'Available' : 'Not Available'}
+                    {userProfile.mobileNumber ? t('trainerProfile.available') : t('trainerProfile.notAvailable')}
                   </span>
                 </div>
               </div>
@@ -497,7 +500,7 @@ const AdminProfile = ({ currentUser }) => {
           <div className="admin-modal-overlay">
             <div className="admin-email-modal">
               <div className="admin-modal-header">
-                <h3>Change Email Address</h3>
+                <h3>{t('trainerProfile.changeEmailAddress')}</h3>
                 <button className="admin-close-btn" onClick={closeEmailModal}>
                   <X size={24} />
                 </button>
@@ -507,39 +510,39 @@ const AdminProfile = ({ currentUser }) => {
                 {emailError && <div className="admin-error-message">{emailError}</div>}
                 
                 <div className="admin-form-group">
-                  <label htmlFor="currentPassword">Current Password:</label>
+                  <label htmlFor="currentPassword">{t('trainerProfile.currentPassword')}:</label>
                   <input
                     type="password"
                     id="currentPassword"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Enter your current password"
+                    placeholder={t('trainerProfile.currentPasswordPlaceholder')}
                     required
                     disabled={emailLoading}
                   />
                 </div>
 
                 <div className="admin-form-group">
-                  <label htmlFor="newEmail">New Email:</label>
+                  <label htmlFor="newEmail">{t('trainerProfile.newEmail')}:</label>
                   <input
                     type="email"
                     id="newEmail"
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
-                    placeholder="Enter new email address"
+                    placeholder={t('trainerProfile.newEmailPlaceholder')}
                     required
                     disabled={emailLoading}
                   />
                 </div>
 
                 <div className="admin-form-group">
-                  <label htmlFor="confirmEmail">Confirm New Email:</label>
+                  <label htmlFor="confirmEmail">{t('trainerProfile.confirmNewEmail')}:</label>
                   <input
                     type="email"
                     id="confirmEmail"
                     value={confirmEmail}
                     onChange={(e) => setConfirmEmail(e.target.value)}
-                    placeholder="Confirm new email address"
+                    placeholder={t('trainerProfile.confirmEmailPlaceholder')}
                     required
                     disabled={emailLoading}
                   />
@@ -552,14 +555,14 @@ const AdminProfile = ({ currentUser }) => {
                     onClick={closeEmailModal}
                     disabled={emailLoading}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                   <button 
                     type="submit" 
                     className="admin-change-btn"
                     disabled={emailLoading}
                   >
-                    {emailLoading ? 'Changing...' : 'Change Email'}
+                    {emailLoading ? t('trainerProfile.changing') + '...' : t('trainerProfile.changeEmail')}
                   </button>
                 </div>
               </form>
@@ -572,7 +575,7 @@ const AdminProfile = ({ currentUser }) => {
           <div className="admin-modal-overlay">
             <div className="admin-password-modal">
               <div className="admin-modal-header">
-                <h3>Change Password</h3>
+                <h3>{t('trainerProfile.changePassword')}</h3>
                 <button className="admin-close-btn" onClick={closePasswordModal}>
                   <X size={24} />
                 </button>
@@ -582,26 +585,26 @@ const AdminProfile = ({ currentUser }) => {
                 {passwordError && <div className="admin-error-message">{passwordError}</div>}
                 
                 <div className="admin-form-group">
-                  <label htmlFor="currentPasswordChange">Current Password:</label>
+                  <label htmlFor="currentPasswordChange">{t('trainerProfile.currentPassword')}:</label>
                   <input
                     type="password"
                     id="currentPasswordChange"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Enter your current password"
+                    placeholder={t('trainerProfile.currentPasswordPlaceholder')}
                     required
                     disabled={passwordLoading}
                   />
                 </div>
 
                 <div className="admin-form-group">
-                  <label htmlFor="newPasswordChange">New Password:</label>
+                  <label htmlFor="newPasswordChange">{t('trainerProfile.newPassword')}:</label>
                   <input
                     type="password"
                     id="newPasswordChange"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new password (min 6 characters)"
+                    placeholder={t('trainerProfile.newPasswordPlaceholder')}
                     required
                     disabled={passwordLoading}
                     minLength="6"
@@ -609,13 +612,13 @@ const AdminProfile = ({ currentUser }) => {
                 </div>
 
                 <div className="admin-form-group">
-                  <label htmlFor="confirmPasswordChange">Confirm New Password:</label>
+                  <label htmlFor="confirmPasswordChange">{t('trainerProfile.confirmNewPassword')}:</label>
                   <input
                     type="password"
                     id="confirmPasswordChange"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm new password"
+                    placeholder={t('trainerProfile.confirmPasswordPlaceholder')}
                     required
                     disabled={passwordLoading}
                     minLength="6"
@@ -629,14 +632,14 @@ const AdminProfile = ({ currentUser }) => {
                     onClick={closePasswordModal}
                     disabled={passwordLoading}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                   <button 
                     type="submit" 
                     className="admin-change-btn"
                     disabled={passwordLoading}
                   >
-                    {passwordLoading ? 'Changing...' : 'Change Password'}
+                    {passwordLoading ? t('trainerProfile.changing') + '...' : t('trainerProfile.changePassword')}
                   </button>
                 </div>
               </form>
