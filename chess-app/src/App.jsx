@@ -1,4 +1,6 @@
 import React from 'react';
+import './i18n/i18n'; // חשוב - חייב להיות בתחילת הקובץ לפני שאר הImports
+import './styles/rtl-support.css'; // תמיכה ב-RTL לערבית
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import AdminArea from './components/AdminArea';
@@ -7,8 +9,6 @@ import ChangeInitialPassword from './components/ChangeInitialPassword';
 import ForgotPassword from './components/ForgotPassword'; // Added ForgotPassword import
 import GuestPage from './components/Guest/GuestPage/GuestPage';
 import InquiryForm from './components/Guest/InquiryForm/InquiryForm'; // مسار الكومبوننت حسب مكانه
-
-
 
 function App() {
   return (
