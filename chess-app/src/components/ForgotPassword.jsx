@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { 
   getAuth, 
   sendPasswordResetEmail, 
@@ -6,10 +7,12 @@ import {
   verifyPasswordResetCode
 } from 'firebase/auth';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import LanguageSwitcher from './LanguageSwitcher'; // הוספת מתג השפות
 import './ForgotPassword.css';
 import chessLogo from './chessLogo.png';
 
 const ForgotPassword = () => {
+  const { t, i18n } = useTranslation(); // הוספת hook לתרגום
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -21,8 +24,25 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  // הגדרת שפה בהתחלה לפי פרמטר מה-URL
+  useEffect(() => {
+    const langFromUrl = searchParams.get('lang');
+    const savedLanguage = localStorage.getItem('i18nextLng');
+    
+    if (langFromUrl) {
+      // אם יש פרמטר שפה ב-URL, השתמש בו
+      i18n.changeLanguage(langFromUrl);
+    } else if (savedLanguage && savedLanguage !== i18n.language) {
+      // אחרת, השתמש בשפה השמורה
+      i18n.changeLanguage(savedLanguage);
+    } else {
+      // ברירת מחדל - ערבית (כמו ב-Login)
+      i18n.changeLanguage('ar');
+    }
+  }, [i18n, searchParams]);
+
   // Check if we have a reset code from email link
-  React.useEffect(() => {
+  useEffect(() => {
     const mode = searchParams.get('mode');
     const oobCode = searchParams.get('oobCode');
     
@@ -42,7 +62,7 @@ const ForgotPassword = () => {
       setSuccess(true);
     } catch (error) {
       console.error('Invalid or expired reset code:', error);
-      setError('Invalid or expired reset link. Please request a new one.');
+      setError(t('forgotPassword.invalidResetLink'));
     }
   };
 
@@ -55,14 +75,14 @@ const ForgotPassword = () => {
     
     // Validation
     if (!email) {
-      setError('Please enter your email address');
+      setError(t('forgotPassword.enterEmail'));
       return;
     }
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setError('Please enter a valid email address');
+      setError(t('forgotPassword.validEmail'));
       return;
     }
 
@@ -84,13 +104,13 @@ const ForgotPassword = () => {
       console.error('Error message:', error.message);
       
       if (error.code === 'auth/user-not-found') {
-        setError('No account found with this email address');
+        setError(t('forgotPassword.userNotFound'));
       } else if (error.code === 'auth/invalid-email') {
-        setError('Invalid email address');
+        setError(t('forgotPassword.invalidEmail'));
       } else if (error.code === 'auth/too-many-requests') {
-        setError('Too many requests. Please try again later');
+        setError(t('forgotPassword.tooManyRequests'));
       } else {
-        setError(`Failed to send verification email: ${error.message}`);
+        setError(`${t('forgotPassword.failedToSend')}: ${error.message}`);
       }
     } finally {
       setLoading(false);
@@ -105,17 +125,17 @@ const ForgotPassword = () => {
     
     // Validation
     if (!newPassword || !confirmPassword) {
-      setError('Please fill in all fields');
+      setError(t('forgotPassword.fillAllFields'));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('forgotPassword.passwordsNotMatch'));
       return;
     }
 
     if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setError(t('forgotPassword.passwordMinLength'));
       return;
     }
 
@@ -125,7 +145,7 @@ const ForgotPassword = () => {
       const oobCode = searchParams.get('oobCode');
       
       if (!oobCode) {
-        setError('Invalid reset link. Please request a new password reset.');
+        setError(t('forgotPassword.invalidResetLink'));
         return;
       }
 
@@ -146,13 +166,13 @@ const ForgotPassword = () => {
       console.error('Error message:', error.message);
       
       if (error.code === 'auth/invalid-action-code') {
-        setError('Invalid or expired reset link. Please request a new one.');
+        setError(t('forgotPassword.invalidResetCode'));
       } else if (error.code === 'auth/expired-action-code') {
-        setError('Reset link has expired. Please request a new one.');
+        setError(t('forgotPassword.expiredResetCode'));
       } else if (error.code === 'auth/weak-password') {
-        setError('Password is too weak. Please choose a stronger password.');
+        setError(t('forgotPassword.weakPassword'));
       } else {
-        setError(`Failed to reset password: ${error.message}`);
+        setError(`${t('forgotPassword.failedToReset')}: ${error.message}`);
       }
     } finally {
       setLoading(false);
@@ -160,7 +180,8 @@ const ForgotPassword = () => {
   };
 
   const handleBackToLogin = () => {
-    navigate('/login');
+    const currentLanguage = i18n.language;
+    navigate(`/login?lang=${currentLanguage}`);
   };
 
   const handleRequestNewLink = () => {
@@ -176,32 +197,37 @@ const ForgotPassword = () => {
         <div className="chess-decoration decoration-1"></div>
         <div className="chess-decoration decoration-2"></div>
         
+        {/* הוספת מתג השפות */}
+        <div className="forgot-password-language-switcher">
+          <LanguageSwitcher />
+        </div>
+        
         <div className="logo-area">
           <img src={chessLogo} alt="Chess Logo" />
-          <h1>Chess Club Management System</h1>
+          <h1>{t('login.systemTitle')}</h1>
         </div>
         
         <div className="change-password-form">
           {step === 'email' ? (
             <>
-              <h2>Reset Your Password</h2>
+              <h2>{t('forgotPassword.resetPassword')}</h2>
               
               {error && <div className="error-message">{error}</div>}
               {verificationSent && (
                 <div className="success-message">
-                  Password reset email sent successfully! Please check your email and click the reset link.
+                  {t('forgotPassword.emailSentSuccess')}
                 </div>
               )}
               
               <form onSubmit={handleSendVerification}>
                 <div className="form-group">
-                  <label htmlFor="email">Email Address:</label>
+                  <label htmlFor="email">{t('forgotPassword.emailAddress')}:</label>
                   <input
                     type="email"
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email address"
+                    placeholder={t('forgotPassword.enterEmailPlaceholder')}
                     required
                     disabled={loading || verificationSent}
                   />
@@ -212,7 +238,7 @@ const ForgotPassword = () => {
                   className="change-password-button" 
                   disabled={loading || verificationSent}
                 >
-                  {loading ? 'Sending...' : 'Send Verification Email'}
+                  {loading ? t('forgotPassword.sending') : t('forgotPassword.sendVerificationEmail')}
                 </button>
               </form>
 
@@ -223,7 +249,7 @@ const ForgotPassword = () => {
                   onClick={handleRequestNewLink}
                   style={{ marginTop: '10px' }}
                 >
-                  Send Another Email
+                  {t('forgotPassword.sendAnotherEmail')}
                 </button>
               )}
 
@@ -233,32 +259,32 @@ const ForgotPassword = () => {
                 onClick={handleBackToLogin}
                 disabled={loading}
               >
-                Back to Login
+                {t('forgotPassword.backToLogin')}
               </button>
             </>
           ) : (
             <>
-              <h2>Set New Password</h2>
+              <h2>{t('forgotPassword.setNewPassword')}</h2>
               <p style={{ textAlign: 'center', marginBottom: '20px', color: '#666' }}>
-                Enter your new password for: <strong>{email}</strong>
+                {t('forgotPassword.enterNewPasswordFor')}: <strong>{email}</strong>
               </p>
               
               {error && <div className="error-message">{error}</div>}
               {success && step === 'reset' && !error && (
                 <div className="success-message">
-                  Password reset successfully! Redirecting to login...
+                  {t('forgotPassword.passwordResetSuccess')}
                 </div>
               )}
               
               <form onSubmit={handlePasswordReset}>
                 <div className="form-group">
-                  <label htmlFor="newPassword">New Password:</label>
+                  <label htmlFor="newPassword">{t('forgotPassword.newPassword')}:</label>
                   <input
                     type="password"
                     id="newPassword"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new password (min 6 characters)"
+                    placeholder={t('forgotPassword.enterNewPassword')}
                     required
                     disabled={loading || success}
                     minLength="6"
@@ -266,13 +292,13 @@ const ForgotPassword = () => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="confirmPassword">Confirm New Password:</label>
+                  <label htmlFor="confirmPassword">{t('forgotPassword.confirmNewPassword')}:</label>
                   <input
                     type="password"
                     id="confirmPassword"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm new password"
+                    placeholder={t('forgotPassword.confirmPasswordPlaceholder')}
                     required
                     disabled={loading || success}
                     minLength="6"
@@ -284,7 +310,7 @@ const ForgotPassword = () => {
                   className="change-password-button" 
                   disabled={loading || success}
                 >
-                  {loading ? 'Updating Password...' : 'Update Password'}
+                  {loading ? t('forgotPassword.updatingPassword') : t('forgotPassword.updatePassword')}
                 </button>
               </form>
 
@@ -294,7 +320,7 @@ const ForgotPassword = () => {
                 onClick={handleBackToLogin}
                 disabled={loading}
               >
-                Back to Login
+                {t('forgotPassword.backToLogin')}
               </button>
             </>
           )}
