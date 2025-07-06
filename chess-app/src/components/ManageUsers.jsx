@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { db, auth, functions } from '../firebase';
 import { doc, setDoc, updateDoc, deleteDoc, collection, query, where, getDocs, arrayRemove } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -6,8 +7,9 @@ import { httpsCallable } from 'firebase/functions';
 import './ManageUsers.css';
 import { logAdminAction } from '../utils/adminLogger';
 
-
 const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fetchUsers }) => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+  
   const [isEditing, setIsEditing] = useState(false);
   const [newUser, setNewUser] = useState({
     id: '',
@@ -33,7 +35,7 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
     
     try {
       if (!newUser.id || !newUser.email || !newUser.firstName || !newUser.lastName || !newUser.role) {
-        error('Please fill all required fields');
+        error(t('adminUsers.fillAllRequiredFields'));
         setLoading(false);
         return;
       }
@@ -55,12 +57,12 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
           targetId: newUser.id,
           description: `Updated user ${newUser.firstName} ${newUser.lastName} (${newUser.email})`
       });
-        success('User updated successfully!');
+        success(t('adminUsers.userUpdatedSuccessfully'));
       } else {
         // בדיקה אם יוזר עם ID זה כבר קיים
         const existingUser = (users || []).find(user => user.id === newUser.id);
         if (existingUser) {
-          error(`A user with ID "${newUser.id}" already exists. Please choose a different ID.`);
+          error(t('adminUsers.userIdExists', { id: newUser.id }));
           setLoading(false);
           return;
         }
@@ -68,7 +70,7 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
         // בדיקה אם יוזר עם אימייל זה כבר קיים
         const existingEmailUser = (users || []).find(user => user.email === newUser.email);
         if (existingEmailUser) {
-          error(`A user with email "${newUser.email}" already exists. Please choose a different email.`);
+          error(t('adminUsers.userEmailExists', { email: newUser.email }));
           setLoading(false);
           return;
         }
@@ -96,7 +98,7 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
         targetId: newUser.id,
         description: `Added user ${newUser.firstName} ${newUser.lastName} (${newUser.email})`
       });
-        success('User added successfully!');
+        success(t('adminUsers.userAddedSuccessfully'));
       }
 
       setNewUser({
@@ -236,7 +238,7 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
   };
 
   const handleDeleteUser = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    if (!window.confirm(t('adminUsers.confirmDeleteUser'))) return;
     setLoading(true);
     const currentAdmin = JSON.parse(localStorage.getItem('user'));
 
@@ -245,7 +247,7 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
       // מציאת המשתמש במטרה לקבל את האימייל והרול שלו
       const userToDelete = users.find(user => user.id === userId);
       if (!userToDelete) {
-        error('User not found');
+        error(t('adminUsers.userNotFound'));
         setLoading(false);
         return;
       }
@@ -286,11 +288,11 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
   description: `Deleted user ${userToDelete.firstName} ${userToDelete.lastName} (${userToDelete.email})`
 });
 
-      success('User deleted successfully');
+      success(t('adminUsers.userDeletedSuccessfully'));
       fetchUsers();
     } catch (err) {
       console.error("Error deleting user:", err);
-      error('Failed to delete user: ' + err.message);
+      error(t('adminUsers.failedToDeleteUser') + ': ' + err.message);
     }
     setLoading(false);
   };
@@ -394,30 +396,30 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
   return (
     <div className="user-management-container">
       <div className="add-user-section">
-        <h2>{isEditing ? 'Edit User' : 'Add New User'}</h2>
+        <h2>{isEditing ? t('adminUsers.editUser') : t('adminUsers.addNewUser')}</h2>
         <form onSubmit={handleAddUser} className="add-user-form">
           <div className="form-row">
             <div className="form-group">
-              <label>ID Number*</label>
+              <label>{t('adminUsers.idNumberRequired')}</label>
               <input
                 type="text"
                 name="id"
                 value={newUser.id}
                 onChange={handleUserChange}
-                placeholder="User ID"
+                placeholder={t('adminUsers.idNumberPlaceholder')}
                 required
                 disabled={isEditing}
               />
             </div>
             
             <div className="form-group">
-              <label>Email*</label>
+              <label>{t('adminUsers.emailRequired')}</label>
               <input
                 type="email"
                 name="email"
                 value={newUser.email}
                 onChange={handleUserChange}
-                placeholder="Email"
+                placeholder={t('adminUsers.emailPlaceholder')}
                 required
               />
             </div>
@@ -426,13 +428,13 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
           {!isEditing && (
             <div className="form-row">
               <div className="form-group">
-                <label>Password</label>
+                <label>{t('adminUsers.password')}</label>
                 <input
                   type="password"
                   name="password"
                   value={newUser.password}
                   onChange={handleUserChange}
-                  placeholder="Temporary Password"
+                  placeholder={t('adminUsers.passwordPlaceholder')}
                 />
               </div>
             </div>
@@ -440,25 +442,25 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
 
           <div className="form-row">
             <div className="form-group">
-              <label>First Name*</label>
+              <label>{t('adminUsers.firstNameRequired')}</label>
               <input
                 type="text"
                 name="firstName"
                 value={newUser.firstName}
                 onChange={handleUserChange}
-                placeholder="First Name"
+                placeholder={t('adminUsers.firstNamePlaceholder')}
                 required
               />
             </div>
             
             <div className="form-group">
-              <label>Last Name*</label>
+              <label>{t('adminUsers.lastNameRequired')}</label>
               <input
                 type="text"
                 name="lastName"
                 value={newUser.lastName}
                 onChange={handleUserChange}
-                placeholder="Last Name"
+                placeholder={t('adminUsers.lastNamePlaceholder')}
                 required
               />
             </div>
@@ -466,29 +468,29 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
 
           <div className="form-row">
             <div className="form-group">
-              <label>Age</label>
+              <label>{t('adminUsers.age')}</label>
               <input
                 type="number"
                 name="age"
                 value={newUser.age}
                 onChange={handleUserChange}
-                placeholder="Age"
+                placeholder={t('adminUsers.agePlaceholder')}
                 min="10"
                 max="99"
               />
             </div>
             
             <div className="form-group">
-              <label>Role*</label>
+              <label>{t('adminUsers.roleRequired')}</label>
               <select
                 name="role"
                 value={newUser.role}
                 onChange={handleUserChange}
                 required
               >
-                <option value="">Select Role</option>
-                <option value="admin">Admin</option>
-                <option value="trainer">Trainer</option>
+                <option value="">{t('adminUsers.selectRole')}</option>
+                <option value="admin">{t('adminUsers.admin')}</option>
+                <option value="trainer">{t('adminUsers.trainer')}</option>
               </select>
             </div>
           </div>
@@ -497,8 +499,8 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
             {isEditing ? (
               <>
                 <div className="edit-mode-info">
-                  <span className="edit-indicator">✏️ Editing Mode:</span>
-                  <span className="edit-description">You are currently editing user data. Make changes and click "Save Changes" to update.</span>
+                  <span className="edit-indicator">✏️ {t('adminUsers.editingMode')}</span>
+                  <span className="edit-description">{t('adminUsers.editingDescription')}</span>
                 </div>
                 <div className="edit-buttons-row">
                   <button 
@@ -506,14 +508,14 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
                     className="save-button"
                     disabled={loading}
                   >
-                    {loading ? 'Saving...' : 'Save Changes'}
+                    {loading ? t('adminUsers.saving') + '...' : t('adminUsers.saveChanges')}
                   </button>
                   <button
                     type="button"
                     className="cancel-button"
                     onClick={handleCancelEdit}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                 </div>
               </>
@@ -523,7 +525,7 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
                 className="add-button"
                 disabled={loading}
               >
-                {loading ? 'Adding...' : 'Add User'}
+                {loading ? t('adminUsers.adding') + '...' : t('adminUsers.addUser')}
               </button>
             )}
           </div>
@@ -532,7 +534,7 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
       
       <div className="user-list-section">
         <div className="users-list-header">
-          <h3>Registered Users</h3>
+          <h3>{t('adminUsers.registeredUsers')}</h3>
           <div className="users-search-container">
             <div className="users-search-filter-row">
               <select
@@ -540,17 +542,24 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
                 onChange={(e) => setSearchFilter(e.target.value)}
                 className="users-filter-select"
               >
-                <option value="all">All Fields</option>
-                <option value="id">ID</option>
-                <option value="name">Name</option>
-                <option value="email">Email</option>
-                <option value="age">Age</option>
-                <option value="role">Role</option>
+                <option value="all">{t('adminUsers.allFields')}</option>
+                <option value="id">{t('adminUsers.id')}</option>
+                <option value="name">{t('adminUsers.name')}</option>
+                <option value="email">{t('adminUsers.email')}</option>
+                <option value="age">{t('forms.age')}</option>
+                <option value="role">{t('adminUsers.role')}</option>
               </select>
               
               <input
                 type="text"
-                placeholder={`Search ${searchFilter === 'all' ? 'users' : searchFilter}...`}
+                placeholder={t('adminUsers.searchPlaceholder', { 
+                  field: searchFilter === 'all' ? t('adminUsers.allFields').toLowerCase() : 
+                    searchFilter === 'id' ? t('adminUsers.id').toLowerCase() :
+                    searchFilter === 'name' ? t('adminUsers.name').toLowerCase() :
+                    searchFilter === 'email' ? t('adminUsers.email').toLowerCase() :
+                    searchFilter === 'age' ? t('forms.age').toLowerCase() :
+                    searchFilter === 'role' ? t('adminUsers.role').toLowerCase() : searchFilter
+                })}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="users-search-input"
@@ -560,7 +569,7 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
                 <button
                   onClick={handleClearSearch}
                   className="users-clear-search-button"
-                  title="Clear search"
+                  title={t('adminUsers.clearSearch')}
                 >
                   ✕
                 </button>
@@ -572,34 +581,34 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
               className="refresh-button"
               disabled={loading}
             >
-              {loading ? 'Refreshing...' : '↻ Refresh List'}
+              {loading ? t('adminUsers.refreshing') + '...' : '↻ ' + t('adminUsers.refreshList')}
             </button>
           </div>
         </div>
         
         {loading ? (
-          <div className="loading-users">Loading users...</div>
+          <div className="loading-users">{t('adminUsers.loadingUsers')}</div>
         ) : (
           <div className="users-table-wrapper">
             {filteredUsers.length > 0 ? (
               <>
                 {(searchQuery || searchFilter !== 'all') && (
                   <div className="search-results-info">
-                    Found {filteredUsers.length} user{filteredUsers.length !== 1 ? 's' : ''} 
-                    {searchFilter !== 'all' ? ` in ${searchFilter}` : ''}
-                    {searchQuery ? ` matching "${searchQuery}"` : ''}
+                    {t('adminUsers.foundResults', { count: filteredUsers.length })}
+                    {searchFilter !== 'all' ? ` ${t('adminUsers.inField', { field: searchFilter })}` : ''}
+                    {searchQuery ? ` ${t('adminUsers.matching', { query: searchQuery })}` : ''}
                   </div>
                 )}
                 <table className="users-table">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Age</th>
-                      <th>Role</th>
-                      <th>Added</th>
-                      <th>Actions</th>
+                      <th>{t('adminUsers.id')}</th>
+                      <th>{t('adminUsers.name')}</th>
+                      <th>{t('adminUsers.email')}</th>
+                      <th>{t('forms.age')}</th>
+                      <th>{t('adminUsers.role')}</th>
+                      <th>{t('adminUsers.added')}</th>
+                      <th>{t('adminUsers.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -611,7 +620,7 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
                         <td>{user.age || '-'}</td>
                         <td>
                           <span className={`role-badge ${user.role}`}>
-                            {user.role}
+                            {user.role === 'admin' ? t('adminUsers.admin') : t('adminUsers.trainer')}
                           </span>
                         </td>
                         <td>{formatDate(user.createdAt)}</td>
@@ -621,13 +630,13 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
                               className="edit-button"
                               onClick={() => handleEditUser(user)}
                             >
-                              Edit
+                              {t('common.edit')}
                             </button>
                             <button
                               className="delete-button"
                               onClick={() => handleDeleteUser(user.id)}
                             >
-                              Delete
+                              {t('common.delete')}
                             </button>
                           </div>
                         </td>
@@ -639,8 +648,8 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
             ) : (
               <div className="no-users">
                 {searchQuery || searchFilter !== 'all' 
-                  ? `No users found matching your search criteria.` 
-                  : 'No users found. Start by adding your first user.'
+                  ? t('adminUsers.noUsersMatchSearch')
+                  : t('adminUsers.noUsersFound')
                 }
               </div>
             )}
