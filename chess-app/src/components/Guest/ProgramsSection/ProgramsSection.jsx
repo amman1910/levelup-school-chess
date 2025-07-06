@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import './ProgramsSection.css';
 
 import trainingImg from '../../../assets/program-section/in-school-training.jpg';
@@ -6,40 +7,45 @@ import eveningImg from '../../../assets/program-section/evening-courses.jpg';
 import tournamentsImg from '../../../assets/program-section/chess-tournaments.jpg';
 import communityImg from '../../../assets/program-section/community-hub.jpg';
 
-const programs = [
-  {
-    title: 'In-School Training',
-    desc: 'Structured chess programs delivered in schools — following an official curriculum and a clear development plan.',
-    img: trainingImg,
-    badge: 'School Program',
-  },
-  {
-    title: 'Evening Courses',
-    desc: 'Group sessions for students and adults held outside school hours — designed for extra learning and fun.',
-    img: eveningImg,
-    badge: 'Evening Courses',
-  },
-  {
-    title: 'Chess Tournaments',
-    desc: 'Two competitive series: Jerusalem Open (7 events so far) and Jerusalem School Championships (3 events yearly).',
-    img: tournamentsImg,
-    badge: 'Championships Series',
-  },
-  {
-    title: 'Community Hub',
-    desc: 'A space for casual players and advanced enthusiasts to meet, play, and grow — open to everyone.',
-    img: communityImg,
-    badge: 'Chess Community',
-  },
-];
-
 const ProgramsSection = () => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+
+  // העברת ה-programs array לתוך הקומפוננטה כדי שיהיה גישה ל-t()
+  const programs = [
+    {
+      title: t('programs.items.inSchool.title'),
+      desc: t('programs.items.inSchool.description'),
+      img: trainingImg,
+      badge: t('programs.items.inSchool.badge'),
+    },
+    {
+      title: t('programs.items.evening.title'),
+      desc: t('programs.items.evening.description'),
+      img: eveningImg,
+      badge: t('programs.items.evening.badge'),
+    },
+    {
+      title: t('programs.items.tournaments.title'),
+      desc: t('programs.items.tournaments.description'),
+      img: tournamentsImg,
+      badge: t('programs.items.tournaments.badge'),
+    },
+    {
+      title: t('programs.items.community.title'),
+      desc: t('programs.items.community.description'),
+      img: communityImg,
+      badge: t('programs.items.community.badge'),
+    },
+  ];
+
   return (
     <section id="programs" className="programs-section">
       <div className="programs-header">
-  <p className="programs-label">Services & Activities	</p>
-  <h2 className="programs-title">Learn. Improve.<br />Master the Game.</h2>
-</div>
+        <p className="programs-label">{t('programs.sectionLabel')}</p>
+        <h2 className="programs-title">
+          {t('programs.titleLine1')}<br />{t('programs.titleLine2')}
+        </h2>
+      </div>
       <div className="programs-grid">
         {programs.map((program, index) => (
           <div className="program-card" key={index}>
@@ -59,6 +65,3 @@ const ProgramsSection = () => {
 };
 
 export default ProgramsSection;
-
-
-

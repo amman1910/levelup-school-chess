@@ -1,15 +1,24 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import { db } from '../../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import './NewsAndEventsSection.css';
 
 const NewsAndEventsSection = () => {
+  const { t, i18n } = useTranslation(); // הוספת i18n לקבלת השפה הנוכחית
   const [events, setEvents] = useState([]);
   const [newsItems, setNewsItems] = useState([]);
   const carouselRef = useRef(null); // 🔁 للأحداث
   const newsRef = useRef(null);     // 🔁 للأخبار
   const navigate = useNavigate();
+
+  // פונקציה לטיפול בקישורי JOIN NOW
+  const handleJoinEventClick = (eventType, eventTitle) => {
+    const currentLanguage = i18n.language;
+    const joinUrl = `/join?applicantType=${eventType}&eventName=${encodeURIComponent(eventTitle)}&lang=${currentLanguage}`;
+    window.open(joinUrl, '_blank', 'noopener,noreferrer');
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,13 +56,13 @@ const NewsAndEventsSection = () => {
   return (
     <section className="events-section" id="news">
       <div className="events-header">
-        <p className="section-label">What's New at Shah2Range</p>
-        <h2 className="events-title">Programs, Tournaments & News</h2>
+        <p className="section-label">{t('newsEvents.sectionLabel')}</p>
+        <h2 className="events-title">{t('newsEvents.title')}</h2>
       </div>
 
       {/* SECTION 1 - EVENTS */}
       <section className="events-subsection">
-        <h3 className="subsection-title">Programs & Competitions</h3>
+        <h3 className="subsection-title">{t('newsEvents.programsCompetitions')}</h3>
         <div className="events-carousel-wrapper" style={{ position: 'relative' }}>
           <button className="arrow left" onClick={scrollLeft}>‹</button>
           <div className="events-carousel" ref={carouselRef}>
@@ -77,14 +86,16 @@ const NewsAndEventsSection = () => {
                   <p className="event-location">📍 {event.location}</p>
                   <p className="event-description">{event.description}</p>
                   <a
-  className="event-join-btn"
-  href={`/join?applicantType=${event.type}&eventName=${encodeURIComponent(event.title)}`}
-  target="_blank"
-  rel="noopener noreferrer"
->
-  Join Now
-</a>
-
+                    className="event-join-btn"
+                    href={`/join?applicantType=${event.type}&eventName=${encodeURIComponent(event.title)}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleJoinEventClick(event.type, event.title);
+                    }}
+                    rel="noopener noreferrer"
+                  >
+                    {t('newsEvents.joinNow')}
+                  </a>
                 </div>
               </div>
             ))}
@@ -95,7 +106,7 @@ const NewsAndEventsSection = () => {
 
       {/* SECTION 2 - NEWS */}
       <section className="events-subsection">
-        <h3 className="subsection-title">News & Announcements</h3>
+        <h3 className="subsection-title">{t('newsEvents.newsAnnouncements')}</h3>
         <div className="events-carousel-wrapper" style={{ position: 'relative' }}>
           <button className="arrow left" onClick={scrollNewsLeft}>‹</button>
           <div className="news-carousel" ref={newsRef}>
@@ -119,9 +130,3 @@ const NewsAndEventsSection = () => {
 };
 
 export default NewsAndEventsSection;
-
-
-
-
-
-

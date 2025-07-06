@@ -1,27 +1,30 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import './WhyShah2Range.css';
 import { FaAward, FaChalkboardTeacher, FaUsers } from 'react-icons/fa';
 
 const WhyShah2Range = () => {
+  const { t } = useTranslation(); // הוספת hook לתרגום
+
   return (
     <section className="why-cards-section" id="why-shah2range">
       <div className="why-cards-container">
         <div className="why-card dark">
           <FaAward className="why-icon" />
-          <h3>FIDE Certified Coaches</h3>
-          <p>Learn chess from top-tier coaches officially certified by the International Chess Federation (FIDE). Our instructors combine expertise with a passion for teaching.</p>
+          <h3>{t('whyShah2Range.items.fideCoaches.title')}</h3>
+          <p>{t('whyShah2Range.items.fideCoaches.description')}</p>
         </div>
 
         <div className="why-card light">
           <FaChalkboardTeacher className="why-icon" />
-          <h3>Vision of Growth</h3>
-          <p>We strive to be a leading community where chess fuels intellectual development, resilience, and lifelong learning for all ages and skill levels.</p>
+          <h3>{t('whyShah2Range.items.visionGrowth.title')}</h3>
+          <p>{t('whyShah2Range.items.visionGrowth.description')}</p>
         </div>
 
         <div className="why-card dark">
           <FaUsers className="why-icon" />
-          <h3>From Beginner to Advanced</h3>
-          <p>Our structured programs serve players at every stage — from first moves to advanced strategies — with personalized training and competitive growth.</p>
+          <h3>{t('whyShah2Range.items.beginnerToAdvanced.title')}</h3>
+          <p>{t('whyShah2Range.items.beginnerToAdvanced.description')}</p>
         </div>
       </div>
     </section>
