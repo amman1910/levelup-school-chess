@@ -81,3 +81,15 @@
   border-bottom: 1px solid #6a4c83;
   padding-bottom: 20px;
 }
+
+html[dir="rtl"] .about-section-label,
+html[dir="rtl"] .about-title {
+  text-align: right;
+  margin-right: 0;
+}
+
+html[dir="ltr"] .about-section-label,
+html[dir="ltr"] .about-title {
+  text-align: left;
+  margin-left: 0;
+}
