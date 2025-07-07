@@ -261,5 +261,18 @@
   padding-left: 40px;
 }
 
+:dir(rtl) .testimonials-title,
+:dir(rtl) .testimonials-subtitle,
+:dir(rtl) .success-section-label,
+:dir(rtl) .success-title {
+  text-align: right !important;
+  padding-right: 40px;
+  padding-left: 0;
+}
+:dir(rtl) .quote-icon {
+  left: auto;
+  right: 25px;
+}
+
 
 
