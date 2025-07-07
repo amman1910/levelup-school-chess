@@ -111,3 +111,8 @@
   margin: 0;
 }
 
+html[dir="rtl"] .program-card-text {
+  text-align: right;
+}
+
+
