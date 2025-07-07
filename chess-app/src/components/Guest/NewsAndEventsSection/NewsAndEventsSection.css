@@ -233,5 +233,14 @@
   line-height: 1.6;
 }
 
+html[dir="rtl"] .subsection-title {
+  text-align: right;
+}
+
+html[dir="ltr"] .subsection-title {
+  text-align: left;
+}
+
+
 
 
