@@ -334,6 +334,7 @@ const AdminArea = () => {
       
       <div className="admin-content">
         <div className="admin-header">
+<div className="header-content-wrapper">
           <h1 className="page-title">{getPageTitle()}</h1>
           <button 
             onClick={handleRefresh} 
@@ -343,6 +344,8 @@ const AdminArea = () => {
             {loading ? t('admin.refreshing') : `↻ ${t('common.refresh')}`}
           </button>
         </div>
+</div>
+
         
         <div className="admin-main">
           {error && <div className="error-message">{error}</div>}
