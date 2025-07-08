@@ -481,6 +481,9 @@ body, html {
   }
   
   .admin-link {
+display: flex;
+  align-items: center;
+  justify-content: flex-start;
     padding: 15px 5px;
     text-align: center;
     overflow: hidden;
