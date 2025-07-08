@@ -553,3 +553,32 @@ display: flex;
     padding: 12px 2px;
   }
 }
+
+html[dir="rtl"] .admin-nav .admin-link {
+  text-align: right !important;
+  direction: rtl !important;
+  justify-content: flex-end !important;
+  flex-direction: row-reverse !important;
+}
+html[dir="rtl"] .admin-link {
+  text-align: right;
+  direction: rtl;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+
+.admin-header .header-content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+html[dir="ltr"] .admin-header .header-content-wrapper {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+
+
+
