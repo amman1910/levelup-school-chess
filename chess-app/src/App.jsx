@@ -1,6 +1,8 @@
 import React from 'react';
 import './i18n/i18n'; // חשוב - חייב להיות בתחילת הקובץ לפני שאר הImports
 import './styles/rtl-support.css'; // תמיכה ב-RTL לערבית
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import AdminArea from './components/AdminArea';
@@ -11,6 +13,12 @@ import GuestPage from './components/Guest/GuestPage/GuestPage';
 import InquiryForm from './components/Guest/InquiryForm/InquiryForm'; // مسار الكومبوننت حسب مكانه
 
 function App() {
+const { i18n } = useTranslation();
+
+useEffect(() => {
+  document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+}, [i18n.language]);
+
   return (
     <Router>
       <Routes>
