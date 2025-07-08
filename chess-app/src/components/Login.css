@@ -263,3 +263,32 @@ body {
     padding: 10px;
   }
 }
+@media (max-width: 768px) {
+  .chess-decoration {
+    width: 120px;
+    height: 120px;
+  }
+
+  .decoration-1 {
+    top: -60px;
+    right: -60px;
+  }
+
+  .decoration-2 {
+    bottom: -60px;
+    left: -60px;
+  }
+}
+
+.login-language-switcher {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+}
+[dir="rtl"] .login-language-switcher {
+  right: auto;
+  left: 20px;
+}
+
+
