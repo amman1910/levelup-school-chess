@@ -24,16 +24,15 @@ const LanguageSwitcher = ({ className = '' }) => {
   }, [i18n.language]);
 
   return (
-    <div className={`language-switcher ${className}`}>
-      <select
-        value={i18n.language}
-        onChange={(e) => changeLanguage(e.target.value)}
-        className="language-select"
-        aria-label={t('navbar.language')}
-      >
-        <option value="en">{t('languages.english')}</option>
-        <option value="ar">{t('languages.arabic')}</option>
-      </select>
+    <div className={`language-dropdown ${className}`}>
+      <button className="language-button">
+  <FaGlobe style={{ color: 'white', marginRight: 6 }} />
+  {i18n.language.toUpperCase()}
+</button>
+    <ul className="language-menu"      >
+        <li onClick={() => changeLanguage('en')}>English</li>
+        <li onClick={() => changeLanguage('ar')}>العربية</li>
+      </ul>
     </div>
   );
 };
