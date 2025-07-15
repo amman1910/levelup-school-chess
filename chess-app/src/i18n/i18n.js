@@ -23,8 +23,8 @@ i18n
   // init i18next
   .init({
     resources,
-    lng: 'en', // default language
-    fallbackLng: 'en', // fallback language
+    lng: 'ar', // default language changed to Arabic
+    fallbackLng: 'ar', // fallback language changed to Arabic
     debug: false, // set to true for debugging
 
     interpolation: {
