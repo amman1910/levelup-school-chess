@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next'; // הוספת useTranslation
 import './Footer.css';
 import { FaPhone, FaFacebookF, FaInstagram, FaYoutube, FaWhatsapp } from 'react-icons/fa';
 
+// Import the logo directly
+import shahtranjLogo from '../../../assets/logos/shahtranj_logo_gold.png'; // עדכן את הנתיב לפי המבנה שלך
+
 const Footer = () => {
   const { t, i18n } = useTranslation(); // הוספת i18n לקבלת השפה הנוכחית
 
@@ -21,10 +24,14 @@ const Footer = () => {
           <div className="logo-box">
             <a href="#top">
               <img
-                src="/src/assets/logos/shahtranj_logo_gold.png"
+                src={shahtranjLogo}
                 alt="Shah2Range Logo"
                 className="footer-logo"
                 style={{ cursor: 'pointer' }}
+                onError={(e) => {
+                  console.error('Failed to load logo:', e.target.src);
+                  e.target.style.display = 'none';
+                }}
               />
             </a>
             <h2 className="logo-text">SHAH2RANGE</h2>
