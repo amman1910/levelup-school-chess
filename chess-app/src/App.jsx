@@ -1,4 +1,5 @@
 import React from 'react';
+
 import './i18n/i18n'; // חשוב - חייב להיות בתחילת הקובץ לפני שאר הImports
 import './styles/rtl-support.css'; // תמיכה ב-RTL לערבית
 import { useEffect } from 'react';
@@ -16,8 +17,16 @@ function App() {
 const { i18n } = useTranslation();
 
 useEffect(() => {
+  // Set initial direction to RTL for Arabic default
   document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+  document.documentElement.lang = i18n.language;
 }, [i18n.language]);
+
+// Set initial RTL direction on first load
+useEffect(() => {
+  document.documentElement.dir = 'rtl';
+  document.documentElement.lang = 'ar';
+}, []);
 
   return (
     <Router>
