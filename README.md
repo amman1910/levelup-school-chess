@@ -87,3 +87,161 @@ The application follows a three-layer architecture:
    ```bash
    git clone https://github.com/amman1910/levelup-school-chess.git
    cd levelup-school-chess/chess-app
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Firebase**
+   
+   Create a `.env` file in the root directory with the provided Firebase configuration:
+   ```env
+   VITE_FIREBASE_API_KEY=AIzaSyC7cvVFEXWjcHVquaQ7dWwLqNTOhe5ugBQ
+   VITE_FIREBASE_AUTH_DOMAIN=levelup-chess.firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID=levelup-chess
+   VITE_FIREBASE_STORAGE_BUCKET=levelup-chess.firebasestorage.app
+   VITE_FIREBASE_MESSAGING_SENDER_ID=760940506832
+   VITE_FIREBASE_APP_ID=1:760940506832:web:a8a1dbaf41f5ec8ed178d5
+   VITE_FIREBASE_MEASUREMENT_ID=G-NBN5QP37Z2
+   ```
+
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+## 🔧 System Setup
+
+The Firebase project is already configured and ready to use. No additional Firebase setup is required.
+
+### Environment Configuration
+
+Create a `.env` file in the root directory with the provided Firebase configuration:
+
+```env
+VITE_FIREBASE_API_KEY=AIzaSyC7cvVFEXWjcHVquaQ7dWwLqNTOhe5ugBQ
+VITE_FIREBASE_AUTH_DOMAIN=levelup-chess.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=levelup-chess
+VITE_FIREBASE_STORAGE_BUCKET=levelup-chess.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=760940506832
+VITE_FIREBASE_APP_ID=1:760940506832:web:a8a1dbaf41f5ec8ed178d5
+VITE_FIREBASE_MEASUREMENT_ID=G-NBN5QP37Z2
+```
+
+### Initial Admin Setup
+1. The first admin user must be created in Firebase Console
+2. Add the user to Firestore `users` collection with `role: "admin"`
+3. The admin can then create additional users through the admin portal
+
+## 📁 Project Structure
+
+```
+chess-app/
+├── public/                 # Static assets
+├── src/
+│   ├── components/
+│   │   ├── Guest/         # Public website components
+│   │   ├── AdminArea.jsx  # Admin portal
+│   │   ├── TrainerArea.jsx # Trainer portal
+│   │   └── Login.jsx      # Authentication
+│   ├── i18n/              # Internationalization
+│   ├── styles/            # Global styles
+│   ├── firebase.js        # Firebase configuration
+│   └── App.jsx           # Main application component
+├── .env                   # Environment variables
+├── package.json          # Dependencies
+└── README.md             # Project documentation
+```
+
+## 🌐 Supported Languages
+
+The application supports:
+- **Arabic** (Right-to-Left) - Default language
+- **English** (Left-to-Right)
+
+Language switching is available throughout the application with persistent user preferences.
+
+## 📱 Browser Support
+
+The application is tested and supports:
+- Chrome (recommended)
+- Firefox
+- Safari
+- Edge
+- Mobile browsers (iOS Safari, Chrome Mobile)
+
+## 🔐 User Roles & Permissions
+
+### Guest (Public)
+- View organization information
+- Browse gallery and events
+- Submit registration requests
+- Access FAQ and contact information
+
+### Trainer
+- Access personal dashboard
+- Document lessons and track attendance
+- View assigned students and classes
+- Access lesson materials
+- Receive notifications from admins
+
+### Administrator
+- Full system access and management
+- User account management
+- Content management (news, events, gallery)
+- Analytics and reporting
+- System configuration
+
+## 🚀 Deployment
+
+The application is deployed using Firebase Hosting:
+
+```bash
+npm run build
+firebase deploy
+```
+
+## 📊 Key Features in Detail
+
+### Attendance Tracking
+- Digital attendance recording
+- Student progress monitoring
+- Session documentation
+
+### Content Management
+- Dynamic news and events updates
+- Gallery management with image upload
+- Student registration processing
+
+### Analytics & Reporting
+- User activity tracking
+- Session analytics
+- Attendance trends
+
+### Notification System
+- Real-time notifications
+- Admin-to-trainer messaging
+- System alerts
+
+## 🤝 Contributing
+
+This is an academic project developed for Shah2Range organization. For any modifications or improvements, please contact the development team.
+
+## 📄 License
+
+This project is developed for educational purposes as part of Azrieli College of Engineering coursework.
+
+## 📞 Support
+
+For technical support or questions about the system, please contact the development team through the GitHub repository.
+
+---
+
+**Developed with ❤️ for Shah2Range Organization**
