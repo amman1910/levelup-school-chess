@@ -1,31 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next';
+import { db } from '../../../firebase'; // עדכן את הנתיב לפי המבנה שלך
+import { collection, getDocs } from 'firebase/firestore';
 import './GallerySection.css';
-import { getStorage, ref, listAll, getDownloadURL } from 'firebase/storage';
 
 const GallerySection = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation();
   const [images, setImages] = useState([]);
-  const storage = getStorage();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // تحميل الصور من Firebase
+  // טעינת תמונות מ-Firestore במקום מ-Storage
   useEffect(() => {
-    const galleryRef = ref(storage, 'gallery/');
-    listAll(galleryRef)
-      .then((res) => {
-        const urlPromises = res.items.map((itemRef) => getDownloadURL(itemRef));
-        return Promise.all(urlPromises);
-      })
-      .then((urls) => {
-        setImages(urls);
-      })
-      .catch((error) => {
+    const fetchGalleryImages = async () => {
+      try {
+        setLoading(true);
+        const snapshot = await getDocs(collection(db, 'gallery'));
+        const galleryData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        // מיון לפי תאריך העלאה (החדשים ראשון)
+        const sortedImages = galleryData.sort((a, b) => {
+          const dateA = a.uploadedAt?.toDate ? a.uploadedAt.toDate() : new Date(a.uploadedAt);
+          const dateB = b.uploadedAt?.toDate ? b.uploadedAt.toDate() : new Date(b.uploadedAt);
+          return dateB - dateA;
+        });
+
+        setImages(sortedImages);
+      } catch (error) {
         console.error('Error loading gallery images:', error);
-      });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGalleryImages();
   }, []);
 
-  // تحريك الصفوف مع السكرول بطريقة ذكية مثل موقع Pitch
+  // תחריך הגלילה
   useEffect(() => {
     const handleScroll = () => {
       const windowHeight = window.innerHeight;
@@ -47,7 +61,7 @@ const GallerySection = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // تقسيم الصور إلى صفوف من 6
+  // חלוקת תמונות לשורות
   const chunkArray = (arr, size) => {
     const result = [];
     for (let i = 0; i < arr.length; i += size) {
@@ -58,12 +72,41 @@ const GallerySection = () => {
 
   const chunkedImages = chunkArray(images, 6);
 
+  if (loading) {
+    return (
+      <section className="gallery-section" id="gallery">
+        <div className="gallery-header">
+          <p className="section-label">{t('gallery.sectionLabel')}</p>
+          <h2 className="gallery-title">{t('gallery.title')}</h2>
+        </div>
+        <div className="gallery-loading">
+          <p>{t('common.loading')}...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (images.length === 0) {
+    return (
+      <section className="gallery-section" id="gallery">
+        <div className="gallery-header">
+          <p className="section-label">{t('gallery.sectionLabel')}</p>
+          <h2 className="gallery-title">{t('gallery.title')}</h2>
+        </div>
+        <div className="gallery-empty">
+          <p>{t('gallery.noImages')}</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <>
       {selectedImage && (
         <div className="image-modal" onClick={() => setSelectedImage(null)}>
           <span className="close-btn" onClick={() => setSelectedImage(null)}>&times;</span>
-          <img src={selectedImage} alt={t('gallery.fullView')} className="modal-image" />
+          <img src={selectedImage.imageUrl} alt={selectedImage.title} className="modal-image" />
+          <div className="modal-title">{selectedImage.title}</div>
         </div>
       )}
 
@@ -77,13 +120,17 @@ const GallerySection = () => {
           {chunkedImages.map((row, rowIndex) => (
             <div className="gallery-row-wrapper" key={rowIndex}>
               <div className="gallery-row" data-direction={rowIndex % 2 === 0 ? 1 : -1}>
-                {row.map((url, index) => (
-                  <div className="gallery-item" key={index}>
+                {row.map((imageData, index) => (
+                  <div className="gallery-item" key={imageData.id || index}>
                     <img
-                      src={url}
-                      alt={t('gallery.imageAlt', { number: index + 1 })}
-                      onClick={() => setSelectedImage(url)}
+                      src={imageData.imageUrl}
+                      alt={imageData.title}
+                      onClick={() => setSelectedImage(imageData)}
                       style={{ cursor: 'pointer' }}
+                      onError={(e) => {
+                        console.error('Error loading image:', imageData.imageUrl);
+                        e.target.style.display = 'none';
+                      }}
                     />
                   </div>
                 ))}
