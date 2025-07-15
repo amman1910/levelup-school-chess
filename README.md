@@ -1,50 +1,89 @@
-# ♟️ Chess Club Management System – Final Project
+# ♟️ Level Up Chess Club Management System
 
-This project was developed by our team as part of the course "Software Engineering for the Community" at Azrieli College of Engineering, Jerusalem.
+A comprehensive web-based management system for Shah2Range organization, designed to manage chess clubs in East Jerusalem schools and private groups.
 
-## 👥 Team Members
-- [Amir mana, github_username:amman1910]  
-- [moataz sharabaty, github_username:motazshar]  
-- [Hadeel abbasi, github_username:hadeelAbbasi]  
-- [Ahmad abu ghosh, github_username:ahmadswe]  
-- [Ameer jaber,  github_username:xxameerxx]  
+## 🌐 Live Demo
+**Website**: [https://levelup-chess.firebaseapp.com/](https://levelup-chess.firebaseapp.com/)
 
+## 👥 Development Team
+This project was developed as part of the "Software Engineering for the Community" course at Azrieli College of Engineering, Jerusalem.
 
-
----
+- **Amir Mana** - [@amman1910](https://github.com/amman1910)  
+- **Moataz Sharabaty** - [@motazshar](https://github.com/motazshar)  
+- **Hadeel Abbasi** - [@hadeelAbbasi](https://github.com/hadeelAbbasi)  
+- **Ahmad Abu Ghosh** - [@ahmadswe](https://github.com/ahmadswe)  
+- **Ameer Jaber** - [@xxameerxx](https://github.com/xxameerxx)
 
 ## 📋 Project Overview
 
-The project is a web-based management system for a organization that runs chess clubs in East Jerusalem schools and private groups.
+The Level Up Chess Club Management System is a full-stack web application designed for Shah2Range organization to efficiently manage their chess programs across multiple schools and groups in East Jerusalem.
 
-Key Features:
-- **Admin Portal** for managing trainers, students, schools, classes, materials, sessions, and reports.
-- **Trainer Portal** for documenting lessons, tracking attendance, accessing lesson materials, and messaging with the admin.
-- Public informational website with:
-  - Organization details  
-  - Gallery & news updates  
-  - Student registration form  
+### 🎯 Key Features
 
-Technologies used:
-- **React.js** for the frontend
-- **Firebase** for Authentication, Firestore, and Storage
-- Firebase Hosting
+#### 🌍 **Public Website (Guest Portal)**
+- Bilingual support (Arabic/English) with RTL support
+- Organization information and mission
+- Interactive gallery and news/events section
+- Student registration form
+- Program details and testimonials
+- FAQ section and contact information
 
----
+#### 👨‍🏫 **Trainer Portal**
+- Personal dashboard with session overview
+- Lesson planning and material access
+- Attendance tracking and management
+- Session documentation and reporting
+- Real-time notifications from administrators
+- Student progress monitoring
 
-## 🚀 Installation Guide
+#### 👨‍💼 **Admin Portal**
+- Comprehensive dashboard with analytics
+- User management (trainers, students, schools)
+- Content management (news, events, gallery)
+- Registration request management
+- Lesson materials library
+- Notification system
+- Activity logging and monitoring
+- Reports generation
 
-1) Clone the repository:
-git clone https://github.com/amman1910/levelup-school-chess.git
+### 🏗️ System Architecture
 
-2) Navigate to the Project app Folder:
-cd chess-app
+The application follows a three-layer architecture:
 
-3) Install Project Dependencies:
-npm install
+- **Client Layer**: React.js frontend supporting desktop and mobile browsers
+- **Service Layer**: Business logic handling authentication, data processing, and core functionality
+- **Database Layer**: Firebase Firestore for data storage, Firebase Storage for media files
 
-4) Set Up Firebase Environment Variables:
-In the root folder of the project, create a .env file and add the Firebase configuration variables
+## 🛠️ Technologies Used
 
-5) Run the Project Locally:
-npm run dev
+### Frontend
+- **React.js 19.0** - Modern web framework
+- **React Router Dom 7.5** - Client-side routing
+- **React i18next** - Internationalization (Arabic/English)
+- **React Icons** - Icon library
+- **Recharts** - Data visualization
+- **Vite** - Build tool and development server
+
+### Backend & Services
+- **Firebase Authentication** - User authentication
+- **Firebase Firestore** - NoSQL database
+- **Firebase Storage** - File storage
+- **Firebase Hosting** - Web hosting
+
+### Development Tools
+- **ESLint** - Code linting
+- **Node.js** - Runtime environment
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn package manager
+- Firebase project with enabled services
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/amman1910/levelup-school-chess.git
+   cd levelup-school-chess/chess-app
