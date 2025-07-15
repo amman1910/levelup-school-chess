@@ -1,19 +1,23 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FaGlobe } from 'react-icons/fa';
+
 import './LanguageSwitcher.css';
 
 const LanguageSwitcher = ({ className = '' }) => {
   const { i18n, t } = useTranslation();
 
-  const changeLanguage = (language) => {
-    i18n.changeLanguage(language);
+  const toggleLanguage = () => {
+    // Switch between English and Arabic
+    const newLanguage = i18n.language === 'en' ? 'ar' : 'en';
+    i18n.changeLanguage(newLanguage);
     
     // Update document direction and language
-    document.documentElement.lang = language;
-    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = newLanguage;
+    document.documentElement.dir = newLanguage === 'ar' ? 'rtl' : 'ltr';
     
     // Save to localStorage
-    localStorage.setItem('language', language);
+    localStorage.setItem('language', newLanguage);
   };
 
   // Set initial direction and language on component mount
@@ -23,16 +27,17 @@ const LanguageSwitcher = ({ className = '' }) => {
     document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
   }, [i18n.language]);
 
+  // Get display text for current language
+  const getLanguageDisplay = () => {
+    return i18n.language === 'en' ? 'EN | English' : 'AR | العربية';
+  };
+
   return (
-    <div className={`language-dropdown ${className}`}>
-      <button className="language-button">
-  <FaGlobe style={{ color: 'white', marginRight: 6 }} />
-  {i18n.language.toUpperCase()}
-</button>
-    <ul className="language-menu"      >
-        <li onClick={() => changeLanguage('en')}>English</li>
-        <li onClick={() => changeLanguage('ar')}>العربية</li>
-      </ul>
+    <div className={`language-switcher ${className}`}>
+      <button className="language-button" onClick={toggleLanguage}>
+        <FaGlobe style={{ color: 'white', marginRight: 6 }} />
+        {getLanguageDisplay()}
+      </button>
     </div>
   );
 };
