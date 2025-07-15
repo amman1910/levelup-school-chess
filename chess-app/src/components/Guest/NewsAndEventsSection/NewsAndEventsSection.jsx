@@ -9,6 +9,7 @@ const NewsAndEventsSection = () => {
   const { t, i18n } = useTranslation(); // הוספת i18n לקבלת השפה הנוכחית
   const [events, setEvents] = useState([]);
   const [newsItems, setNewsItems] = useState([]);
+
   const carouselRef = useRef(null); // 🔁 للأحداث
   const newsRef = useRef(null);     // 🔁 للأخبار
   const navigate = useNavigate();
@@ -22,16 +23,26 @@ const NewsAndEventsSection = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const eventsSnapshot = await getDocs(collection(db, 'events'));
-      const allEvents = eventsSnapshot.docs.map((doc) => doc.data());
-      const filteredEvents = allEvents.filter((event) =>
-        event.type === 'course' || event.type === 'tournament'
-      );
-      setEvents(filteredEvents);
+      try {
+        const eventsSnapshot = await getDocs(collection(db, 'events'));
+        const allEvents = eventsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        const filteredEvents = allEvents.filter((event) =>
+          event.type === 'course' || event.type === 'tournament'
+        );
+        setEvents(filteredEvents);
 
-      const newsSnapshot = await getDocs(collection(db, 'news'));
-      const newsData = newsSnapshot.docs.map((doc) => doc.data());
-      setNewsItems(newsData);
+        const newsSnapshot = await getDocs(collection(db, 'news'));
+        const newsData = newsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setNewsItems(newsData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
 
     fetchData();
@@ -63,9 +74,18 @@ const NewsAndEventsSection = () => {
       {/* SECTION 1 - EVENTS */}
       <section className="events-subsection">
         <h3 className="subsection-title">{t('newsEvents.programsCompetitions')}</h3>
-        <div className="events-carousel-wrapper" style={{ position: 'relative' }}>
-          <button className="arrow left" onClick={scrollLeft}>‹</button>
-          <div className="events-carousel" ref={carouselRef}>
+        <div className="events-carousel-wrapper" style={{ position: 'relative', padding: '0 60px' }}>
+          <button 
+            className="arrow left" 
+            onClick={scrollLeft}
+            style={{ left: '10px' }}
+          >
+            ‹
+          </button>
+          <div 
+            className="events-carousel" 
+            ref={carouselRef}
+          >
             {events.map((event, index) => (
               <div className="event-card-horizontal" key={index}>
                 <div className="event-img-wrapper">
@@ -100,16 +120,31 @@ const NewsAndEventsSection = () => {
               </div>
             ))}
           </div>
-          <button className="arrow right" onClick={scrollRight}>›</button>
+          <button 
+            className="arrow right" 
+            onClick={scrollRight}
+            style={{ right: '10px' }}
+          >
+            ›
+          </button>
         </div>
       </section>
 
       {/* SECTION 2 - NEWS */}
       <section className="events-subsection">
         <h3 className="subsection-title">{t('newsEvents.newsAnnouncements')}</h3>
-        <div className="events-carousel-wrapper" style={{ position: 'relative' }}>
-          <button className="arrow left" onClick={scrollNewsLeft}>‹</button>
-          <div className="news-carousel" ref={newsRef}>
+        <div className="events-carousel-wrapper" style={{ position: 'relative', padding: '0 60px' }}>
+          <button 
+            className="arrow left" 
+            onClick={scrollNewsLeft}
+            style={{ left: '10px' }}
+          >
+            ‹
+          </button>
+          <div 
+            className="news-carousel" 
+            ref={newsRef}
+          >
             {newsItems.map((news, idx) => (
               <div className="news-card" key={idx}>
                 {news.imageUrl && (
@@ -122,7 +157,13 @@ const NewsAndEventsSection = () => {
               </div>
             ))}
           </div>
-          <button className="arrow right" onClick={scrollNewsRight}>›</button>
+          <button 
+            className="arrow right" 
+            onClick={scrollNewsRight}
+            style={{ right: '10px' }}
+          >
+            ›
+          </button>
         </div>
       </section>
     </section>

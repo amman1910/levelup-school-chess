@@ -16,6 +16,54 @@
   text-transform: uppercase;
   margin-bottom: 8px;
 }
+/* הוסף את הקוד הזה לקובץ NewsAndEventsSection.css */
+
+.events-carousel-wrapper {
+  position: relative;
+  padding: 0 60px; /* מקום לכפתורים */
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  padding: 15px 12px;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 50%;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.arrow:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.arrow.left {
+  left: 10px;
+}
+
+.arrow.right {
+  right: 10px;
+}
+
+/* וודא שהקרוסלים לא חורגים מהקונטיינר */
+.events-carousel,
+.news-carousel {
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0 10px; /* קצת רווח פנימי */
+}
+
+/* מניעת scroll bar מלהיראות */
+.events-carousel::-webkit-scrollbar,
+.news-carousel::-webkit-scrollbar {
+  display: none;
+}
 
 .events-title {
   font-family: 'Playfair Display', serif;
