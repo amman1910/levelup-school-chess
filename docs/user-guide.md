@@ -31,8 +31,8 @@ The Level Up Chess Club Management System is designed for Shah2Range organizatio
 ## Getting Started
 
 ### Accessing the System
-- **Public Website**: [https://levelup-chess.firebaseapp.com/](https://levelup-chess.firebaseapp.com/)
-- **Login Portal**: [https://levelup-chess.firebaseapp.com/login](https://levelup-chess.firebaseapp.com/login)
+- **Public Website**: [https://levelup-chess.web.app/](https://levelup-chess.web.app/)
+- **Login Portal**: [https://levelup-chess.web.app/login](https://levelup-chess.web.app/login)
 
 ### Language Support
 - **Default Language**: Arabic (Right-to-Left layout)
