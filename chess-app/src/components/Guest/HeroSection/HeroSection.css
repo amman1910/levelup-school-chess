@@ -3,38 +3,34 @@
 .hero-section {
   position: relative;
   padding: 100px 20px;
-background: radial-gradient(ellipse at center, #5d3a88 0%, #2a1740 100%);
+  background: radial-gradient(ellipse at center, #5d3a88 0%, #2a1740 100%);
   color: white;
   overflow: hidden;
   text-align: left;
   min-height: 90vh;
   font-family: 'Nunito', sans-serif;
-
 }
 
 .gold-text {
-  color: #FFD700; /* لون ذهبي */
+  color: #FFD700;
 }
-
 
 .hero-content {
   position: relative;
   z-index: 10;
   max-width: 800px;
- position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-text-align: center;
-
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
 }
 
 .hero-content h1 {
-  font-size: 3.8rem; /* أكبر من 3rem */
-  font-weight: 700; /* أضخم */
+  font-size: 3.8rem;
+  font-weight: 700;
   margin-bottom: 20px;
 }
-
 
 .hero-content p {
   font-size: 1.2rem;
@@ -52,28 +48,25 @@ text-align: center;
 .explore-btn {
   padding: 12px 24px;
   border: none;
-  border-radius: 999px; /* شكل دائري أكثر */
-  font-size: 0.95rem; /* أصغر شوي */
+  border-radius: 999px;
+  font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.3s ease;
 }
-
 
 .join-btn {
   background-color: #D4AF37;
   color: #202020;
   font-weight: 600;
   box-shadow: none;
-    transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 .join-btn:hover {
   background-color: #c49f2c;
   transform: scale(1.02);
 }
-
-
 
 .explore-btn {
   background-color: transparent;
@@ -87,26 +80,21 @@ text-align: center;
   transform: scale(1.03);
 }
 
-
-
-
 .group {
   position: absolute;
   display: flex;
-  
   z-index: 1;
-  opacity: 0.18; /* وضوح أكبر من قبل */
-  filter: brightness(0.2) blur(1px); /* ظل ناعم لكن مرئي */
+  opacity: 0.18;
+  filter: brightness(0.2) blur(1px);
   pointer-events: none;
 }
 
 .group img {
   aspect-ratio: 2/3;
-object-fit: contain;
+  object-fit: contain;
   animation: float 8s ease-in-out infinite;
 }
 
-/* مواقع المجموعات */
 .top-right {
   top: 40px;
   right: 40px;
@@ -119,14 +107,12 @@ object-fit: contain;
   transform: rotate(-7deg);
 }
 
-/* حركة القطع */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-6px); }
   100% { transform: translateY(0px); }
 }
 
-/* نسب الطول الواقعية */
 .king   { transform: rotate(4deg);  width: 100px; }
 .queen  { transform: rotate(-2deg); width: 90px;  }
 .bishop { transform: rotate(5deg);  width: 80px;  }
@@ -144,33 +130,140 @@ object-fit: contain;
   margin-left: -30px;
 }
 
+/* ========== MOBILE RESPONSIVE ========== */
 
+/* Tablets */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 80px 16px;
+    min-height: 80vh;
+  }
+  
+  .hero-content {
+    max-width: 90%;
+  }
+  
+  .hero-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+  }
+  
+  .hero-content p {
+    font-size: 1.1rem;
+    margin-bottom: 24px;
+  }
+  
+  .hero-buttons {
+    gap: 16px;
+  }
+  
+  .join-btn,
+  .explore-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  /* הקטן את הדמויות */
+  .king   { width: 80px; }
+  .queen  { width: 70px; }
+  .bishop { width: 65px; }
+  .rock   { width: 60px; }
+  .pawn   { width: 45px; }
+  
+  .top-right {
+    top: 20px;
+    right: 20px;
+  }
+  
+  .bottom-left {
+    bottom: 20px;
+    left: 20px;
+  }
+}
 
+/* Mobile */
+@media (max-width: 480px) {
+  .hero-section {
+    padding: 60px 12px;
+    min-height: 70vh;
+  }
+  
+  .hero-content {
+    max-width: 95%;
+  }
+  
+  .hero-content h1 {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  
+  .hero-content p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .join-btn,
+  .explore-btn {
+    padding: 10px 24px;
+    font-size: 0.85rem;
+    width: 200px;
+    text-align: center;
+  }
+  
+  /* הסתר את הדמויות במובייל או הקטן אותן מאוד */
+  .group {
+    opacity: 0.08;
+  }
+  
+  .king   { width: 60px; }
+  .queen  { width: 50px; }
+  .bishop { width: 45px; }
+  .rock   { width: 40px; }
+  .pawn   { width: 35px; }
+  
+  .top-right {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .bottom-left {
+    bottom: 10px;
+    left: 10px;
+  }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* Extra small screens */
+@media (max-width: 320px) {
+  .hero-section {
+    padding: 50px 8px;
+    min-height: 60vh;
+  }
+  
+  .hero-content h1 {
+    font-size: 1.5rem;
+  }
+  
+  .hero-content p {
+    font-size: 0.9rem;
+  }
+  
+  .join-btn,
+  .explore-btn {
+    padding: 8px 20px;
+    font-size: 0.8rem;
+    width: 180px;
+  }
+  
+  /* הסתר לגמרי את הדמויות במסכים קטנים מאוד */
+  .group {
+    display: none;
+  }
+}
