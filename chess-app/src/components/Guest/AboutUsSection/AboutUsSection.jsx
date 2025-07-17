@@ -1,13 +1,19 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next';
 import './AboutUsSection.css';
 import teamPhoto from '../../../assets/aboutAs-photos/output.jpg';
 
 const AboutUsSection = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t, i18n } = useTranslation(); // הוספת i18n
+  
+  // בדיקה אם השפה הנוכחית היא ערבית
+  const isRTL = i18n.language === 'ar';
 
   return (
-    <section id="about" className="about-section">
+    <section 
+      id="about" 
+      className={`about-section ${isRTL ? 'rtl' : 'ltr'}`}
+    >
       {/* Header Row */}
       <div className="about-header">
         <p className="about-section-label">{t('about.sectionLabel')}</p>

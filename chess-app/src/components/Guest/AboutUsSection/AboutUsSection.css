@@ -81,16 +81,82 @@
   padding-bottom: 20px;
 }
 
-html[dir="rtl"] .about-section-label,
-html[dir="rtl"] .about-title {
+/* ========== RTL Support - תמיכה מלאה בערבית ========== */
+
+/* RTL - ערבית */
+[dir="rtl"] .about-section {
   text-align: right;
+}
+
+[dir="rtl"] .about-header {
+  text-align: right;
+  align-self: flex-end;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+[dir="rtl"] .about-section-label {
+  text-align: right;
+  margin-right: 0;
+  margin-left: 0;
+}
+
+[dir="rtl"] .about-title {
+  text-align: right;
+}
+
+[dir="rtl"] .about-content-row {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .about-text-side {
+  text-align: right;
+}
+
+[dir="rtl"] .about-paragraph h3 {
+  text-align: right;
+}
+
+[dir="rtl"] .about-paragraph p {
+  text-align: right;
+}
+
+/* LTR - אנגלית */
+[dir="ltr"] .about-section {
+  text-align: left;
+}
+
+[dir="ltr"] .about-header {
+  text-align: left;
+  align-self: flex-start;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+[dir="ltr"] .about-section-label {
+  text-align: left;
+  margin-left: 0;
   margin-right: 0;
 }
 
-html[dir="ltr"] .about-section-label,
-html[dir="ltr"] .about-title {
+[dir="ltr"] .about-title {
   text-align: left;
-  margin-left: 0;
+}
+
+[dir="ltr"] .about-content-row {
+  flex-direction: row;
+}
+
+[dir="ltr"] .about-text-side {
+  text-align: left;
+}
+
+[dir="ltr"] .about-paragraph h3 {
+  text-align: left;
+}
+
+[dir="ltr"] .about-paragraph p {
+  text-align: left;
 }
 
 /* ========== MOBILE RESPONSIVE ========== */
@@ -189,19 +255,35 @@ html[dir="ltr"] .about-title {
     padding-bottom: 15px;
   }
   
-  /* התאמה לכיוון טקסט במובייל */
-  html[dir="rtl"] .about-section-label,
-  html[dir="rtl"] .about-title,
-  html[dir="rtl"] .about-paragraph h3,
-  html[dir="rtl"] .about-paragraph p {
+  /* התאמה לכיוון טקסט במובייל - כל השפות במרכז */
+  [dir="rtl"] .about-header,
+  [dir="ltr"] .about-header {
     text-align: center;
   }
   
-  html[dir="ltr"] .about-section-label,
-  html[dir="ltr"] .about-title,
-  html[dir="ltr"] .about-paragraph h3,
-  html[dir="ltr"] .about-paragraph p {
+  [dir="rtl"] .about-section-label,
+  [dir="ltr"] .about-section-label {
     text-align: center;
+  }
+  
+  [dir="rtl"] .about-title,
+  [dir="ltr"] .about-title {
+    text-align: center;
+  }
+  
+  [dir="rtl"] .about-paragraph h3,
+  [dir="ltr"] .about-paragraph h3 {
+    text-align: center;
+  }
+  
+  [dir="rtl"] .about-paragraph p,
+  [dir="ltr"] .about-paragraph p {
+    text-align: center;
+  }
+  
+  [dir="rtl"] .about-content-row,
+  [dir="ltr"] .about-content-row {
+    flex-direction: column;
   }
 }
 
