@@ -1,18 +1,20 @@
+/* ===== כל הקוד המקורי נשאר בדיוק כמו שהיה ===== */
+
 .navbar {
   position: fixed;
   top: 0;
   width: 100%;
-  height: 64px; /* 👈 ارتفاع ثابت */
-  padding: 0 24px; /* فقط جانبي */
+  height: 64px;
+  padding: 0 24px;
   z-index: 100;
   background-color: transparent;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   display: flex;
-  align-items: center; /* 👈 يضمن توسيط العناصر عموديًا */
+  align-items: center;
 }
 
 .navbar.scrolled {
-background-color: #3C255A;
+  background-color: #3C255A;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
@@ -30,7 +32,7 @@ background-color: #3C255A;
 }
 
 .navbar-logo {
-  height: 72px;        
+  height: 72px;
   width: auto;
   max-height: 76px;
   object-fit: contain;
@@ -84,9 +86,6 @@ background-color: #3C255A;
 .admin-access-btn:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
-
-
-
 
 .language-switch {
   background: none;
@@ -144,7 +143,276 @@ background-color: #3C255A;
   color: #ffde59;
 }
 
+/* ========== הוספות חדשות רק למובייל ========== */
 
+/* כפתור המבורגר - מוסתר כברירת מחדל */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 102; /* גבוה מהתפריט */
+}
 
+.hamburger {
+  width: 24px;
+  height: 18px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
+.hamburger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background-color: white;
+  border-radius: 1px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
 
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* תפריט מובייל - מוסתר כברירת מחדל */
+.mobile-menu {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 100%;
+  background-color: #3C255A;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+  z-index: 50; /* נמוך מהכפתורים */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: none;
+}
+
+.mobile-menu.open {
+  transform: translateY(0);
+}
+
+.mobile-nav-links {
+  list-style: none;
+  padding: 20px;
+  margin: 0;
+}
+
+.mobile-nav-links > li {
+  margin-bottom: 8px;
+}
+
+.mobile-nav-links > li > a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: color 0.3s ease;
+}
+
+.mobile-nav-links > li > a:hover {
+  color: #ffde59;
+}
+
+/* תת-תפריט במובייל */
+.mobile-submenu {
+  margin-top: 8px;
+}
+
+.mobile-submenu-title {
+  color: white;
+  font-size: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+}
+
+.mobile-submenu-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.mobile-submenu-items li a {
+  display: block;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: color 0.3s ease;
+}
+
+.mobile-submenu-items li a:hover {
+  color: #ffde59;
+}
+
+/* פרידה בתפריט מובייל */
+.mobile-separator {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  margin: 12px 0;
+}
+
+/* כפתור מנהל במובייל */
+.mobile-admin-btn {
+  width: 100%;
+  background-color: transparent;
+  color: white;
+  border: 1.5px solid white;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 8px 0;
+}
+
+.mobile-admin-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* החלפת שפה במובייל */
+.mobile-language {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.mobile-language-wrapper {
+  /* הWrapper יאפשר לLanguageSwitcher לעבוד כרגיל */
+}
+
+/* Overlay */
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 49; /* נמוך מהכל */
+  display: none;
+}
+
+/* ========== MEDIA QUERIES - רק למובייל ========== */
+
+/* הכל נשאר כמו קודם עד 768px */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 16px;
+    height: 60px;
+  }
+  
+  .mobile-menu {
+    top: 60px;
+  }
+  
+  .navbar-logo {
+    height: 50px;
+    max-height: 50px;
+  }
+  
+  .nav-links {
+    gap: 20px;
+  }
+  
+  .nav-links li a {
+    font-size: 14px;
+  }
+  
+  .admin-access-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+/* במובייל - הסתר תפריט רגיל והראה המבורגר */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 12px;
+    height: 56px;
+  }
+  
+  .mobile-menu {
+    top: 56px;
+    display: block;
+  }
+  
+  .navbar-logo {
+    height: 40px;
+    max-height: 40px;
+  }
+  
+  .nav-links {
+    display: none; /* הסתר תפריט רגיל רק במובייל */
+  }
+  
+  .navbar-right {
+    gap: 8px;
+  }
+  
+  /* הסתר אלמנטים של דסקטופ */
+  .desktop-only {
+    display: none !important;
+  }
+  
+  /* הראה אלמנטים של מובייל */
+  .mobile-only {
+    display: block !important;
+  }
+  
+  .mobile-menu-overlay {
+    display: block;
+  }
+  
+  .mobile-nav-links {
+    padding: 16px;
+  }
+  
+  .mobile-nav-links > li > a {
+    font-size: 15px;
+    padding: 10px 0;
+  }
+}
+
+/* מסכים קטנים מאוד */
+@media (max-width: 320px) {
+  .navbar {
+    padding: 0 8px;
+  }
+  
+  .navbar-logo {
+    height: 36px;
+    max-height: 36px;
+  }
+  
+  .admin-access-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+  
+  .mobile-nav-links {
+    padding: 12px;
+  }
+  
+  .mobile-nav-links > li > a {
+    font-size: 14px;
+  }
+}
