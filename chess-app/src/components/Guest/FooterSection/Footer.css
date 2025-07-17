@@ -15,13 +15,13 @@
   max-width: 1200px;
   margin: 0 auto;
 }
+
 .logo-box {
   display: flex;
   flex-direction: column;
   align-items: flex-start; 
   margin-bottom: 12px;
 }
-
 
 .footer-column {
   flex: 1 1 220px;
@@ -104,9 +104,8 @@
   cursor: pointer;
   margin-top: 12px;
   transition: background-color 0.3s ease;
-    display: inline-block;
+  display: inline-block;
   text-align: center;
-
 }
 
 .footer-btn:hover {
@@ -125,6 +124,7 @@
   width: 80px;
   margin-bottom: 10px;
 }
+
 .footer-column.about {
   padding-top: 0;
 }
@@ -149,22 +149,191 @@
   text-decoration: underline;
 }
 
+/* ========== MOBILE RESPONSIVE ========== */
 
-
+/* Tablets */
 @media (max-width: 768px) {
+  .custom-footer {
+    padding: 40px 16px 16px;
+  }
+  
+  .footer-container {
+    gap: 30px;
+  }
+  
+  .footer-column {
+    flex: 1 1 200px;
+    min-width: 200px;
+  }
+  
+  .footer-logo {
+    width: 70px;
+  }
+  
+  .about .logo-text {
+    font-size: 1.4rem;
+  }
+  
+  .footer-column h4 {
+    font-size: 1rem;
+    margin-bottom: 14px;
+  }
+  
+  .social-icons a {
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+  }
+  
+  .footer-bottom {
+    margin-top: 35px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .custom-footer {
+    padding: 30px 12px 12px;
+  }
+  
   .footer-container {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 30px;
+    gap: 25px;
   }
 
   .footer-column {
     min-width: 100%;
+    flex: none;
+    padding-top: 0;
   }
-
+  
+  .footer-column.about {
+    padding-top: 0;
+  }
+  
+  .logo-box {
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .footer-logo {
+    width: 60px;
+    margin-bottom: 8px;
+  }
+  
+  .about .logo-text {
+    font-size: 1.2rem;
+  }
+  
+  .footer-column h4 {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  
+  .footer-column ul {
+    text-align: center;
+  }
+  
+  .footer-column ul li {
+    margin-bottom: 8px;
+  }
+  
+  .contact-info {
+    text-align: center;
+    margin-top: 8px;
+  }
+  
+  .contact-info li {
+    justify-content: center;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+  }
+  
   .social-icons {
     justify-content: center;
+    gap: 8px;
+  }
+  
+  .social-icons a {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .footer-btn {
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    margin-top: 8px;
+  }
+  
+  .footer-bottom {
+    margin-top: 25px;
+    font-size: 0.75rem;
+    padding-top: 12px;
   }
 }
 
+/* Extra small screens */
+@media (max-width: 320px) {
+  .custom-footer {
+    padding: 25px 8px 10px;
+  }
+  
+  .footer-container {
+    gap: 20px;
+  }
+  
+  .footer-logo {
+    width: 50px;
+  }
+  
+  .about .logo-text {
+    font-size: 1.1rem;
+  }
+  
+  .footer-column h4 {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  
+  .footer-column ul li {
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+  }
+  
+  .contact-info li {
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+  }
+  
+  .social-icons a {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+  
+  .footer-btn {
+    padding: 5px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .footer-bottom {
+    margin-top: 20px;
+    font-size: 0.7rem;
+  }
+}
+
+/* הסתרת אלמנטים במובייל אם צריך */
+@media (max-width: 480px) {
+  .footer-column ul li {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+    margin: 0 auto 8px;
+  }
+}
