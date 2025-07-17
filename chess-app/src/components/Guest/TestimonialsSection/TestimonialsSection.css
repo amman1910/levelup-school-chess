@@ -1,18 +1,18 @@
+/* ========== Main Testimonials Section Styles ========== */
+
 .testimonials-section {
   position: relative;
   background-size: cover;
   background-position: center;
   padding: 100px 40px;
   overflow: hidden;
-    background-attachment: fixed; /* 🔥 هاي السطر هو اللي بعمل التأثير */
-
+  background-attachment: fixed; /* Parallax effect */
 }
 
 .testimonials-overlay {
   position: absolute;
   inset: 0;
   background: rgba(30, 30, 30, 0.55);
- /* يمكنكِ تعديل الشفافية واللون */
   z-index: 1;
 }
 
@@ -21,28 +21,51 @@
   z-index: 2;
 }
 
-.testimonials-title {
-  color: white;
-  text-align: center;
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 50px;
+/* Testimonials header styling */
+.testimonials-header {
+  text-align: left;
+  margin-bottom: 40px;
+  width: 100%;
+  max-width: none;
+  padding-left: 40px;
 }
 
+.testimonials-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.testimonials-subtitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 48px;
+  font-weight: 300;
+  color: #ffffff;
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+
+/* Testimonials container and cards */
 .testimonials-container {
   display: flex;
-  justify-content:  flex-start;
+  justify-content: flex-start;
   align-items: stretch;
   gap: 40px;
-  flex-wrap: nowrap; /* 🟣 هذا السطر هو السر لعدم التفاف البطاقات */
-  overflow-x: auto;   /* اختياري: يسمح بالسكرول إذا الشاشة ضيقة */
+  flex-wrap: nowrap;
+  overflow-x: auto;
   scroll-behavior: smooth;
   padding-left: 40px;
 }
+
 .testimonial-card {
-  background-color: #f8f1e9; /* ✅ لون أفتح زي Chestry */
+  background-color: #f8f1e9;
   border-radius: 24px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); /* كمان خففي الشادو شوي */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   padding: 40px 30px;
   max-width: 320px;
   min-height: 320px;
@@ -61,7 +84,7 @@
 
 .quote-icon {
   font-size: 40px;
-  color: #d3b07a;
+  color: #3b3b3b;
   position: absolute;
   top: 20px;
   left: 25px;
@@ -108,11 +131,8 @@
   border: 2px solid #ddd;
 }
 
-
-
-
 .testimonial-card h4 {
-  color: #1e1e1e; /* أسود ناعم */
+  color: #1e1e1e;
   font-weight: bold;
   margin-top: 20px;
 }
@@ -123,56 +143,37 @@
   margin-top: 4px;
 }
 
-
-.testimonials-header {
-  text-align: left;
-  margin-bottom: 40px;
-  width: 100%;
-  max-width: none;
-  padding-left: 40px; /* ✅ نفس الـ padding المستخدم ببداية البطاقات */
+/* Success stories section */
+.success-stories {
+  margin-top: 100px;
+  padding-left: 40px;
 }
 
+.success-header {
+  text-align: left;
+  margin-bottom: 40px;
+  padding-left: 40px;
+}
 
-.testimonials-title {
+.success-section-label {
   font-family: 'Inter', sans-serif;
   font-size: 13px;
-    font-weight: 300;
-
+  font-weight: 300;
   color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-bottom: 10px;
-  text-align: left; /* ✅ هذا هو الحل */
+  text-align: left;
 }
 
-.testimonials-subtitle {
+.success-title {
   font-family: 'Playfair Display', serif;
   font-size: 48px;
   font-weight: 300;
   color: #ffffff;
   line-height: 1.3;
   margin-bottom: 20px;
-}
-
-.quote-icon {
-  color: #3b3b3b;              /* رمادي دافئ */
-  
-}
-
-
-
-.success-stories {
-  margin-top: 100px;
-  padding-left: 40px;
-}
-
-.success-title {
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  color: #cccccc;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
+  text-align: left;
 }
 
 .success-cards-container {
@@ -213,66 +214,581 @@
 .success-quote {
   font-size: 15px;
   line-height: 1.7;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   color: #333;
   font-style: italic;
-    margin-bottom: 12px; 
 }
 
 .success-name {
   font-weight: bold;
   color: #1e1e1e;
   font-size: 16px;
-  margin-bottom: 4px;
-    margin-bottom: 12px; 
+  margin-bottom: 12px;
 }
 
 .success-role {
-    margin-bottom: 12px; 
+  margin-bottom: 12px;
   font-size: 14px;
   color: #777;
 }
 
+/* ========== RTL Support ========== */
 
-
-.success-section-label {
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 300;
-  color: #ffffff;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
-  text-align: left;
+/* RTL styles for Arabic language */
+[dir="rtl"] .testimonials-section {
+  text-align: right;
 }
 
-.success-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 48px;
-  font-weight: 300;
-  color: #ffffff;
-  line-height: 1.3;
-  margin-bottom: 20px;
-  text-align: left;
-}
-.success-header {
-  text-align: left;
-  margin-bottom: 40px;
-  padding-left: 40px;
-}
-
-:dir(rtl) .testimonials-title,
-:dir(rtl) .testimonials-subtitle,
-:dir(rtl) .success-section-label,
-:dir(rtl) .success-title {
-  text-align: right !important;
+[dir="rtl"] .testimonials-header {
+  text-align: right;
   padding-right: 40px;
   padding-left: 0;
 }
-:dir(rtl) .quote-icon {
+
+[dir="rtl"] .testimonials-title {
+  text-align: right;
+  font-size: 16px !important;
+  font-weight: 400;
+}
+
+[dir="rtl"] .testimonials-subtitle {
+  text-align: right;
+  font-size: 48px;
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', serif;
+}
+
+[dir="rtl"] .testimonials-container {
+  padding-right: 40px;
+  padding-left: 0;
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .testimonial-card {
+  text-align: right;
+}
+
+[dir="rtl"] .quote-icon {
   left: auto;
   right: 25px;
 }
 
+[dir="rtl"] .testimonial-quote {
+  text-align: right;
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', Arial, sans-serif;
+}
 
+[dir="rtl"] .testimonial-footer {
+  flex-direction: row-reverse;
+}
 
+[dir="rtl"] .testimonial-info {
+  text-align: right;
+}
+
+[dir="rtl"] .testimonial-name,
+[dir="rtl"] .testimonial-role {
+  text-align: right;
+}
+
+[dir="rtl"] .success-stories {
+  padding-right: 40px;
+  padding-left: 0;
+}
+
+[dir="rtl"] .success-header {
+  text-align: right;
+  padding-right: 40px;
+  padding-left: 0;
+}
+
+[dir="rtl"] .success-section-label {
+  text-align: right;
+  font-size: 16px !important;
+  font-weight: 400;
+}
+
+[dir="rtl"] .success-title {
+  text-align: right;
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', serif;
+}
+
+[dir="rtl"] .success-cards-container {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+[dir="rtl"] .success-card {
+  text-align: right;
+}
+
+[dir="rtl"] .success-name,
+[dir="rtl"] .success-role,
+[dir="rtl"] .success-quote {
+  text-align: right;
+}
+
+[dir="rtl"] .success-quote {
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', Arial, sans-serif;
+}
+
+/* LTR styles for English language */
+[dir="ltr"] .testimonials-section {
+  text-align: left;
+}
+
+[dir="ltr"] .testimonials-header {
+  text-align: left;
+  padding-left: 40px;
+  padding-right: 0;
+}
+
+[dir="ltr"] .testimonials-title {
+  text-align: left;
+  font-size: 13px;
+}
+
+[dir="ltr"] .testimonials-subtitle {
+  text-align: left;
+}
+
+[dir="ltr"] .testimonials-container {
+  padding-left: 40px;
+  padding-right: 0;
+  justify-content: flex-start;
+  flex-direction: row;
+}
+
+[dir="ltr"] .testimonial-card {
+  text-align: left;
+}
+
+[dir="ltr"] .quote-icon {
+  left: 25px;
+  right: auto;
+}
+
+[dir="ltr"] .testimonial-quote {
+  text-align: left;
+}
+
+[dir="ltr"] .testimonial-footer {
+  flex-direction: row;
+}
+
+[dir="ltr"] .testimonial-info {
+  text-align: left;
+}
+
+[dir="ltr"] .testimonial-name,
+[dir="ltr"] .testimonial-role {
+  text-align: left;
+}
+
+[dir="ltr"] .success-stories {
+  padding-left: 40px;
+  padding-right: 0;
+}
+
+[dir="ltr"] .success-header {
+  text-align: left;
+  padding-left: 40px;
+  padding-right: 0;
+}
+
+[dir="ltr"] .success-section-label {
+  text-align: left;
+  font-size: 13px;
+}
+
+[dir="ltr"] .success-title {
+  text-align: left;
+}
+
+[dir="ltr"] .success-cards-container {
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+[dir="ltr"] .success-card {
+  text-align: left;
+}
+
+[dir="ltr"] .success-name,
+[dir="ltr"] .success-role,
+[dir="ltr"] .success-quote {
+  text-align: left;
+}
+
+/* Smooth transitions for direction changes */
+.testimonials-title,
+.testimonials-subtitle,
+.testimonial-card,
+.success-section-label,
+.success-title {
+  transition: text-align 0.3s ease, font-size 0.3s ease;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablet responsive styles */
+@media (max-width: 768px) {
+  .testimonials-section {
+    padding: 60px 20px;
+  }
+  
+  .testimonials-header {
+    padding-left: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .testimonials-title {
+    font-size: 11px;
+  }
+  
+  .testimonials-subtitle {
+    font-size: 32px;
+    line-height: 1.2;
+  }
+  
+  .testimonials-container {
+    padding-left: 20px;
+    gap: 30px;
+  }
+  
+  .testimonial-card {
+    max-width: 280px;
+    min-height: 280px;
+    padding: 30px 20px;
+  }
+  
+  .testimonial-quote {
+    font-size: 14px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+  }
+  
+  .testimonial-name {
+    font-size: 15px;
+  }
+  
+  .testimonial-role {
+    font-size: 13px;
+  }
+  
+  .testimonial-img {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .success-stories {
+    margin-top: 60px;
+    padding-left: 20px;
+  }
+  
+  .success-header {
+    padding-left: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .success-section-label {
+    font-size: 11px;
+  }
+  
+  .success-title {
+    font-size: 32px;
+    line-height: 1.2;
+  }
+  
+  .success-cards-container {
+    gap: 30px;
+  }
+  
+  .success-card {
+    max-width: 280px;
+    min-width: 240px;
+    padding: 25px 20px;
+  }
+  
+  .success-img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+  }
+  
+  .success-name {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+  
+  .success-role {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  
+  .success-quote {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
+  /* RTL adjustments for tablets */
+  [dir="rtl"] .testimonials-header {
+    padding-right: 20px;
+    padding-left: 0;
+  }
+  
+  [dir="rtl"] .testimonials-container {
+    padding-right: 20px;
+    padding-left: 0;
+  }
+  
+  [dir="rtl"] .success-stories {
+    padding-right: 20px;
+    padding-left: 0;
+  }
+  
+  [dir="rtl"] .success-header {
+    padding-right: 20px;
+    padding-left: 0;
+  }
+  
+  [dir="rtl"] .testimonials-title,
+  [dir="rtl"] .success-section-label {
+    font-size: 14px !important;
+  }
+  
+  [dir="rtl"] .testimonials-subtitle,
+  [dir="rtl"] .success-title {
+    font-size: 32px;
+  }
+}
+
+/* Mobile responsive styles */
+@media (max-width: 480px) {
+  .testimonials-section {
+    padding: 40px 15px;
+  }
+  
+  .testimonials-header {
+    padding-left: 15px;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+  
+  .testimonials-title {
+    font-size: 10px;
+    text-align: center;
+  }
+  
+  .testimonials-subtitle {
+    font-size: 24px;
+    text-align: center;
+    line-height: 1.3;
+  }
+  
+  .testimonials-container {
+    padding-left: 15px;
+    gap: 20px;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .testimonial-card {
+    max-width: 100%;
+    min-height: 250px;
+    padding: 25px 20px;
+  }
+  
+  .quote-icon {
+    font-size: 30px;
+    top: 15px;
+    left: 20px;
+  }
+  
+  .testimonial-quote {
+    font-size: 13px;
+    margin-top: 35px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .testimonial-footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .testimonial-info {
+    text-align: center;
+  }
+  
+  .testimonial-name {
+    font-size: 14px;
+  }
+  
+  .testimonial-role {
+    font-size: 12px;
+  }
+  
+  .testimonial-img {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .success-stories {
+    margin-top: 40px;
+    padding-left: 15px;
+  }
+  
+  .success-header {
+    padding-left: 15px;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+  
+  .success-section-label {
+    font-size: 10px;
+    text-align: center;
+  }
+  
+  .success-title {
+    font-size: 24px;
+    text-align: center;
+    line-height: 1.3;
+  }
+  
+  .success-cards-container {
+    gap: 20px;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .success-card {
+    max-width: 100%;
+    min-width: 100%;
+    padding: 20px 15px;
+  }
+  
+  .success-img {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 12px;
+  }
+  
+  .success-name {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  
+  .success-role {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  
+  .success-quote {
+    font-size: 13px;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  
+  /* RTL adjustments for mobile */
+  [dir="rtl"] .testimonials-header {
+    padding-right: 15px;
+    padding-left: 0;
+    text-align: center;
+  }
+  
+  [dir="rtl"] .testimonials-title {
+    text-align: center;
+    font-size: 12px !important;
+  }
+  
+  [dir="rtl"] .testimonials-subtitle {
+    text-align: center;
+    font-size: 24px;
+  }
+  
+  [dir="rtl"] .testimonials-container {
+    padding-right: 15px;
+    padding-left: 0;
+  }
+  
+  [dir="rtl"] .quote-icon {
+    right: 20px;
+    left: auto;
+  }
+  
+  [dir="rtl"] .testimonial-quote {
+    text-align: center;
+  }
+  
+  [dir="rtl"] .testimonial-footer {
+    flex-direction: column;
+  }
+  
+  [dir="rtl"] .testimonial-info {
+    text-align: center;
+  }
+  
+  [dir="rtl"] .success-stories {
+    padding-right: 15px;
+    padding-left: 0;
+  }
+  
+  [dir="rtl"] .success-header {
+    padding-right: 15px;
+    padding-left: 0;
+    text-align: center;
+  }
+  
+  [dir="rtl"] .success-section-label {
+    text-align: center;
+    font-size: 12px !important;
+  }
+  
+  [dir="rtl"] .success-title {
+    text-align: center;
+    font-size: 24px;
+  }
+  
+  [dir="rtl"] .success-quote {
+    text-align: center;
+  }
+  
+  /* LTR adjustments for mobile */
+  [dir="ltr"] .testimonials-header {
+    text-align: center;
+  }
+  
+  [dir="ltr"] .testimonials-title {
+    text-align: center;
+  }
+  
+  [dir="ltr"] .testimonials-subtitle {
+    text-align: center;
+  }
+  
+  [dir="ltr"] .testimonial-quote {
+    text-align: center;
+  }
+  
+  [dir="ltr"] .testimonial-info {
+    text-align: center;
+  }
+  
+  [dir="ltr"] .success-header {
+    text-align: center;
+  }
+  
+  [dir="ltr"] .success-section-label {
+    text-align: center;
+  }
+  
+  [dir="ltr"] .success-title {
+    text-align: center;
+  }
+  
+  [dir="ltr"] .success-quote {
+    text-align: center;
+  }
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next';
 import './ProgramsSection.css';
 
 import trainingImg from '../../../assets/program-section/in-school-training.jpg';
@@ -7,10 +7,15 @@ import eveningImg from '../../../assets/program-section/evening-courses.jpg';
 import tournamentsImg from '../../../assets/program-section/chess-tournaments.jpg';
 import communityImg from '../../../assets/program-section/community-hub.jpg';
 
+/**
+ * ProgramsSection Component
+ * Displays a grid of program cards with images, badges, and descriptions
+ * Features responsive design and internationalization support
+ */
 const ProgramsSection = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation();
 
-  // העברת ה-programs array לתוך הקומפוננטה כדי שיהיה גישה ל-t()
+  // Define programs array with translation keys
   const programs = [
     {
       title: t('programs.items.inSchool.title'),
@@ -40,12 +45,15 @@ const ProgramsSection = () => {
 
   return (
     <section id="programs" className="programs-section">
+      {/* Section header */}
       <div className="programs-header">
         <p className="programs-label">{t('programs.sectionLabel')}</p>
         <h2 className="programs-title">
           {t('programs.titleLine1')}<br />{t('programs.titleLine2')}
         </h2>
       </div>
+      
+      {/* Programs grid */}
       <div className="programs-grid">
         {programs.map((program, index) => (
           <div className="program-card" key={index}>

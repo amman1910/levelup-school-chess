@@ -1,4 +1,4 @@
-/* ===== כל הקוד המקורי נשאר בדיוק כמו שהיה ===== */
+/* ========== Main Navbar Styles ========== */
 
 .navbar {
   position: fixed;
@@ -39,6 +39,7 @@
   display: block;
 }
 
+/* Desktop navigation links */
 .nav-links {
   flex: 2;
   display: flex;
@@ -59,6 +60,7 @@
   color: #ffde59;
 }
 
+/* Right side controls */
 .navbar-right {
   flex: 1;
   display: flex;
@@ -102,6 +104,7 @@
   opacity: 0.8;
 }
 
+/* Dropdown menu for desktop */
 .dropdown {
   position: relative;
 }
@@ -143,16 +146,16 @@
   color: #ffde59;
 }
 
-/* ========== הוספות חדשות רק למובייל ========== */
+/* ========== Mobile Menu Styles ========== */
 
-/* כפתור המבורגר - מוסתר כברירת מחדל */
+/* Mobile hamburger button - hidden by default */
 .mobile-menu-btn {
   display: none;
   background: none;
   border: none;
   cursor: pointer;
   padding: 8px;
-  z-index: 102; /* גבוה מהתפריט */
+  z-index: 102;
 }
 
 .hamburger {
@@ -186,7 +189,7 @@
   transform: rotate(-45deg) translate(7px, -6px);
 }
 
-/* תפריט מובייל - מוסתר כברירת מחדל */
+/* Mobile menu - hidden by default */
 .mobile-menu {
   position: fixed;
   top: 64px;
@@ -195,7 +198,7 @@
   background-color: #3C255A;
   transform: translateY(-100%);
   transition: transform 0.3s ease;
-  z-index: 50; /* נמוך מהכפתורים */
+  z-index: 50;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   display: none;
 }
@@ -228,7 +231,7 @@
   color: #ffde59;
 }
 
-/* תת-תפריט במובייל */
+/* Mobile submenu */
 .mobile-submenu {
   margin-top: 8px;
 }
@@ -262,14 +265,14 @@
   color: #ffde59;
 }
 
-/* פרידה בתפריט מובייל */
+/* Mobile menu separator */
 .mobile-separator {
   height: 1px;
   background-color: rgba(255, 255, 255, 0.2);
   margin: 12px 0;
 }
 
-/* כפתור מנהל במובייל */
+/* Mobile admin button */
 .mobile-admin-btn {
   width: 100%;
   background-color: transparent;
@@ -288,7 +291,7 @@
   background-color: rgba(255, 255, 255, 0.15);
 }
 
-/* החלפת שפה במובייל */
+/* Mobile language switcher */
 .mobile-language {
   display: flex;
   justify-content: center;
@@ -296,10 +299,10 @@
 }
 
 .mobile-language-wrapper {
-  /* הWrapper יאפשר לLanguageSwitcher לעבוד כרגיל */
+  /* Wrapper allows LanguageSwitcher to work normally */
 }
 
-/* Overlay */
+/* Mobile menu overlay */
 .mobile-menu-overlay {
   position: fixed;
   top: 0;
@@ -307,13 +310,13 @@
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 49; /* נמוך מהכל */
+  z-index: 49;
   display: none;
 }
 
-/* ========== MEDIA QUERIES - רק למובייל ========== */
+/* ========== RESPONSIVE DESIGN ========== */
 
-/* הכל נשאר כמו קודם עד 768px */
+/* Tablet styles */
 @media (max-width: 768px) {
   .navbar {
     padding: 0 16px;
@@ -343,7 +346,7 @@
   }
 }
 
-/* במובייל - הסתר תפריט רגיל והראה המבורגר */
+/* Mobile styles - hide desktop menu and show hamburger */
 @media (max-width: 480px) {
   .navbar {
     padding: 0 12px;
@@ -361,19 +364,19 @@
   }
   
   .nav-links {
-    display: none; /* הסתר תפריט רגיל רק במובייל */
+    display: none;
   }
   
   .navbar-right {
     gap: 8px;
   }
   
-  /* הסתר אלמנטים של דסקטופ */
+  /* Hide desktop elements */
   .desktop-only {
     display: none !important;
   }
   
-  /* הראה אלמנטים של מובייל */
+  /* Show mobile elements */
   .mobile-only {
     display: block !important;
   }
@@ -392,7 +395,7 @@
   }
 }
 
-/* מסכים קטנים מאוד */
+/* Extra small screens */
 @media (max-width: 320px) {
   .navbar {
     padding: 0 8px;

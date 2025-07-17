@@ -1,26 +1,38 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next';
 import { db } from '../../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import './NewsAndEventsSection.css';
 
+/**
+ * NewsAndEventsSection Component
+ * Displays horizontally scrollable carousels for events and news items
+ * Features join functionality for events with language parameter support
+ */
 const NewsAndEventsSection = () => {
-  const { t, i18n } = useTranslation(); // הוספת i18n לקבלת השפה הנוכחית
+  const { t, i18n } = useTranslation();
   const [events, setEvents] = useState([]);
   const [newsItems, setNewsItems] = useState([]);
 
-  const carouselRef = useRef(null); // 🔁 للأحداث
-  const newsRef = useRef(null);     // 🔁 للأخبار
+  const carouselRef = useRef(null); // Events carousel reference
+  const newsRef = useRef(null);     // News carousel reference
   const navigate = useNavigate();
 
-  // פונקציה לטיפול בקישורי JOIN NOW
+  /**
+   * Handle join event button click with language parameter
+   * @param {string} eventType - Type of event (course/tournament)
+   * @param {string} eventTitle - Title of the event
+   */
   const handleJoinEventClick = (eventType, eventTitle) => {
     const currentLanguage = i18n.language;
     const joinUrl = `/join?applicantType=${eventType}&eventName=${encodeURIComponent(eventTitle)}&lang=${currentLanguage}`;
     window.open(joinUrl, '_blank', 'noopener,noreferrer');
   };
 
+  /**
+   * Fetch events and news data from Firestore
+   */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -41,37 +53,50 @@ const NewsAndEventsSection = () => {
         }));
         setNewsItems(newsData);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        // Error handling without console logging
       }
     };
 
     fetchData();
   }, []);
 
+  /**
+   * Scroll events carousel to the left
+   */
   const scrollLeft = () => {
     carouselRef.current.scrollBy({ left: -300, behavior: 'smooth' });
   };
 
+  /**
+   * Scroll events carousel to the right
+   */
   const scrollRight = () => {
     carouselRef.current.scrollBy({ left: 300, behavior: 'smooth' });
   };
 
+  /**
+   * Scroll news carousel to the left
+   */
   const scrollNewsLeft = () => {
     newsRef.current.scrollBy({ left: -300, behavior: 'smooth' });
   };
 
+  /**
+   * Scroll news carousel to the right
+   */
   const scrollNewsRight = () => {
     newsRef.current.scrollBy({ left: 300, behavior: 'smooth' });
   };
 
   return (
     <section className="events-section" id="news">
+      {/* Section header */}
       <div className="events-header">
         <p className="section-label">{t('newsEvents.sectionLabel')}</p>
         <h2 className="events-title">{t('newsEvents.title')}</h2>
       </div>
 
-      {/* SECTION 1 - EVENTS */}
+      {/* Events/Programs section */}
       <section className="events-subsection">
         <h3 className="subsection-title">{t('newsEvents.programsCompetitions')}</h3>
         <div className="events-carousel-wrapper" style={{ position: 'relative', padding: '0 60px' }}>
@@ -130,7 +155,7 @@ const NewsAndEventsSection = () => {
         </div>
       </section>
 
-      {/* SECTION 2 - NEWS */}
+      {/* News section */}
       <section className="events-subsection">
         <h3 className="subsection-title">{t('newsEvents.newsAnnouncements')}</h3>
         <div className="events-carousel-wrapper" style={{ position: 'relative', padding: '0 60px' }}>

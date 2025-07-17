@@ -5,17 +5,23 @@ import LanguageSwitcher from '../../LanguageSwitcher';
 import './Navbar.css';
 import logo from '../../../assets/logos/shahtranj_logo_gold.png';
 
+/**
+ * Navbar Component
+ * Responsive navigation bar with mobile hamburger menu, language switching,
+ * and scroll-based background changes. Supports both desktop and mobile layouts.
+ */
 const Navbar = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  console.log("🔧 Navbar component is running");
 
+  /**
+   * Handle scroll events to change navbar background
+   */
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      console.log('🔥 window.scrollY =', scrollTop);
       setIsScrolled(scrollTop > 10);
     };
 
@@ -23,38 +29,52 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // פונקציה לפתיחה/סגירה של תפריט מובייל
+  /**
+   * Toggle mobile menu visibility
+   */
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // פונקציה לסגירת התפריט כשלוחצים על קישור
+  /**
+   * Close mobile menu
+   */
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
 
-  // פונקציה לטיפול בקישור JOIN US עם העברת השפה
+  /**
+   * Handle join us link click with language parameter
+   * @param {Event} e - Click event
+   */
   const handleJoinUsClick = (e) => {
     e.preventDefault();
     const currentLanguage = i18n.language;
     const joinUrl = `/join?lang=${currentLanguage}`;
     window.open(joinUrl, '_blank', 'noopener,noreferrer');
-    closeMobileMenu(); // סגור תפריט מובייל
+    closeMobileMenu();
   };
 
-  // פונקציה לטיפול בקישור Login עם העברת השפה
+  /**
+   * Handle login link click with language parameter
+   * @param {Event} e - Click event
+   */
   const handleLoginClick = (e) => {
     e.preventDefault();
     const currentLanguage = i18n.language;
     const loginUrl = `/login?lang=${currentLanguage}`;
     window.open(loginUrl, '_blank', 'noopener,noreferrer');
-    closeMobileMenu(); // סגור תפריט מובייל
+    closeMobileMenu();
   };
 
-  // פונקציה לטיפול בקישורי ניווט רגילים במובייל
+  /**
+   * Handle mobile navigation link clicks
+   * @param {Event} e - Click event
+   * @param {string} href - Target URL/anchor
+   */
   const handleMobileNavClick = (e, href) => {
     closeMobileMenu();
-    // אם זה anchor link, תן לדפדפן לטפל בזה
+    // Let browser handle anchor links
     if (href.startsWith('#')) {
       return;
     }
@@ -66,13 +86,14 @@ const Navbar = () => {
     <>
       <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}> 
         <div className="navbar-container">
+          {/* Logo section */}
           <div className="navbar-left">
             <a href="#top">
               <img src={logo} alt="Shah2Range Logo" className="navbar-logo" />
             </a>
           </div>
 
-          {/* תפריט רגיל - בדיוק כמו קודם */}
+          {/* Desktop navigation menu */}
           <ul className="nav-links">
             <li><a href="#about">{t('navbar.about')}</a></li>
             <li><a href="#testimonials">{t('navbar.testimonials')}</a></li>
@@ -88,6 +109,7 @@ const Navbar = () => {
               </a>
             </li>
 
+            {/* Dropdown menu for additional links */}
             <li className="dropdown">
               <span className="dropdown-toggle">{t('navbar.more')} ▾</span>
               <ul className="dropdown-menu">
@@ -98,8 +120,9 @@ const Navbar = () => {
             </li>
           </ul>
 
+          {/* Right side controls */}
           <div className="navbar-right">
-            {/* דסקטופ - כפתורים רגילים */}
+            {/* Desktop login button */}
             <button 
               className="admin-access-btn desktop-only" 
               onClick={handleLoginClick}
@@ -107,15 +130,16 @@ const Navbar = () => {
               {t('navbar.trainerAdminLogin')}
             </button>
 
+            {/* Desktop language switcher */}
             <div className="desktop-only">
               <LanguageSwitcher />
             </div>
 
-            {/* מובייל - רק כפתור המבורגר */}
+            {/* Mobile hamburger menu button */}
             <button 
               className="mobile-menu-btn mobile-only"
               onClick={toggleMobileMenu}
-              aria-label="תפריט ניווט"
+              aria-label="Navigation menu"
             >
               <div className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`}>
                 <span></span>
@@ -126,7 +150,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* תפריט מובייל */}
+        {/* Mobile navigation menu */}
         <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
           <ul className="mobile-nav-links">
             <li>
@@ -163,7 +187,7 @@ const Navbar = () => {
               </a>
             </li>
             
-            {/* תת-תפריט "עוד" */}
+            {/* Mobile submenu for additional links */}
             <li className="mobile-submenu">
               <div className="mobile-submenu-title">{t('navbar.more')}</div>
               <ul className="mobile-submenu-items">
@@ -194,10 +218,10 @@ const Navbar = () => {
               </ul>
             </li>
 
-            {/* פרידה */}
+            {/* Separator line */}
             <li className="mobile-separator"></li>
 
-            {/* כפתור כניסת מנהל במובייל */}
+            {/* Mobile admin login button */}
             <li>
               <button 
                 className="mobile-admin-btn" 
@@ -207,7 +231,7 @@ const Navbar = () => {
               </button>
             </li>
 
-            {/* החלפת שפה במובייל */}
+            {/* Mobile language switcher */}
             <li className="mobile-language">
               <div className="mobile-language-wrapper">
                 <LanguageSwitcher />
@@ -217,7 +241,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Overlay לסגירת התפריט */}
+      {/* Overlay for closing mobile menu */}
       {isMobileMenuOpen && (
         <div 
           className="mobile-menu-overlay" 
