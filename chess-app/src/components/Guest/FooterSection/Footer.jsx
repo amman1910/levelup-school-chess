@@ -1,15 +1,22 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next';
 import './Footer.css';
 import { FaPhone, FaFacebookF, FaInstagram, FaYoutube, FaWhatsapp } from 'react-icons/fa';
+import shahtranjLogo from '../../../assets/logos/shahtranj_logo_gold.png';
 
-// Import the logo directly
-import shahtranjLogo from '../../../assets/logos/shahtranj_logo_gold.png'; // עדכן את הנתיב לפי המבנה שלך
-
+/**
+ * Footer Component
+ * Main footer section containing company information, contact details, 
+ * social media links, and registration call-to-action
+ * Features internationalization support
+ */
 const Footer = () => {
-  const { t, i18n } = useTranslation(); // הוספת i18n לקבלת השפה הנוכחית
+  const { t, i18n } = useTranslation();
 
-  // פונקציה לטיפול בקישור REGISTER NOW
+  /**
+   * Handle register button click - opens registration page in new tab
+   * @param {Event} e - Click event
+   */
   const handleRegisterClick = (e) => {
     e.preventDefault();
     const currentLanguage = i18n.language;
@@ -20,6 +27,7 @@ const Footer = () => {
   return (
     <footer className="custom-footer">
       <div className="footer-container">
+        {/* About section with logo and contact info */}
         <div className="footer-column about">
           <div className="logo-box">
             <a href="#top">
@@ -29,7 +37,6 @@ const Footer = () => {
                 className="footer-logo"
                 style={{ cursor: 'pointer' }}
                 onError={(e) => {
-                  console.error('Failed to load logo:', e.target.src);
                   e.target.style.display = 'none';
                 }}
               />
@@ -48,6 +55,7 @@ const Footer = () => {
           </ul>
         </div>
 
+        {/* Quick navigation links */}
         <div className="footer-column">
           <h4>{t('footer.quickLinks')}</h4>
           <ul>
@@ -58,6 +66,7 @@ const Footer = () => {
           </ul>
         </div>
 
+        {/* Social media links */}
         <div className="footer-column">
           <h4>{t('footer.followUs')}</h4>
           <div className="social-icons">
@@ -68,6 +77,7 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* Registration call-to-action */}
         <div className="footer-column">
           <h4>{t('footer.joinProgram.title')}</h4>
           <p>{t('footer.joinProgram.description')}</p>
@@ -83,6 +93,7 @@ const Footer = () => {
         </div>
       </div>
 
+      {/* Copyright section */}
       <div className="footer-bottom">
         <p>{t('footer.copyright')}</p>
       </div>

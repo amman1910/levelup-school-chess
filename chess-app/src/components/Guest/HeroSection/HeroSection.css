@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
 
+/* ========== Main Hero Section Styles ========== */
+
 .hero-section {
   position: relative;
   padding: 100px 20px;
@@ -38,6 +40,7 @@
   margin-bottom: 30px;
 }
 
+/* Button styling */
 .hero-buttons {
   display: flex;
   justify-content: center;
@@ -80,6 +83,7 @@
   transform: scale(1.03);
 }
 
+/* Floating chess pieces */
 .group {
   position: absolute;
   display: flex;
@@ -107,12 +111,14 @@
   transform: rotate(-7deg);
 }
 
+/* Floating animation */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-6px); }
   100% { transform: translateY(0px); }
 }
 
+/* Chess piece sizes and rotations */
 .king   { transform: rotate(4deg);  width: 100px; }
 .queen  { transform: rotate(-2deg); width: 90px;  }
 .bishop { transform: rotate(5deg);  width: 80px;  }
@@ -130,9 +136,9 @@
   margin-left: -30px;
 }
 
-/* ========== MOBILE RESPONSIVE ========== */
+/* ========== RESPONSIVE DESIGN ========== */
 
-/* Tablets */
+/* Tablet responsive styles */
 @media (max-width: 768px) {
   .hero-section {
     padding: 80px 16px;
@@ -163,7 +169,7 @@
     font-size: 0.9rem;
   }
   
-  /* הקטן את הדמויות */
+  /* Smaller chess pieces for tablets */
   .king   { width: 80px; }
   .queen  { width: 70px; }
   .bishop { width: 65px; }
@@ -181,7 +187,7 @@
   }
 }
 
-/* Mobile */
+/* Mobile responsive styles */
 @media (max-width: 480px) {
   .hero-section {
     padding: 60px 12px;
@@ -218,7 +224,7 @@
     text-align: center;
   }
   
-  /* הסתר את הדמויות במובייל או הקטן אותן מאוד */
+  /* Hide/reduce chess pieces on mobile */
   .group {
     opacity: 0.08;
   }
@@ -262,7 +268,7 @@
     width: 180px;
   }
   
-  /* הסתר לגמרי את הדמויות במסכים קטנים מאוד */
+  /* Completely hide chess pieces on very small screens */
   .group {
     display: none;
   }

@@ -1,3 +1,5 @@
+/* ========== Main Inquiry Form Styles ========== */
+
 .inquiry-form-section {
   background: radial-gradient(ellipse at center, #4B2C6B 0%, #2B1840 100%);
   color: #f5ecd7;
@@ -80,16 +82,15 @@
   z-index: 10;
 }
 
+/* ========== RTL Support ========== */
 
-/* ========== RTL Support - תמיכה מלאה בערבית ========== */
-
-/* RTL - ערבית */
+/* RTL styles for Arabic language */
 [dir="rtl"] .inquiry-form-section {
   text-align: right;
 }
 
 [dir="rtl"] .inquiry-form-title {
-  text-align: center; /* כותרת תמיד במרכז */
+  text-align: center;
 }
 
 [dir="rtl"] .inquiry-form {
@@ -107,7 +108,7 @@
   direction: rtl;
 }
 
-/* שמירה על כיוון LTR לשדות מיוחדים */
+/* Keep LTR direction for special input types */
 [dir="rtl"] .inquiry-form input[type="email"],
 [dir="rtl"] .inquiry-form input[type="time"],
 [dir="rtl"] .inquiry-form input[type="number"] {
@@ -132,13 +133,13 @@
   left: 20px;
 }
 
-/* LTR - אנגלית */
+/* LTR styles for English language */
 [dir="ltr"] .inquiry-form-section {
   text-align: left;
 }
 
 [dir="ltr"] .inquiry-form-title {
-  text-align: center; /* כותרת תמיד במרכז */
+  text-align: center;
 }
 
 [dir="ltr"] .inquiry-form {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next';
 import Navbar from '../Navbar/Navbar';
 import HeroSection from '../HeroSection/HeroSection';
 import WhyShah2Range from '../WhyShah2Range/WhyShah2Range';
@@ -14,8 +14,13 @@ import FAQSection from '../FAQSection/FAQSection';
 
 import './GuestPage.css';
 
+/**
+ * GuestPage Component
+ * Main landing page that renders all sections in proper order
+ * Features internationalization support and responsive design
+ */
 const GuestPage = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation();
 
   return (
     <>

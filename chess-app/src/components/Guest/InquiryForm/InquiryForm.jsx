@@ -8,26 +8,33 @@ import { collection, getDocs, addDoc, Timestamp } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
+/**
+ * InquiryForm Component
+ * Multi-purpose registration form supporting various applicant types
+ * Features dynamic fields, file upload, internationalization, and RTL support
+ */
 const InquiryForm = () => {
   const { t, i18n } = useTranslation();
   const [searchParams] = useSearchParams();
   
-  // בדיקה אם השפה הנוכחית היא ערבית
+  // Check if current language is Arabic for RTL layout
   const isRTL = i18n.language === 'ar';
 
-  // הגדרת שפה בהתחלה לפי פרמטר מה-URL או מה-localStorage
+  /**
+   * Set language based on URL parameter or localStorage
+   */
   useEffect(() => {
     const langFromUrl = searchParams.get('lang');
     const savedLanguage = localStorage.getItem('i18nextLng');
     
     if (langFromUrl) {
-      // אם יש פרמטר שפה ב-URL, השתמש בו
+      // Use language parameter from URL
       i18n.changeLanguage(langFromUrl);
     } else if (savedLanguage && savedLanguage !== i18n.language) {
-      // אחרת, השתמש בשפה השמורה
+      // Use saved language
       i18n.changeLanguage(savedLanguage);
     } else {
-      // ברירת מחדל - ערבית (כמו ב-GuestPage)
+      // Default to Arabic
       i18n.changeLanguage('ar');
     }
   }, [i18n, searchParams]);
@@ -63,6 +70,9 @@ const InquiryForm = () => {
   const [courses, setCourses] = useState([]);
   const [tournaments, setTournaments] = useState([]);
 
+  /**
+   * Fetch available courses and tournaments from Firestore
+   */
   useEffect(() => {
     const fetchEvents = async () => {
       const eventsSnapshot = await getDocs(collection(db, 'events'));
@@ -74,10 +84,18 @@ const InquiryForm = () => {
     fetchEvents();
   }, []);
 
+  /**
+   * Handle form input changes
+   * @param {Event} e - Input change event
+   */
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  /**
+   * Handle form submission with file upload and data processing
+   * @param {Event} e - Form submit event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -95,6 +113,7 @@ const InquiryForm = () => {
         submittedAt: Timestamp.now(),
       };
 
+      // Add specific fields based on applicant type
       switch (form.applicantType) {
         case 'individual':
           dataToSend = {
@@ -189,6 +208,8 @@ const InquiryForm = () => {
 
       await addDoc(collection(db, 'registrationForm'), dataToSend);
       setSubmitted(true);
+      
+      // Reset form after successful submission
       setForm({
         applicantType: '',
         studentName: '',
@@ -212,25 +233,26 @@ const InquiryForm = () => {
       });
       setCvFile(null);
     } catch (error) {
-      console.error(error);
       alert(t('inquiryForm.submitError'));
     }
   };
 
   return (
     <div className={`inquiry-form-section ${isRTL ? 'rtl' : 'ltr'}`} id="join">
-      {/* הוספת מתג השפות */}
+      {/* Language switcher */}
       <div className="inquiry-language-switcher">
         <LanguageSwitcher />
       </div>
 
+      {/* Logo section */}
       <div className="join-logo-wrapper">
         <img src={logo} alt="Shah2Range Logo" className="join-logo" />
       </div>
 
       <h2 className="inquiry-form-title">{t('inquiryForm.title')}</h2>
+      
       <form onSubmit={handleSubmit} className="inquiry-form">
-
+        {/* Applicant type selector */}
         <label>
           {t('inquiryForm.applyingAs')}
           <select name="applicantType" value={form.applicantType} onChange={handleChange} required>
@@ -245,7 +267,7 @@ const InquiryForm = () => {
           </select>
         </label>
 
-        {/* Dynamic Fields */}
+        {/* Dynamic form fields based on applicant type */}
         {form.applicantType === 'individual' && (
           <>
             <label>{t('inquiryForm.fullName')}:<input type="text" name="studentName" value={form.studentName} onChange={handleChange} required /></label>

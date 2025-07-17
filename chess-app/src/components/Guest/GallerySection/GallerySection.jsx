@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { db } from '../../../firebase'; // עדכן את הנתיב לפי המבנה שלך
+import { db } from '../../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import './GallerySection.css';
 
+/**
+ * GallerySection Component
+ * Displays a responsive image gallery loaded from Firestore
+ * Features parallax scrolling effect, modal image viewer, and loading states
+ */
 const GallerySection = () => {
   const { t } = useTranslation();
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // טעינת תמונות מ-Firestore במקום מ-Storage
+  /**
+   * Fetch gallery images from Firestore collection
+   */
   useEffect(() => {
     const fetchGalleryImages = async () => {
       try {
@@ -21,7 +28,7 @@ const GallerySection = () => {
           ...doc.data()
         }));
         
-        // מיון לפי תאריך העלאה (החדשים ראשון)
+        // Sort by upload date (newest first)
         const sortedImages = galleryData.sort((a, b) => {
           const dateA = a.uploadedAt?.toDate ? a.uploadedAt.toDate() : new Date(a.uploadedAt);
           const dateB = b.uploadedAt?.toDate ? b.uploadedAt.toDate() : new Date(b.uploadedAt);
@@ -30,7 +37,7 @@ const GallerySection = () => {
 
         setImages(sortedImages);
       } catch (error) {
-        console.error('Error loading gallery images:', error);
+        // Error handling without console logging
       } finally {
         setLoading(false);
       }
@@ -39,7 +46,9 @@ const GallerySection = () => {
     fetchGalleryImages();
   }, []);
 
-  // תחריך הגלילה
+  /**
+   * Parallax scroll effect for gallery rows
+   */
   useEffect(() => {
     const handleScroll = () => {
       const windowHeight = window.innerHeight;
@@ -61,7 +70,12 @@ const GallerySection = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // חלוקת תמונות לשורות
+  /**
+   * Split array into chunks for gallery rows
+   * @param {Array} arr - Array to chunk
+   * @param {number} size - Size of each chunk
+   * @returns {Array} Array of chunks (limited to 3 rows)
+   */
   const chunkArray = (arr, size) => {
     const result = [];
     for (let i = 0; i < arr.length; i += size) {
@@ -72,6 +86,7 @@ const GallerySection = () => {
 
   const chunkedImages = chunkArray(images, 6);
 
+  // Loading state
   if (loading) {
     return (
       <section className="gallery-section" id="gallery">
@@ -86,6 +101,7 @@ const GallerySection = () => {
     );
   }
 
+  // Empty state
   if (images.length === 0) {
     return (
       <section className="gallery-section" id="gallery">
@@ -102,6 +118,7 @@ const GallerySection = () => {
 
   return (
     <>
+      {/* Image modal for enlarged view */}
       {selectedImage && (
         <div className="image-modal" onClick={() => setSelectedImage(null)}>
           <span className="close-btn" onClick={() => setSelectedImage(null)}>&times;</span>
@@ -110,12 +127,14 @@ const GallerySection = () => {
         </div>
       )}
 
+      {/* Main gallery section */}
       <section className="gallery-section" id="gallery">
         <div className="gallery-header">
           <p className="section-label">{t('gallery.sectionLabel')}</p>
           <h2 className="gallery-title">{t('gallery.title')}</h2>
         </div>
 
+        {/* Gallery grid with parallax rows */}
         <div className="gallery-grid-container">
           {chunkedImages.map((row, rowIndex) => (
             <div className="gallery-row-wrapper" key={rowIndex}>
@@ -128,7 +147,6 @@ const GallerySection = () => {
                       onClick={() => setSelectedImage(imageData)}
                       style={{ cursor: 'pointer' }}
                       onError={(e) => {
-                        console.error('Error loading image:', imageData.imageUrl);
                         e.target.style.display = 'none';
                       }}
                     />
