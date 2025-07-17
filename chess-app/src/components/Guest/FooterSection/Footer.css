@@ -1,3 +1,5 @@
+/* ========== Main Footer Styles ========== */
+
 .custom-footer {
   background: radial-gradient(ellipse at center, #4B2C6B 0%, #2B1840 100%);
   color: #f5ecd7;
@@ -69,6 +71,7 @@
   color: #d8c18f;
 }
 
+/* Social media icons */
 .social-icons {
   display: flex;
   gap: 10px;
@@ -93,6 +96,7 @@
   background-color: #c4a55f;
 }
 
+/* Footer button styling */
 .footer-btn {
   background-color: #d8c18f;
   color: #28153d;
@@ -129,6 +133,7 @@
   padding-top: 0;
 }
 
+/* Link styling */
 .footer-column ul li a {
   color: #f5ecd7;
   text-decoration: none;
@@ -149,9 +154,9 @@
   text-decoration: underline;
 }
 
-/* ========== MOBILE RESPONSIVE ========== */
+/* ========== RESPONSIVE DESIGN ========== */
 
-/* Tablets */
+/* Tablet responsive styles */
 @media (max-width: 768px) {
   .custom-footer {
     padding: 40px 16px 16px;
@@ -191,7 +196,7 @@
   }
 }
 
-/* Mobile */
+/* Mobile responsive styles */
 @media (max-width: 480px) {
   .custom-footer {
     padding: 30px 12px 12px;
@@ -327,7 +332,7 @@
   }
 }
 
-/* הסתרת אלמנטים במובייל אם צריך */
+/* Text overflow handling for mobile */
 @media (max-width: 480px) {
   .footer-column ul li {
     white-space: nowrap;

@@ -1,3 +1,5 @@
+/* ========== Main FAQ Section Styles ========== */
+
 .faq-section {
   background-color: #f4efe9;
   padding: 60px 20px;
@@ -57,6 +59,7 @@
   animation: fadeIn 0.3s ease-in-out;
 }
 
+/* Fade-in animation for answers */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -68,15 +71,15 @@
   }
 }
 
-/* ========== RTL Support - תמיכה מלאה בערבית ========== */
+/* ========== RTL Support ========== */
 
-/* RTL - ערבית */
+/* RTL styles for Arabic language */
 [dir="rtl"] .faq-section {
   text-align: right;
 }
 
 [dir="rtl"] .faq-title {
-  text-align: center; /* כותרת תמיד במרכז */
+  text-align: center;
 }
 
 [dir="rtl"] .faq-question {
@@ -99,13 +102,13 @@
   padding-left: 4px;
 }
 
-/* LTR - אנגלית */
+/* LTR styles for English language */
 [dir="ltr"] .faq-section {
   text-align: left;
 }
 
 [dir="ltr"] .faq-title {
-  text-align: center; /* כותרת תמיד במרכז */
+  text-align: center;
 }
 
 [dir="ltr"] .faq-question {
@@ -128,9 +131,9 @@
   padding-left: 0;
 }
 
-/* ========== MOBILE RESPONSIVE ========== */
+/* ========== RESPONSIVE DESIGN ========== */
 
-/* Tablets */
+/* Tablet responsive styles */
 @media (max-width: 768px) {
   .faq-section {
     padding: 50px 16px;
@@ -153,7 +156,7 @@
     font-size: 1rem;
   }
   
-  /* RTL adjustments for tablets */
+  /* RTL padding adjustments for tablets */
   [dir="rtl"] .faq-answer {
     padding-left: 2px;
     padding-right: 0;
@@ -165,7 +168,7 @@
   }
 }
 
-/* Mobile */
+/* Mobile responsive styles */
 @media (max-width: 480px) {
   .faq-section {
     padding: 40px 12px;
@@ -274,7 +277,7 @@
 
 /* Special icon adjustments for better RTL support */
 [dir="rtl"] .faq-question svg {
-  transform: scaleX(-1); /* היפוך האייקון בערבית אם רוצים */
+  transform: scaleX(-1);
 }
 
 /* Smooth transitions for direction changes */

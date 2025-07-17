@@ -2,8 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getFunctions } from "firebase/functions";
-import { getStorage } from "firebase/storage"; // הוספה חדשה
+import { getStorage } from "firebase/storage";
 
+/**
+ * Firebase configuration object
+ * Uses environment variables for security
+ */
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -14,10 +18,13 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+// Initialize Firebase app
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase services
 const db = getFirestore(app);
 const auth = getAuth(app);
 const functions = getFunctions(app);
-const storage = getStorage(app); // הוספה חדשה
+const storage = getStorage(app);
 
-export { db, auth, functions, storage }; // עדכון ה-export
+export { db, auth, functions, storage };

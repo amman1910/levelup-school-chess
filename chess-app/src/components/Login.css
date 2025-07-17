@@ -27,7 +27,7 @@ body, html {
 
 body {
   background-color: var(--background-light);
-  direction: ltr; /* Changed from RTL to LTR for English */
+  direction: ltr; /* Default LTR for English */
 }
 
 .login-container {
@@ -63,7 +63,7 @@ body {
 .logo-area img {
   max-width: 120px;
   height: auto;
-  display: inline-block; /* Ensures the image is properly displayed */
+  display: inline-block;
 }
 
 .logo-area h1 {
@@ -212,7 +212,7 @@ body {
   border-radius: 6px;
   text-align: center;
   font-size: 14px;
-  border-left: 4px solid var(--error-color); /* Changed from right to left for LTR */
+  border-left: 4px solid var(--error-color);
 }
 
 .chess-decoration {
@@ -244,6 +244,152 @@ body {
   animation: fadeIn 0.5s ease-out forwards;
 }
 
+.login-language-switcher {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+}
+
+/* ========== RTL Support ========== */
+
+/* RTL styles for Arabic language */
+[dir="rtl"] .login-container {
+  text-align: right;
+}
+
+[dir="rtl"] .logo-area {
+  text-align: center;
+}
+
+[dir="rtl"] .logo-area h1 {
+  text-align: center;
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', serif;
+}
+
+[dir="rtl"] .login-form {
+  text-align: right;
+}
+
+[dir="rtl"] .login-form h2 {
+  text-align: center;
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', serif;
+}
+
+[dir="rtl"] .form-group label {
+  text-align: right;
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', Arial, sans-serif;
+}
+
+[dir="rtl"] .form-group input {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .login-button {
+  text-align: center;
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', Arial, sans-serif;
+}
+
+[dir="rtl"] .forgot-password-button {
+  text-align: center;
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', Arial, sans-serif;
+}
+
+[dir="rtl"] .error-message {
+  text-align: center;
+  border-right: 4px solid var(--error-color);
+  border-left: none;
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', Arial, sans-serif;
+}
+
+[dir="rtl"] .login-language-switcher {
+  right: auto;
+  left: 20px;
+}
+
+/* RTL decoration adjustments */
+[dir="rtl"] .decoration-1 {
+  top: -90px;
+  right: auto;
+  left: -90px;
+}
+
+[dir="rtl"] .decoration-2 {
+  bottom: -90px;
+  left: auto;
+  right: -90px;
+}
+
+/* LTR styles for English language */
+[dir="ltr"] .login-container {
+  text-align: left;
+}
+
+[dir="ltr"] .logo-area {
+  text-align: center;
+}
+
+[dir="ltr"] .logo-area h1 {
+  text-align: center;
+}
+
+[dir="ltr"] .login-form {
+  text-align: left;
+}
+
+[dir="ltr"] .login-form h2 {
+  text-align: center;
+}
+
+[dir="ltr"] .form-group label {
+  text-align: left;
+}
+
+[dir="ltr"] .form-group input {
+  text-align: left;
+  direction: ltr;
+}
+
+[dir="ltr"] .login-button {
+  text-align: center;
+}
+
+[dir="ltr"] .forgot-password-button {
+  text-align: center;
+}
+
+[dir="ltr"] .error-message {
+  text-align: center;
+  border-left: 4px solid var(--error-color);
+  border-right: none;
+}
+
+[dir="ltr"] .login-language-switcher {
+  right: 20px;
+  left: auto;
+}
+
+[dir="ltr"] .decoration-1 {
+  top: -90px;
+  right: -90px;
+  left: auto;
+}
+
+[dir="ltr"] .decoration-2 {
+  bottom: -90px;
+  left: -90px;
+  right: auto;
+}
+
+/* Smooth transitions for direction changes */
+.login-form,
+.form-group label,
+.form-group input,
+.error-message {
+  transition: text-align 0.3s ease;
+}
+
 /* Responsive for small screens */
 @media (max-width: 480px) {
   .login-form {
@@ -262,7 +408,18 @@ body {
     font-size: 13px;
     padding: 10px;
   }
+  
+  .login-language-switcher {
+    top: 15px;
+    right: 15px;
+  }
+  
+  [dir="rtl"] .login-language-switcher {
+    right: auto;
+    left: 15px;
+  }
 }
+
 @media (max-width: 768px) {
   .chess-decoration {
     width: 120px;
@@ -278,17 +435,17 @@ body {
     bottom: -60px;
     left: -60px;
   }
-}
+  
+  /* RTL adjustments for mobile */
+  [dir="rtl"] .decoration-1 {
+    top: -60px;
+    right: auto;
+    left: -60px;
+  }
 
-.login-language-switcher {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 2;
+  [dir="rtl"] .decoration-2 {
+    bottom: -60px;
+    left: auto;
+    right: -60px;
+  }
 }
-[dir="rtl"] .login-language-switcher {
-  right: auto;
-  left: 20px;
-}
-
-

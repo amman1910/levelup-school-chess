@@ -3,10 +3,15 @@ import { useTranslation } from 'react-i18next';
 import './AboutUsSection.css';
 import teamPhoto from '../../../assets/aboutAs-photos/output.jpg';
 
+/**
+ * AboutUsSection Component
+ * Displays information about the team/company with support for RTL/LTR languages
+ * Features responsive design and internationalization
+ */
 const AboutUsSection = () => {
-  const { t, i18n } = useTranslation(); // הוספת i18n
+  const { t, i18n } = useTranslation();
   
-  // בדיקה אם השפה הנוכחית היא ערבית
+  // Check if current language is Arabic for RTL layout
   const isRTL = i18n.language === 'ar';
 
   return (
@@ -14,18 +19,20 @@ const AboutUsSection = () => {
       id="about" 
       className={`about-section ${isRTL ? 'rtl' : 'ltr'}`}
     >
-      {/* Header Row */}
+      {/* Header section with title and label */}
       <div className="about-header">
         <p className="about-section-label">{t('about.sectionLabel')}</p>
         <h2 className="about-title">{t('about.title')}</h2>
       </div>
 
-      {/* Content Row */}
+      {/* Main content with image and text sections */}
       <div className="about-content-row">
+        {/* Team photo section */}
         <div className="about-image-side">
           <img src={teamPhoto} alt="Shah2Range Team" />
         </div>
 
+        {/* Text content with three main sections */}
         <div className="about-text-side">
           <div className="about-paragraph">
             <h3>{t('about.expertCoaches.title')}</h3>

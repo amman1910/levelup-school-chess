@@ -1,3 +1,5 @@
+/* ========== Main About Section Styles ========== */
+
 .about-section {
   background: radial-gradient(ellipse at center, #4B2C6B 0%, #2B1840 100%);
   color: #f5ecd7;
@@ -81,9 +83,9 @@
   padding-bottom: 20px;
 }
 
-/* ========== RTL Support - תמיכה מלאה בערבית ========== */
+/* ========== RTL Support ========== */
 
-/* RTL - ערבית */
+/* RTL styles for Arabic language */
 [dir="rtl"] .about-section {
   text-align: right;
 }
@@ -121,7 +123,7 @@
   text-align: right;
 }
 
-/* LTR - אנגלית */
+/* LTR styles for English language */
 [dir="ltr"] .about-section {
   text-align: left;
 }
@@ -159,9 +161,9 @@
   text-align: left;
 }
 
-/* ========== MOBILE RESPONSIVE ========== */
+/* ========== RESPONSIVE DESIGN ========== */
 
-/* Tablets */
+/* Tablet responsive styles */
 @media (max-width: 768px) {
   .about-section {
     padding: 60px 40px;
@@ -195,7 +197,7 @@
   }
 }
 
-/* Mobile */
+/* Mobile responsive styles */
 @media (max-width: 480px) {
   .about-section {
     padding: 40px 20px;
@@ -255,7 +257,7 @@
     padding-bottom: 15px;
   }
   
-  /* התאמה לכיוון טקסט במובייל - כל השפות במרכז */
+  /* Center alignment for all languages on mobile */
   [dir="rtl"] .about-header,
   [dir="ltr"] .about-header {
     text-align: center;
