@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next';
 import './FAQSection.css';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 const FAQSection = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t, i18n } = useTranslation(); // הוספת i18n
   const [activeIndex, setActiveIndex] = useState(null);
+  
+  // בדיקה אם השפה הנוכחית היא ערבית
+  const isRTL = i18n.language === 'ar';
 
   // נטען את השאלות והתשובות מהתרגום
   const faqData = [
@@ -56,14 +59,19 @@ const FAQSection = () => {
   };
 
   return (
-    <div className="faq-section">
+    <div className={`faq-section ${isRTL ? 'rtl' : 'ltr'}`}>
       <h2 className="faq-title">{t('faq.title')}</h2>
       <div className="faq-list">
         {faqData.map((item, index) => (
-          <div className="faq-item" key={index}>
+          <div 
+            className={`faq-item ${activeIndex === index ? 'open' : ''}`} 
+            key={index}
+          >
             <div className="faq-question" onClick={() => toggleAnswer(index)}>
               <span>{item.question}</span>
-              {activeIndex === index ? <FaChevronUp /> : <FaChevronDown />}
+              <span className="faq-icon">
+                {activeIndex === index ? <FaChevronUp /> : <FaChevronDown />}
+              </span>
             </div>
             {activeIndex === index && (
               <div className="faq-answer">{item.answer}</div>
