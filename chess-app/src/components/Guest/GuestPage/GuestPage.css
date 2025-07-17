@@ -1,4 +1,4 @@
-/* تنسيق عام للصفحة */
+/* Global page styling */
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap');
 
 .guest-font {
@@ -22,31 +22,31 @@ html {
 
 /* ========== GLOBAL RESPONSIVE STYLES ========== */
 
-/* Container מרכזי לכל הקומפוננטות */
+/* Central container for all components */
 .container {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* תיקונים כלליים למובייל */
+/* General mobile fixes */
 @media (max-width: 768px) {
   .container {
     padding: 0 16px;
   }
   
-  /* וודא שכל הטקסט לא יחרוג מהמסך */
+  /* Ensure all text doesn't overflow screen */
   * {
     max-width: 100%;
     word-wrap: break-word;
   }
   
-  /* תיקון לכפתורים */
+  /* Button accessibility fixes */
   button {
-    min-height: 44px; /* נגישות מגע */
+    min-height: 44px;
   }
   
-  /* תיקון לקישורים */
+  /* Link accessibility fixes */
   a {
     min-height: 44px;
     display: inline-flex;
@@ -59,12 +59,12 @@ html {
     padding: 0 12px;
   }
   
-  /* הקטן את המרווחים הכלליים */
+  /* Reduce general spacing */
   section {
     padding: 40px 0 !important;
   }
   
-  /* תיקון לכותרות */
+  /* Heading responsive fixes */
   h1 {
     font-size: 1.8rem !important;
     line-height: 1.3 !important;
@@ -80,7 +80,7 @@ html {
     line-height: 1.4 !important;
   }
   
-  /* תיקון לפסקאות */
+  /* Paragraph responsive fixes */
   p {
     font-size: 0.9rem !important;
     line-height: 1.5 !important;
@@ -115,7 +115,7 @@ html {
 
 /* ========== UTILITY CLASSES ========== */
 
-/* להסתרת אלמנטים במובייל */
+/* Hide elements on mobile */
 .hidden-mobile {
   display: block;
 }
@@ -126,7 +126,7 @@ html {
   }
 }
 
-/* להצגת אלמנטים רק במובייל */
+/* Show elements only on mobile */
 .visible-mobile {
   display: none;
 }
@@ -137,7 +137,7 @@ html {
   }
 }
 
-/* Grid רספונסיבי */
+/* Responsive grid utility */
 .responsive-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -158,7 +158,7 @@ html {
   }
 }
 
-/* Flex רספונסיבי */
+/* Responsive flex utility */
 .responsive-flex {
   display: flex;
   gap: 20px;

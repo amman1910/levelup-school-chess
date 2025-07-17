@@ -4,7 +4,7 @@ import { db } from '../firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import './ChangeInitialPassword.css';
-import chessLogo from './chessLogo.png'; // Make sure this path matches your actual logo path
+import chessLogo from './chessLogo.png';
 
 const ChangeInitialPassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -16,20 +16,18 @@ const ChangeInitialPassword = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Add protection similar to TrainerArea
+  // Redirect user if already logged in and password is not the initial one
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
     if (!loggedInUser) {
-      // User is not logged in, redirect to login page
       navigate('/login');
       return;
     }
-    
+
     const userData = JSON.parse(loggedInUser);
-    
-    // Verify if it's the user's first login
+
     if (!userData.firstLogin) {
-      // User has already changed their initial password, redirect to their area
+      // User already changed password, redirect according to their role
       if (userData.role === 'trainer') {
         navigate('/trainer-area');
       } else if (userData.role === 'admin') {
@@ -39,15 +37,15 @@ const ChangeInitialPassword = () => {
       }
       return;
     }
-    
+
     setUser(userData);
   }, [navigate]);
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
     setError('');
-    
-    // Validate passwords
+
+    // Basic validation
     if (!currentPassword || !newPassword || !confirmPassword) {
       setError('Please fill in all fields');
       return;
@@ -65,51 +63,42 @@ const ChangeInitialPassword = () => {
 
     try {
       setLoading(true);
-      
-      // Get current authenticated user
       const auth = getAuth();
       const user = auth.currentUser;
-      
+
       if (!user) {
         setError('No logged-in user found. Please log in again');
         setLoading(false);
         return;
       }
 
-      // Re-authenticate user before changing password
       try {
-        const credential = EmailAuthProvider.credential(
-          user.email,
-          currentPassword
-        );
-        
+        // Re-authenticate user with current password
+        const credential = EmailAuthProvider.credential(user.email, currentPassword);
         await reauthenticateWithCredential(user, credential);
-        
-        // Now update the password
+
+        // Update password in Firebase Authentication
         await updatePassword(user, newPassword);
-        
-        console.log("Password updated successfully in Firebase Auth");
-        
-        // Get user data from localStorage
+
+        // Retrieve user data from localStorage
         const userData = JSON.parse(localStorage.getItem('user'));
-        
-        // Update firstLogin field in Firestore to false
+
+        // Update firstLogin flag in Firestore
         if (userData && userData.uid) {
           const userRef = doc(db, "users", userData.uid);
           await updateDoc(userRef, {
             firstLogin: false
           });
-          console.log("FirstLogin updated successfully in Firestore");
-            
-          // Update localStorage to reflect the change
+
+          // Update user data in localStorage
           localStorage.setItem('user', JSON.stringify({
             ...userData,
             firstLogin: false
           }));
-            
+
           setSuccess(true);
-            
-          // Redirect to appropriate area after 2 seconds based on user role
+
+          // Redirect user to personal area based on role
           setTimeout(() => {
             if (userData.role === 'trainer') {
               navigate('/trainer-area');
@@ -123,21 +112,18 @@ const ChangeInitialPassword = () => {
           setError('User data not found. Please log in again.');
           setLoading(false);
         }
-        
+
       } catch (reauthError) {
-        console.error("Re-authentication error:", reauthError);
         setError('Current password is incorrect');
         setLoading(false);
       }
-      
+
     } catch (err) {
-      console.error("Password update error:", err);
       setError('An error occurred while updating password. Please try again');
       setLoading(false);
     }
   };
 
-  // If user is not set (will be null during the redirect), show loading
   if (!user) {
     return <div className="loading">Loading...</div>;
   }
@@ -145,21 +131,26 @@ const ChangeInitialPassword = () => {
   return (
     <div className="change-password-container">
       <div className="change-password-form-wrapper">
-        {/* Decorative elements */}
+        {/* Decorative circles */}
         <div className="chess-decoration decoration-1"></div>
         <div className="chess-decoration decoration-2"></div>
-        
-        {/* Logo area */}
+
+        {/* Header and logo */}
         <div className="logo-area">
           <img src={chessLogo} alt="Chess Logo" />
           <h1>Chess Club Management System</h1>
         </div>
-        
+
+        {/* Form */}
         <div className="change-password-form">
           <h2>Update Initial Password</h2>
           {error && <div className="error-message">{error}</div>}
-          {success && <div className="success-message">Password updated successfully! Redirecting to personal area...</div>}
-          
+          {success && (
+            <div className="success-message">
+              Password updated successfully! Redirecting to personal area...
+            </div>
+          )}
+
           <form onSubmit={handleChangePassword}>
             <div className="form-group">
               <label htmlFor="currentPassword">Current Password:</label>
@@ -173,7 +164,7 @@ const ChangeInitialPassword = () => {
                 disabled={loading || success}
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="newPassword">New Password:</label>
               <input
@@ -186,7 +177,7 @@ const ChangeInitialPassword = () => {
                 disabled={loading || success}
               />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="confirmPassword">Confirm Password:</label>
               <input

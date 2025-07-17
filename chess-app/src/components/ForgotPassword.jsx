@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { 
   getAuth, 
   sendPasswordResetEmail, 
@@ -7,12 +7,12 @@ import {
   verifyPasswordResetCode
 } from 'firebase/auth';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import LanguageSwitcher from './LanguageSwitcher'; // הוספת מתג השפות
+import LanguageSwitcher from './LanguageSwitcher'; 
 import './ForgotPassword.css';
 import chessLogo from './chessLogo.png';
 
 const ForgotPassword = () => {
-  const { t, i18n } = useTranslation(); // הוספת hook לתרגום
+  const { t, i18n } = useTranslation(); 
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
