@@ -5,7 +5,7 @@
   font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', 'Arial', sans-serif;
 }
 
-/* Text alignment */
+/* Text alignment adjustments */
 [dir="rtl"] .text-left {
   text-align: right !important;
 }
