@@ -2,6 +2,8 @@
   background: radial-gradient(ellipse at center, #4B2C6B 0%, #2B1840 100%);
   color: #f5ecd7;
   padding: 80px 20px;
+  position: relative;
+  min-height: 100vh;
 }
 
 .inquiry-form-title {
@@ -71,8 +73,6 @@
   height: auto;
 }
 
-
-
 .inquiry-language-switcher {
   position: absolute;
   top: 20px;
@@ -80,15 +80,103 @@
   z-index: 10;
 }
 
-/* בתמיכה ל-RTL (ערבית) */
+
+/* ========== RTL Support - תמיכה מלאה בערבית ========== */
+
+/* RTL - ערבית */
+[dir="rtl"] .inquiry-form-section {
+  text-align: right;
+}
+
+[dir="rtl"] .inquiry-form-title {
+  text-align: center; /* כותרת תמיד במרכז */
+}
+
+[dir="rtl"] .inquiry-form {
+  text-align: right;
+}
+
+[dir="rtl"] .inquiry-form label {
+  text-align: right;
+}
+
+[dir="rtl"] .inquiry-form input,
+[dir="rtl"] .inquiry-form select,
+[dir="rtl"] .inquiry-form textarea {
+  text-align: right;
+  direction: rtl;
+}
+
+/* שמירה על כיוון LTR לשדות מיוחדים */
+[dir="rtl"] .inquiry-form input[type="email"],
+[dir="rtl"] .inquiry-form input[type="time"],
+[dir="rtl"] .inquiry-form input[type="number"] {
+  text-align: left;
+  direction: ltr;
+}
+
+[dir="rtl"] .inquiry-form button {
+  text-align: center;
+}
+
+[dir="rtl"] .form-success {
+  text-align: center;
+}
+
+[dir="rtl"] .join-logo-wrapper {
+  text-align: center;
+}
+
 [dir="rtl"] .inquiry-language-switcher {
   right: auto;
   left: 20px;
 }
 
-.inquiry-form-section {
-  position: relative;
-  min-height: 100vh;
-  padding: 20px;
+/* LTR - אנגלית */
+[dir="ltr"] .inquiry-form-section {
+  text-align: left;
 }
 
+[dir="ltr"] .inquiry-form-title {
+  text-align: center; /* כותרת תמיד במרכז */
+}
+
+[dir="ltr"] .inquiry-form {
+  text-align: left;
+}
+
+[dir="ltr"] .inquiry-form label {
+  text-align: left;
+}
+
+[dir="ltr"] .inquiry-form input,
+[dir="ltr"] .inquiry-form select,
+[dir="ltr"] .inquiry-form textarea {
+  text-align: left;
+  direction: ltr;
+}
+
+[dir="ltr"] .inquiry-form button {
+  text-align: center;
+}
+
+[dir="ltr"] .form-success {
+  text-align: center;
+}
+
+[dir="ltr"] .join-logo-wrapper {
+  text-align: center;
+}
+
+[dir="ltr"] .inquiry-language-switcher {
+  right: 20px;
+  left: auto;
+}
+
+/* Smooth transitions for direction changes */
+.inquiry-form label,
+.inquiry-form input,
+.inquiry-form select,
+.inquiry-form textarea {
+  transition: text-align 0.3s ease;
+}

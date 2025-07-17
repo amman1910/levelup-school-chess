@@ -1,7 +1,7 @@
 import logo from '../../../assets/logos/shahtranj_logo_gold.png';
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
-import LanguageSwitcher from '../../LanguageSwitcher'; // הוספת מתג השפות
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../../LanguageSwitcher';
 import './InquiryForm.css';
 import { db } from '../../../firebase';
 import { collection, getDocs, addDoc, Timestamp } from 'firebase/firestore';
@@ -9,8 +9,11 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
 const InquiryForm = () => {
-  const { t, i18n } = useTranslation(); // הוספת i18n לשליטה בשפה
+  const { t, i18n } = useTranslation();
   const [searchParams] = useSearchParams();
+  
+  // בדיקה אם השפה הנוכחית היא ערבית
+  const isRTL = i18n.language === 'ar';
 
   // הגדרת שפה בהתחלה לפי פרמטר מה-URL או מה-localStorage
   useEffect(() => {
@@ -215,7 +218,7 @@ const InquiryForm = () => {
   };
 
   return (
-    <div className="inquiry-form-section" id="join">
+    <div className={`inquiry-form-section ${isRTL ? 'rtl' : 'ltr'}`} id="join">
       {/* הוספת מתג השפות */}
       <div className="inquiry-language-switcher">
         <LanguageSwitcher />
