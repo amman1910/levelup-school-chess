@@ -11,8 +11,8 @@
 .about-header {
   max-width: 700px;
   text-align: left;
-   align-self: flex-start;
-     padding-left: 0;
+  align-self: flex-start;
+  padding-left: 0;
 }
 
 .about-section-label {
@@ -26,7 +26,6 @@
   margin-left: 0;
   text-align: left;
 }
-
 
 .about-title {
   font-family: 'Playfair Display', serif;
@@ -92,4 +91,148 @@ html[dir="ltr"] .about-section-label,
 html[dir="ltr"] .about-title {
   text-align: left;
   margin-left: 0;
+}
+
+/* ========== MOBILE RESPONSIVE ========== */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .about-section {
+    padding: 60px 40px;
+    gap: 40px;
+  }
+  
+  .about-title {
+    font-size: 2.2rem;
+  }
+  
+  .about-content-row {
+    gap: 30px;
+  }
+  
+  .about-image-side,
+  .about-text-side {
+    min-width: 250px;
+  }
+  
+  .about-text-side {
+    gap: 25px;
+    margin-top: 0;
+  }
+  
+  .about-paragraph h3 {
+    font-size: 1.15rem;
+  }
+  
+  .about-paragraph p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .about-section {
+    padding: 40px 20px;
+    gap: 30px;
+  }
+  
+  .about-header {
+    max-width: 100%;
+    text-align: center;
+    align-self: center;
+  }
+  
+  .about-section-label {
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  
+  .about-title {
+    font-size: 1.8rem;
+    text-align: center;
+    line-height: 1.3;
+  }
+  
+  .about-content-row {
+    flex-direction: column;
+    gap: 25px;
+  }
+  
+  .about-image-side,
+  .about-text-side {
+    min-width: 100%;
+    flex: none;
+  }
+  
+  .about-image-side img {
+    border-radius: 12px;
+  }
+  
+  .about-text-side {
+    gap: 20px;
+    margin-top: 0;
+  }
+  
+  .about-paragraph h3 {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  
+  .about-paragraph p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    text-align: center;
+  }
+  
+  .about-paragraph:not(:last-child) {
+    padding-bottom: 15px;
+  }
+  
+  /* התאמה לכיוון טקסט במובייל */
+  html[dir="rtl"] .about-section-label,
+  html[dir="rtl"] .about-title,
+  html[dir="rtl"] .about-paragraph h3,
+  html[dir="rtl"] .about-paragraph p {
+    text-align: center;
+  }
+  
+  html[dir="ltr"] .about-section-label,
+  html[dir="ltr"] .about-title,
+  html[dir="ltr"] .about-paragraph h3,
+  html[dir="ltr"] .about-paragraph p {
+    text-align: center;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 320px) {
+  .about-section {
+    padding: 30px 16px;
+    gap: 25px;
+  }
+  
+  .about-title {
+    font-size: 1.6rem;
+  }
+  
+  .about-content-row {
+    gap: 20px;
+  }
+  
+  .about-text-side {
+    gap: 18px;
+  }
+  
+  .about-paragraph h3 {
+    font-size: 1rem;
+  }
+  
+  .about-paragraph p {
+    font-size: 0.85rem;
+  }
+  
+  .about-image-side img {
+    border-radius: 8px;
+  }
 }
