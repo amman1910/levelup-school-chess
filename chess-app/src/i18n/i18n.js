@@ -16,29 +16,31 @@ const resources = {
 };
 
 i18n
-  // detect user language
+  // Detect user language
   .use(LanguageDetector)
-  // pass the i18n instance to react-i18next.
+  // Pass the i18n instance to react-i18next
   .use(initReactI18next)
-  // init i18next
+  // Initialize i18next
   .init({
     resources,
-    lng: 'ar', // default language changed to Arabic
-    fallbackLng: 'ar', // fallback language changed to Arabic
-    debug: false, // set to true for debugging
+    lng: 'ar', // Default language set to Arabic
+    fallbackLng: 'ar', // Fallback language set to Arabic
+    debug: false, // Set to true for debugging
 
     interpolation: {
       escapeValue: false // React already does escaping
     },
 
     detection: {
-      // options for language detection
+      // Options for language detection
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
     }
   });
 
-// פונקציה לעדכון כיוון הטקסט
+/**
+ * Function to update text direction based on language
+ */
 i18n.on('languageChanged', (lng) => {
   document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.lang = lng;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next';
 import './TestimonialsSection.css';
 
 import hadeelImg from '../../../assets/Hall-of-fame/hall_hadeel.png';
@@ -11,9 +11,18 @@ import jameelImg from '../../../assets/success-stories/success_jameel.jpg';
 import hossamImg from '../../../assets/success-stories/success_hossam.jpg';
 import noamanImg from '../../../assets/success-stories/success_noaman.png';
 
+/**
+ * TestimonialsSection Component
+ * Displays testimonials and success stories with background image and parallax effect
+ * Features horizontal scrolling cards and RTL/LTR language support
+ */
 const TestimonialsSection = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t, i18n } = useTranslation();
+  
+  // Check if current language is Arabic for RTL layout
+  const isRTL = i18n.language === 'ar';
 
+  // Testimonials data with translation keys
   const testimonials = [
     {
       name: t('testimonials.items.hadeel.name'),
@@ -35,6 +44,7 @@ const TestimonialsSection = () => {
     },
   ];
 
+  // Success stories data with translation keys
   const stories = [
     {
       name: t('successStories.items.jameel.name'),
@@ -57,19 +67,24 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section id="testimonials"
-      className="testimonials-section"
+    <section 
+      id="testimonials"
+      className={`testimonials-section ${isRTL ? 'rtl' : 'ltr'}`}
       style={{ backgroundImage: `url(${bgImage})` }}
     >
+      {/* Background overlay */}
       <div className="testimonials-overlay" />
+      
       <div className="testimonials-content">
+        {/* Testimonials section header */}
         <div className="testimonials-header">
           <p className="testimonials-title">{t('testimonials.sectionLabel')}</p>
           <h2 className="testimonials-subtitle">
-            {t('testimonials.titleLine1')}<br />{t('testimonials.titleLine2')}
+          {t('testimonials.titleLine1')}
           </h2>
         </div>
 
+        {/* Testimonials cards container */}
         <div className="testimonials-container">
           {testimonials.map((item, index) => (
             <div className="testimonial-card" key={index}>
@@ -87,12 +102,14 @@ const TestimonialsSection = () => {
           ))}
         </div>
 
+        {/* Success stories section */}
         <div id="success-stories" className="success-stories">
           <div className="success-header">
             <p className="success-section-label">{t('successStories.sectionLabel')}</p>
             <h2 className="success-title">{t('successStories.title')}</h2>
           </div>
 
+          {/* Success stories cards container */}
           <div className="success-cards-container">
             {stories.map((story, index) => (
               <div className="success-card" key={index}>

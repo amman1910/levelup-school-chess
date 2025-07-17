@@ -1,3 +1,5 @@
+/* ========== Main WhyShah2Range Section Styles ========== */
+
 .why-cards-section {
   background: linear-gradient(to bottom, #f3efe8 0%, #f7f3ec 100%);
   padding: 100px 20px;
@@ -12,6 +14,7 @@
   margin: 0 auto;
 }
 
+/* Card styling */
 .why-card {
   flex: 1 1 300px;
   padding: 40px 24px;
@@ -37,6 +40,7 @@
   color: #D4AF37;
 }
 
+/* Light theme card */
 .why-card.light {
   background-color: #f8f1e9;
   color: #2a1740;
@@ -50,14 +54,249 @@
   color: #4d3a6d;
 }
 
+/* Dark theme card */
 .why-card.dark {
   background-color: #2a1740;
 }
 
+/* ========== RTL Support ========== */
 
+/* RTL styles for Arabic language */
+[dir="rtl"] .why-cards-section {
+  text-align: right;
+}
 
+[dir="rtl"] .why-card {
+  text-align: center;
+}
 
+[dir="rtl"] .why-card h3 {
+  text-align: center;
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', serif;
+}
 
+[dir="rtl"] .why-card p {
+  text-align: center;
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', Arial, sans-serif;
+}
 
+/* LTR styles for English language */
+[dir="ltr"] .why-cards-section {
+  text-align: left;
+}
 
+[dir="ltr"] .why-card {
+  text-align: center;
+}
 
+[dir="ltr"] .why-card h3 {
+  text-align: center;
+}
+
+[dir="ltr"] .why-card p {
+  text-align: center;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Large screens (desktops) */
+@media (min-width: 1200px) {
+  .why-cards-section {
+    padding: 120px 40px;
+  }
+  
+  .why-card {
+    flex: 1 1 350px;
+    padding: 50px 30px;
+    min-height: 380px;
+  }
+  
+  .why-card h3 {
+    font-size: 1.8rem;
+  }
+  
+  .why-card p {
+    font-size: 1.1rem;
+  }
+  
+  .why-icon {
+    font-size: 2.8rem;
+  }
+}
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+  .why-cards-section {
+    padding: 80px 30px;
+  }
+  
+  .why-cards-container {
+    max-width: 900px;
+    gap: 20px;
+  }
+  
+  .why-card {
+    flex: 1 1 280px;
+    padding: 35px 20px;
+    min-height: 300px;
+  }
+  
+  .why-card h3 {
+    font-size: 1.4rem;
+    margin: 14px 0 10px;
+  }
+  
+  .why-card p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .why-icon {
+    font-size: 2.2rem;
+  }
+}
+
+/* Small tablets (768px) */
+@media (max-width: 768px) {
+  .why-cards-section {
+    padding: 60px 20px;
+  }
+  
+  .why-cards-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    max-width: 500px;
+  }
+  
+  .why-card {
+    flex: none;
+    width: 100%;
+    max-width: 450px;
+    padding: 30px 25px;
+    min-height: 280px;
+  }
+  
+  .why-card h3 {
+    font-size: 1.3rem;
+    margin: 12px 0 8px;
+  }
+  
+  .why-card p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  .why-icon {
+    font-size: 2rem;
+  }
+}
+
+/* Mobile phones (480px and below) */
+@media (max-width: 480px) {
+  .why-cards-section {
+    padding: 40px 15px;
+  }
+  
+  .why-cards-container {
+    max-width: 100%;
+    gap: 0;
+  }
+  
+  .why-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 25px 20px;
+    min-height: 250px;
+  }
+  
+  .why-card h3 {
+    font-size: 1.2rem;
+    margin: 10px 0 8px;
+    line-height: 1.3;
+  }
+  
+  .why-card p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin: 0;
+  }
+  
+  .why-icon {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+}
+
+/* Extra small phones (320px and below) */
+@media (max-width: 320px) {
+  .why-cards-section {
+    padding: 30px 10px;
+  }
+  
+  .why-card {
+    padding: 20px 15px;
+    min-height: 220px;
+  }
+  
+  .why-card h3 {
+    font-size: 1.1rem;
+    margin: 8px 0 6px;
+  }
+  
+  .why-card p {
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+  
+  .why-icon {
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+  }
+}
+
+/* RTL responsive adjustments */
+@media (max-width: 768px) {
+  [dir="rtl"] .why-card h3 {
+    text-align: center;
+  }
+  
+  [dir="rtl"] .why-card p {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  [dir="rtl"] .why-card h3 {
+    text-align: center;
+    line-height: 1.4;
+  }
+  
+  [dir="rtl"] .why-card p {
+    text-align: center;
+    line-height: 1.5;
+  }
+}
+
+/* Smooth transitions */
+.why-card,
+.why-card h3,
+.why-card p {
+  transition: all 0.3s ease;
+}
+
+/* Hover effects for larger screens */
+@media (min-width: 769px) {
+  .why-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .why-card.light:hover {
+    box-shadow: 0 10px 25px rgba(42, 23, 64, 0.15);
+  }
+  
+  .why-card.dark:hover {
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+  }
+}
