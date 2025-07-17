@@ -1,3 +1,4 @@
+/* Global App Styles */
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,15 +6,49 @@
   text-align: center;
 }
 
+/* App container */
+.app {
+  width: 100%;
+  min-height: 100vh;
+  transition: all 0.3s ease;
+}
+
+/* RTL/LTR Direction Classes */
+.app.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.app.ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Body classes for RTL/LTR */
+body.rtl {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Tajawal', 'Amiri', 'Noto Sans Arabic', 'Arial', sans-serif;
+}
+
+body.ltr {
+  direction: ltr;
+  text-align: left;
+  font-family: 'Roboto', 'Arial', sans-serif;
+}
+
+/* Logo styles */
 .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -39,4 +74,92 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* RTL Typography improvements */
+.rtl h1, .rtl h2, .rtl h3, .rtl h4, .rtl h5, .rtl h6 {
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.rtl p, .rtl span, .rtl div {
+  line-height: 1.6;
+  text-align: right;
+}
+
+.rtl li {
+  text-align: right;
+}
+
+/* LTR Typography */
+.ltr h1, .ltr h2, .ltr h3, .ltr h4, .ltr h5, .ltr h6 {
+  text-align: left;
+}
+
+.ltr p, .ltr span, .ltr div {
+  text-align: left;
+}
+
+.ltr li {
+  text-align: left;
+}
+
+/* Form elements direction */
+.rtl input, .rtl textarea, .rtl select {
+  text-align: right;
+  direction: rtl;
+}
+
+.ltr input, .ltr textarea, .ltr select {
+  text-align: left;
+  direction: ltr;
+}
+
+/* Email and URL inputs should always be LTR */
+.rtl input[type="email"],
+.rtl input[type="url"],
+.rtl input[type="password"] {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Button alignment */
+.rtl .button-container {
+  text-align: right;
+}
+
+.ltr .button-container {
+  text-align: left;
+}
+
+/* Flexbox adjustments */
+.rtl .flex-container {
+  flex-direction: row-reverse;
+}
+
+.ltr .flex-container {
+  flex-direction: row;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #root {
+    padding: 1rem;
+  }
+  
+  .app {
+    min-height: 100vh;
+  }
+}
+
+/* Smooth transitions for direction changes */
+* {
+  transition: text-align 0.3s ease;
+}
+
+/* Improve Arabic text rendering */
+.rtl {
+  font-feature-settings: "liga" 1, "kern" 1;
+  text-rendering: optimizeLegibility;
 }
