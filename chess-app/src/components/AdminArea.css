@@ -579,6 +579,15 @@ html[dir="ltr"] .admin-header .header-content-wrapper {
   justify-content: space-between;
 }
 
+.admin-area.rtl {
+  direction: rtl;
+}
+
+.admin-area.ltr {
+  direction: ltr;
+}
+
+
 
 
 

@@ -51,6 +51,11 @@ const AdminArea = () => {
     }
   }, [i18n]);
 
+  useEffect(() => {
+  document.documentElement.setAttribute('dir', i18n.language === 'ar' ? 'rtl' : 'ltr');
+}, [i18n.language]);
+
+
   // ניקוי הודעות כשמשנים route - הפתרון העיקרי!
   useEffect(() => {
     setError('');
@@ -247,8 +252,10 @@ const AdminArea = () => {
     return <div className="loading">{t('common.loading')}</div>;
   }
 
+    const direction = i18n.language === 'ar' ? 'rtl' : 'ltr';
+
   return (
-    <div className="admin-area">
+    <div className={`admin-area ${direction}`}>
       <div className="admin-sidebar">
         <div className="logo-wrapper">
           <h2>LEVEL UP</h2>
