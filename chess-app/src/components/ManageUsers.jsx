@@ -8,7 +8,7 @@ import './ManageUsers.css';
 import { logAdminAction } from '../utils/adminLogger';
 
 const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fetchUsers }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t , i18n } = useTranslation();
   
   const [isEditing, setIsEditing] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -394,7 +394,8 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
   };
 
   return (
-    <div className="user-management-container">
+    <div className={`user-management-container ${i18n.language === 'ar' ? 'rtl' : 'ltr'}`}>
+
       <div className="add-user-section">
         <h2>{isEditing ? t('adminUsers.editUser') : t('adminUsers.addNewUser')}</h2>
         <form onSubmit={handleAddUser} className="add-user-form">

@@ -1004,3 +1004,69 @@
   }
 }
 }
+
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl .form-row {
+  direction: rtl;
+}
+
+.rtl .form-group label {
+  text-align: right;
+}
+
+.rtl .users-table th,
+.rtl .users-table td {
+  text-align: right;
+}
+
+/* حذف شكل السهم الأصلي من المتصفح */
+.form-group select,
+.users-filter-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  background-position: right 10px center;
+}
+
+/* اتجاه السهم حسب اللغة */
+.rtl .form-group select,
+.rtl .users-filter-select {
+  background-position: left 10px center;
+  padding-left: 28px;
+  padding-right: 8px;
+  direction: rtl;
+  text-align: right;
+    background-size: 24px;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg fill='%235e3c8f' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
+}
+
+/* English mode */
+.ltr .form-group select,
+.ltr .users-filter-select {
+  background-position: right 10px center;
+  padding-right: 28px;
+  padding-left: 8px;
+  direction: ltr;
+  text-align: left;
+    background-size: 24px;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg fill='%235e3c8f' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
+
+}
+
+.rtl .add-user-section h2:after {
+  left: auto;
+  right: 0;
+}
+
+.ltr .add-user-section h2:after {
+  left: 0;
+  right: auto;
+}
+
+
