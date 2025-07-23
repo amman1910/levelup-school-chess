@@ -241,17 +241,49 @@ const Dashboard = ({ users, classes, students }) => {
           <h3>{t('adminDashboard.topTrainersPerformance')}</h3>
           <p className="chart-description">{t('adminDashboard.completedSessionsByTrainer')}</p>
           {trainerData.length > 0 ? (
+
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={trainerData}>
+              <BarChart 
+  data={trainerData}
+  layout="horizontal"
+  barCategoryGap={12}
+  barGap={4}
+  margin={{
+    top: 80,
+  right: isArabic ? 0 : 30,
+  left: isArabic ? 30 : 0,
+  bottom: 0
+  }}
+>
+
                 <XAxis 
                   dataKey="name" 
                   stroke="#5e3c8f" 
                   fontSize={12}
-                  angle={-45}
-                  textAnchor="end"
-                  height={80}
-                />
-                <YAxis stroke="#5e3c8f" />
+                  angle={-35}
+                  textAnchor="middle"
+                  height={120}
+
+  dy={20}
+  reversed={isArabic}
+/>
+
+
+<YAxis
+  stroke="#5e3c8f"
+  orientation={isArabic ? "right" : "left"}
+  mirror={false}
+  tickMargin={8}
+
+  type="number"
+  allowDecimals={false}
+  domain={[0, 'dataMax + 1']}
+  tickCount={Math.min(trainerData.length + 1, 10)} 
+/>
+
+
+
+
                 <Tooltip 
                   contentStyle={{
                     backgroundColor: '#fff',
