@@ -342,6 +342,9 @@ const AdminArea = () => {
       <div className="admin-content">
         <div className="admin-header">
 <div className="header-content-wrapper">
+<button className="mobile-sidebar-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+  ☰
+</button>
           <h1 className="page-title">{getPageTitle()}</h1>
           <button 
             onClick={handleRefresh} 

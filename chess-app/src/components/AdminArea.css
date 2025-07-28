@@ -588,6 +588,67 @@ html[dir="ltr"] .admin-header .header-content-wrapper {
 }
 
 
+@media (max-width: 768px) {
+  .admin-sidebar.open {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0; 
+    width: 250px;
+    background: var(--primary-purple);
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .admin-header {
+    position: relative;
+    z-index: 1100; 
+  }
+
+  .admin-content {
+    position: relative;
+    z-index: 900;
+  }
+
+}
+
+.mobile-sidebar-toggle {
+  display: none; 
+}
+
+@media (max-width: 768px) {
+  .mobile-sidebar-toggle {
+    display: block;
+    position: fixed;
+    top: 20px;
+    z-index: 3000;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--dark-purple);
+    cursor: pointer;
+  }
+
+  html[dir="rtl"] .mobile-sidebar-toggle {
+    left: 20px;
+    right: auto;
+  }
+
+  html[dir="ltr"] .mobile-sidebar-toggle {
+    right: 20px;
+    left: auto;
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
