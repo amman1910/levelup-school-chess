@@ -11,7 +11,7 @@ import { db } from '../firebase';
 import './TrainerMaterialsLibary.css';
 
 const TrainerMaterialsLibrary = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); // add hook for translating
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');

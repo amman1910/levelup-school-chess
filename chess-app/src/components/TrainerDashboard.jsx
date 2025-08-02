@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; // add useTranslation
 import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import './TrainerDashboard.css';
@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 
 const TrainerDashboard = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); // adding hook for traslating
   const [stats, setStats] = useState({
     classes: 0,
     students: 0,

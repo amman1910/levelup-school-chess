@@ -1,6 +1,6 @@
 /* NotificationsMessages.css - Full Screen Layout */
 
-/* Main Container - Full Screen */
+/* Main Container - covers entire viewport and holds list + chat */
 .notifications-container {
   height: 100vh;
   width: 100vw;
@@ -10,7 +10,7 @@
   position: relative;
 }
 
-/* Left Panel - Notifications List */
+/* Left Panel: notifications list column with fixed width and divider */
 .notifications-list {
   width: 400px;
   min-width: 400px;
@@ -22,7 +22,7 @@
   overflow: hidden;
 }
 
-/* Right Panel - Chat or Empty Space */
+/* Right Panel: chat area or empty placeholder, flexible to fill remaining space */
 .chat-view {
   flex: 1;
   height: 100vh;
@@ -32,7 +32,7 @@
   overflow: hidden;
 }
 
-/* Notifications Header */
+/* Header for notifications section: title and action controls */
 .notifications-header {
   display: flex;
   justify-content: space-between;
@@ -43,6 +43,7 @@
   flex-shrink: 0;
 }
 
+/* Title in header */
 .notifications-header h2 {
   color: #5e3c8f;
   font-size: 22px;
@@ -50,6 +51,7 @@
   margin: 0;
 }
 
+/* Button to compose a new message */
 .new-message-btn {
   background-color: #e9c44c;
   color: #432c64;
@@ -62,12 +64,13 @@
   transition: all 0.3s;
 }
 
+/* Hover effect for new message button */
 .new-message-btn:hover {
   background-color: #d4b43c;
   transform: translateY(-2px);
 }
 
-/* Search Container */
+/* Search area wrapper below header */
 .search-container {
   padding: 15px 20px;
   background-color: #ffffff;
@@ -75,12 +78,14 @@
   flex-shrink: 0;
 }
 
+/* Inner layout for search bar elements */
 .search-bar {
   position: relative;
   display: flex;
   align-items: center;
 }
 
+/* Text input for search */
 .search-input {
   width: 100%;
   padding: 12px 45px 12px 15px;
@@ -93,17 +98,20 @@
   color: #333333;
 }
 
+/* Focus state for search field to highlight it */
 .search-input:focus {
   border-color: #e9c44c;
   background-color: #fefdf8;
   box-shadow: 0 0 0 3px rgba(233, 196, 76, 0.1);
 }
 
+/* Placeholder styling inside search input */
 .search-input::placeholder {
   color: #adb5bd;
   font-style: italic;
 }
 
+/* Icon positioned inside search bar (e.g., magnifying glass) */
 .search-icon {
   position: absolute;
   right: 35px;
@@ -112,6 +120,7 @@
   pointer-events: none;
 }
 
+/* Clear (x) button inside search input */
 .search-clear {
   position: absolute;
   right: 10px;
@@ -129,11 +138,13 @@
   transition: all 0.2s ease;
 }
 
+/* Hover effect for clear search control */
 .search-clear:hover {
   background-color: #e9c44c;
   color: #432c64;
 }
 
+/* Informational text about current search results */
 .search-results-info {
   margin-top: 8px;
   font-size: 12px;
@@ -142,7 +153,7 @@
   font-style: italic;
 }
 
-/* Clear Search Button */
+/* Button to reset/clear the entire search filter */
 .clear-search-btn {
   background-color: #e9c44c;
   color: #432c64;
@@ -156,12 +167,13 @@
   margin-top: 10px;
 }
 
+/* Hover effect for clear search button */
 .clear-search-btn:hover {
   background-color: #d4b43c;
   transform: translateY(-1px);
 }
 
-/* Conversations List - Scrollable */
+/* Scrollable list of conversations */
 .conversations-list {
   flex: 1;
   overflow-y: auto;
@@ -169,6 +181,7 @@
   background-color: #ffffff;
 }
 
+/* Empty state when no conversations exist */
 .no-conversations {
   display: flex;
   flex-direction: column;
@@ -184,7 +197,7 @@
   margin-bottom: 15px;
 }
 
-/* Conversation Items */
+/* Individual conversation item card */
 .conversation-item {
   background-color: #ffffff;
   border: 2px solid #e6e6e6;
@@ -196,18 +209,21 @@
   position: relative;
 }
 
+/* Hover state to give visual feedback */
 .conversation-item:hover {
   border-color: #e9c44c;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Unread conversation styling to highlight it */
 .conversation-item.unread {
   border-color: #e9c44c;
   background-color: #f7eac5;
   box-shadow: 0 2px 8px rgba(233, 196, 76, 0.3);
 }
 
+/* Header inside a conversation item showing admin info and metadata */
 .conversation-header {
   display: flex;
   justify-content: space-between;
@@ -215,6 +231,7 @@
   margin-bottom: 10px;
 }
 
+/* Admin name/title inside conversation card */
 .admin-info h3 {
   color: #5e3c8f;
   font-size: 18px;
@@ -223,12 +240,14 @@
   margin: 0;
 }
 
+/* Admin role label */
 .admin-role {
   color: #8260b3;
   font-size: 14px;
   font-weight: 500;
 }
 
+/* Badge indicating number of unread messages */
 .unread-badge {
   background-color: #e74c3c;
   color: #ffffff;
@@ -242,6 +261,7 @@
   font-weight: bold;
 }
 
+/* Last message preview text */
 .last-message p {
   color: #333333;
   font-size: 14px;
@@ -252,12 +272,13 @@
   margin: 0;
 }
 
+/* Timestamp styling for conversation preview */
 .message-time {
   color: #cccccc;
   font-size: 12px;
 }
 
-/* Chat Header */
+/* Chat header area (when a conversation is open) */
 .chat-header {
   display: flex;
   align-items: center;
@@ -267,6 +288,7 @@
   flex-shrink: 0;
 }
 
+/* Back button to return to list or previous view */
 .back-btn {
   background: none;
   border: none;
@@ -284,6 +306,7 @@
   background-color: #e9c44c;
 }
 
+/* Admin info in chat header */
 .chat-admin-info h3 {
   color: #5e3c8f;
   font-size: 18px;
@@ -297,7 +320,7 @@
   font-size: 14px;
 }
 
-/* Messages Container - Scrollable */
+/* Scrollable container for messages in an open chat */
 .messages-container {
   flex: 1;
   overflow-y: auto;
@@ -305,19 +328,23 @@
   background-color: #faf8f1;
 }
 
+/* Individual message block spacing and layout */
 .message {
   margin-bottom: 15px;
   display: flex;
 }
 
+/* Sent messages align to right */
 .message.sent {
   justify-content: flex-end;
 }
 
+/* Received messages align to left */
 .message.received {
   justify-content: flex-start;
 }
 
+/* Wrapper for message content with max-width and padding */
 .message-content {
   max-width: 70%;
   padding: 12px 16px;
@@ -325,29 +352,34 @@
   position: relative;
 }
 
+/* Sent message styling */
 .message.sent .message-content {
   background-color: #e9c44c;
   color: #432c64;
 }
 
+/* Received message styling */
 .message.received .message-content {
   background-color: #ffffff;
   color: #333333;
   border: 1px solid #e6e6e6;
 }
 
+/* Highlight unread message content */
 .message.unread-message .message-content {
   background-color: #f7eac5;
   border-color: #e9c44c;
   box-shadow: 0 2px 8px rgba(233, 196, 76, 0.3);
 }
 
+/* Paragraph within message bubble */
 .message-content p {
   margin: 0;
   font-size: 14px;
   line-height: 1.4;
 }
 
+/* Timestamp inside message bubble or near it */
 .message-timestamp {
   display: block;
   font-size: 11px;
@@ -355,7 +387,7 @@
   opacity: 0.7;
 }
 
-/* Message file display */
+/* Styling for files attached to messages */
 .message-file {
   margin-top: 8px;
   padding: 8px 12px;
@@ -364,16 +396,19 @@
   border: 1px dashed rgba(255, 255, 255, 0.3);
 }
 
+/* File styling for sent messages */
 .message.sent .message-file {
   background-color: rgba(67, 44, 100, 0.2);
   border-color: rgba(67, 44, 100, 0.3);
 }
 
+/* File styling for received messages */
 .message.received .message-file {
   background-color: rgba(51, 51, 51, 0.1);
   border-color: rgba(51, 51, 51, 0.2);
 }
 
+/* Link inside file preview */
 .file-link {
   color: inherit;
   text-decoration: none;
@@ -385,7 +420,7 @@
   text-decoration: underline;
 }
 
-/* Message Input */
+/* Input area for composing a new message, including attachments */
 .message-input-container {
   display: flex;
   flex-direction: column;
@@ -396,12 +431,14 @@
   flex-shrink: 0;
 }
 
+/* Layout when text input and file selector are side-by-side */
 .message-input-with-file {
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
+/* Text input for message body */
 .message-text-input {
   flex: 1;
   padding: 12px 16px;
@@ -416,6 +453,7 @@
   border-color: #e9c44c;
 }
 
+/* Button to choose a file to attach */
 .file-select-button {
   background-color: #f0f0f0;
   border: 2px solid #e6e6e6;
@@ -435,6 +473,7 @@
   border-color: #d4b43c;
 }
 
+/* Send button styling */
 .send-message-button {
   background-color: #e9c44c;
   color: #432c64;
@@ -447,15 +486,18 @@
   transition: all 0.3s;
 }
 
+/* Hover state for send button when enabled */
 .send-message-button:hover:not(:disabled) {
   background-color: #d4b43c;
 }
 
+/* Disabled send button appearance */
 .send-message-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
 
+/* Preview area for a selected file before sending */
 .selected-file-preview {
   display: flex;
   align-items: center;
@@ -467,6 +509,7 @@
   color: #432c64;
 }
 
+/* Button to remove attached file */
 .remove-file-button {
   background: none;
   border: none;
@@ -488,7 +531,7 @@
   color: white;
 }
 
-/* Modal Styles */
+/* Modal overlay, covers full viewport with dim background */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -502,6 +545,7 @@
   z-index: 1000;
 }
 
+/* New message modal container styling */
 .new-message-modal {
   background-color: #ffffff;
   border-radius: 12px;
@@ -512,6 +556,7 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
+/* Header inside modal with title and close control */
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -528,6 +573,7 @@
   margin: 0;
 }
 
+/* Close button in modal header */
 .close-btn {
   background: none;
   border: none;
@@ -547,14 +593,17 @@
   background-color: #e9c44c;
 }
 
+/* Body area of modal for inputs and selections */
 .modal-body {
   padding: 25px;
 }
 
+/* Wrapper for admin selection section */
 .admin-selection {
   margin-bottom: 20px;
 }
 
+/* Label above admin selection controls */
 .admin-selection > label {
   display: block;
   color: #5e3c8f;
@@ -562,17 +611,19 @@
   margin-bottom: 10px;
 }
 
-/* Admin Search in Modal */
+/* Admin search area inside modal */
 .admin-search-container {
   margin-bottom: 15px;
 }
 
+/* Layout for admin search bar */
 .admin-search-bar {
   position: relative;
   display: flex;
   align-items: center;
 }
 
+/* Input field for searching admins */
 .admin-search-input {
   width: 100%;
   padding: 10px 40px 10px 12px;
@@ -585,17 +636,20 @@
   color: #333333;
 }
 
+/* Focus state for admin search input */
 .admin-search-input:focus {
   border-color: #e9c44c;
   background-color: #fefdf8;
   box-shadow: 0 0 0 3px rgba(233, 196, 76, 0.1);
 }
 
+/* Placeholder style for admin search */
 .admin-search-input::placeholder {
   color: #adb5bd;
   font-style: italic;
 }
 
+/* Icon inside admin search bar */
 .admin-search-icon {
   position: absolute;
   right: 30px;
@@ -604,6 +658,7 @@
   pointer-events: none;
 }
 
+/* Clear input control for admin search */
 .admin-search-clear {
   position: absolute;
   right: 8px;
@@ -621,11 +676,13 @@
   transition: all 0.2s ease;
 }
 
+/* Hover behavior for clear admin search */
 .admin-search-clear:hover {
   background-color: #e9c44c;
   color: #432c64;
 }
 
+/* Info text about admin search results */
 .admin-search-results-info {
   margin-top: 6px;
   font-size: 11px;
@@ -634,6 +691,7 @@
   font-style: italic;
 }
 
+/* Empty state when no admins match search */
 .no-admins-found {
   display: flex;
   flex-direction: column;
@@ -648,6 +706,7 @@
   margin-bottom: 10px;
 }
 
+/* Button to clear admin search filters */
 .clear-admin-search-btn {
   background-color: #e9c44c;
   color: #432c64;
@@ -665,6 +724,7 @@
   transform: translateY(-1px);
 }
 
+/* Container for selectable admin checkboxes with scrolling */
 .admin-checkboxes {
   display: flex;
   flex-direction: column;
@@ -676,6 +736,7 @@
   padding: 8px;
 }
 
+/* Individual checkbox label styling */
 .checkbox-label {
   display: flex;
   align-items: center;
@@ -693,6 +754,7 @@
   background-color: #f7eac5;
 }
 
+/* Base appearance for custom checkbox */
 .checkbox-label input[type="checkbox"] {
   appearance: none;
   width: 20px;
@@ -706,11 +768,13 @@
   flex-shrink: 0;
 }
 
+/* Checked state for custom checkbox */
 .checkbox-label input[type="checkbox"]:checked {
   background-color: #e9c44c;
   border-color: #d4b43c;
 }
 
+/* Checkmark shown when checked */
 .checkbox-label input[type="checkbox"]:checked::after {
   content: '✓';
   position: absolute;
@@ -722,31 +786,37 @@
   font-size: 14px;
 }
 
+/* Hover effect on the checkbox itself */
 .checkbox-label input[type="checkbox"]:hover {
   border-color: #e9c44c;
   box-shadow: 0 0 0 2px rgba(233, 196, 76, 0.2);
 }
 
+/* Admin details layout inside selection */
 .admin-details {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
+/* Admin name text style */
 .admin-name {
   font-weight: 500;
   color: #2c3e50;
 }
 
+/* Smaller role text under admin name */
 .admin-role-small {
   font-size: 11px;
   color: #8260b3;
 }
 
+/* Message input wrapper spacing */
 .message-input {
   margin-bottom: 20px;
 }
 
+/* Label for message input field */
 .message-input label {
   display: block;
   color: #5e3c8f;
@@ -754,6 +824,7 @@
   margin-bottom: 10px;
 }
 
+/* Textarea for composing message */
 .message-input textarea {
   width: 100%;
   padding: 12px;
@@ -777,7 +848,7 @@
   color: #cccccc;
 }
 
-/* File input in new message modal */
+/* File input section in the new message modal */
 .file-input {
   margin-bottom: 20px;
 }
@@ -800,6 +871,7 @@
   cursor: pointer;
 }
 
+/* Footer area of the modal with action buttons */
 .modal-footer {
   display: flex;
   justify-content: flex-end;
@@ -809,6 +881,7 @@
   background-color: #f5f5f5;
 }
 
+/* Cancel button styling */
 .cancel-btn {
   background-color: #cccccc;
   color: #333333;
@@ -824,6 +897,7 @@
   background-color: #999999;
 }
 
+/* Send button styling inside modal */
 .send-btn {
   background-color: #e9c44c;
   color: #432c64;
@@ -836,16 +910,19 @@
   transition: all 0.3s;
 }
 
+/* Hover state for enabled send button */
 .send-btn:hover:not(:disabled) {
   background-color: #d4b43c;
 }
 
+/* Disabled send button appearance */
 .send-btn:disabled {
   background-color: #cccccc;
   color: #666;
   cursor: not-allowed;
 }
 
+/* Loading indicator area, centered */
 .loading {
   display: flex;
   justify-content: center;
@@ -855,7 +932,7 @@
   color: #5e3c8f;
 }
 
-/* Responsive Design */
+/* Responsive adjustments for medium screens */
 @media (max-width: 768px) {
   .notifications-list {
     width: 300px;
@@ -905,6 +982,7 @@
   }
 }
 
+/* Responsive tweaks for small screens */
 @media (max-width: 480px) {
   .message-content {
     max-width: 85%;
@@ -921,16 +999,18 @@
   .modal-footer {
     padding: 15px 20px;
   }
-.select-all-label {
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-}
 
-.select-all-text {
-  font-weight: bold;
-  color: #5e3c8f;
-}
+  .select-all-label {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+
+  .select-all-text {
+    font-weight: bold;
+    color: #5e3c8f;
+  }
+
   .search-input {
     padding: 10px 40px 10px 12px;
   }
