@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; // add useTranslation
 import { db } from '../firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import TrainerSessions from './TrainerSessions';
