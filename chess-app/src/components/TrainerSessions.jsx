@@ -1,35 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; // add translation hook
 import { collection, getDocs, doc, getDoc, query, where, addDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './TrainerSessions.css';
 
 const TrainerSessions = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
-  const [upcoming, setUpcoming] = useState([]);
-  const [past, setPast] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showSessionModal, setShowSessionModal] = useState(false);
-  const [selectedSession, setSelectedSession] = useState(null);
-  const [students, setStudents] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filteredPast, setFilteredPast] = useState([]);
-  const [filteredUpcoming, setFilteredUpcoming] = useState([]);
-  const [autoSearchClass, setAutoSearchClass] = useState('');
+  const { t } = useTranslation(); // translation hook
+  const [upcoming, setUpcoming] = useState([]); // upcoming sessions
+  const [past, setPast] = useState([]); // past/completed sessions
+  const [loading, setLoading] = useState(true); // loading state while fetching
+  const [showSessionModal, setShowSessionModal] = useState(false); // whether detail modal is visible
+  const [selectedSession, setSelectedSession] = useState(null); // session currently viewed
+  const [students, setStudents] = useState([]); // students for selected session
+  const [searchTerm, setSearchTerm] = useState(''); // current search input
+  const [filteredPast, setFilteredPast] = useState([]); // filtered past sessions
+  const [filteredUpcoming, setFilteredUpcoming] = useState([]); // filtered upcoming sessions
+  const [autoSearchClass, setAutoSearchClass] = useState(''); // prefilled search from URL param
   const navigate = useNavigate();
   const location = useLocation();
 
-  // פונקציה לרישום פעולות ב-adminLogs
+  // Function to log trainer actions into adminLogs collection
   const logTrainerAction = async (actionType, description, targetId = null) => {
     try {
-      // קבלת פרטי המשתמש הנוכחי
+      // Retrieve current user info from localStorage
       const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
       const trainerName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'Unknown Trainer';
 
       const logEntry = {
         actionType,
-        adminName: trainerName, // משתמשים באותו שדה כמו באדמין
+        adminName: trainerName, // reuse same field name as admin logs
         description,
         targetType: 'session',
         timestamp: new Date(),
@@ -41,11 +41,11 @@ const TrainerSessions = () => {
       console.log('Trainer action logged:', logEntry);
     } catch (err) {
       console.error('Error logging trainer action:', err);
-      // אל תעצור את הפעולה אם הלוג נכשל
+      // Do not block the main flow if logging fails
     }
   };
 
-  // Helper function to format Timestamp to D/M/Y
+  // Helper: convert various timestamp formats to display string D/M/Y
   const formatTimestampToDisplay = (timestamp) => {
     if (!timestamp) return t('messages.noData');
     
@@ -69,7 +69,7 @@ const TrainerSessions = () => {
     return `${day}/${month}/${year}`;
   };
 
-  // Helper function to parse date for sorting
+  // Helper: parse date plus optional startTime to a Date object for sorting
   const parseDateForSorting = (date, startTime) => {
     let dateObj;
     
@@ -80,11 +80,11 @@ const TrainerSessions = () => {
       // String date
       dateObj = new Date(date);
     } else {
-      // Fallback
+      // Fallback to now
       dateObj = new Date();
     }
     
-    // If startTime is provided, try to add it to the date for more accurate sorting
+    // Incorporate startTime if provided for more granular ordering
     if (startTime && typeof startTime === 'string') {
       const [hours, minutes] = startTime.split(':');
       if (hours && minutes) {
@@ -95,6 +95,7 @@ const TrainerSessions = () => {
     return dateObj;
   };
 
+  // Initial fetch of sessions for the logged-in trainer
   useEffect(() => {
     const fetchSessions = async () => {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -110,7 +111,7 @@ const TrainerSessions = () => {
         for (const docSnap of snapshot.docs) {
           const data = docSnap.data();
           
-          // Get class information
+          // Retrieve class information if available
           const classId = data.classId;
           let className = '[No Class]';
           let studentsCount = 0;
@@ -129,13 +130,13 @@ const TrainerSessions = () => {
             }
           }
 
-          // Get school name directly from schoolId (which contains the school name)
+          // Get school name (stored directly in schoolId field)
           const schoolName = data.schoolId || '[No School]';
 
-          // Format date for display
+          // Prepare display date
           let displayDate = formatTimestampToDisplay(data.date);
           
-          // Add start time if available
+          // Append start time if exists
           if (data.startTime) {
             displayDate = `${displayDate} ${data.startTime}`;
           }
@@ -158,25 +159,25 @@ const TrainerSessions = () => {
           sessionsList.push(sessionObj);
         }
 
-        // Split sessions by status and sort by date
+        // Separate and sort completed sessions (past)
         const completedSessions = sessionsList
           .filter(s => s.status === 'completed')
           .sort((a, b) => {
-            // Parse dates for comparison
             const dateA = parseDateForSorting(a.fullData.date, a.fullData.startTime);
             const dateB = parseDateForSorting(b.fullData.date, b.fullData.startTime);
-            return dateA - dateB; // Oldest first, newest last
+            return dateA - dateB; // oldest first
           });
           
+        // Separate and sort upcoming sessions
         const upcomingSessions = sessionsList
           .filter(s => s.status === 'upcoming')
           .sort((a, b) => {
-            // Parse dates for comparison
             const dateA = parseDateForSorting(a.fullData.date, a.fullData.startTime);
             const dateB = parseDateForSorting(b.fullData.date, b.fullData.startTime);
-            return dateA - dateB; // Oldest first, newest last
+            return dateA - dateB; // oldest first
           });
 
+        // Update state and filtered copies
         setPast(completedSessions);
         setUpcoming(upcomingSessions);
         setFilteredPast(completedSessions);
@@ -192,7 +193,7 @@ const TrainerSessions = () => {
     fetchSessions();
   }, []);
 
-  // Check for search parameter from navigation
+  // Read searchClass param from URL and prefill search
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const classNameParam = searchParams.get('searchClass');
@@ -202,7 +203,7 @@ const TrainerSessions = () => {
     }
   }, [location.search]);
 
-  // Filter sessions based on search term
+  // Apply text filtering to both upcoming and past sessions
   useEffect(() => {
     if (!searchTerm.trim()) {
       setFilteredPast(past);
@@ -226,22 +227,24 @@ const TrainerSessions = () => {
     setFilteredUpcoming(filterSessions(upcoming));
   }, [searchTerm, past, upcoming]);
 
+  // Handler for search input change
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
+  // Clear search input and reset URL
   const clearSearch = () => {
     setSearchTerm('');
     setAutoSearchClass('');
-    // Clear URL parameters
     navigate('/trainer-area/sessions', { replace: true });
   };
 
+  // Start recording a session (upcoming) and log the action
   const handleRecordSession = async (session, event) => {
     // Prevent row click when record button is clicked
     event.stopPropagation();
     
-    // רישום פעולה ב-adminLogs
+    // log action to adminLogs
     await logTrainerAction(
       'start-record-session',
       `Started recording a session for class "${session.className}" at ${session.school}`,
@@ -253,21 +256,21 @@ const TrainerSessions = () => {
         ...session,
         classId: session.fullData.classId,
         className: session.className,
-        // Make sure the session ID is passed
+        // Ensure session ID is passed
         id: session.id,
-        isRecording: true, // Flag to indicate this is recording an upcoming session
-        // Pass the original Timestamp for proper handling in the form
+        isRecording: true, // mark as recording upcoming session
         originalDate: session.fullData.date,
         originalStartTime: session.fullData.startTime
       }
     });
   };
 
+  // Edit an existing session and log the action
   const handleEditSession = async (session, event) => {
     // Prevent row click when edit button is clicked
     event.stopPropagation();
     
-    // רישום פעולה ב-adminLogs
+    // log action to adminLogs
     await logTrainerAction(
       'start-edit-session',
       `Started editing a session for class "${session.className}" from ${session.date}`,
@@ -279,20 +282,19 @@ const TrainerSessions = () => {
         ...session,
         classId: session.fullData.classId,
         className: session.className,
-        // Make sure the session ID is passed
         id: session.id,
-        // Pass the original Timestamp for proper handling in the form
         originalDate: session.fullData.date,
         originalStartTime: session.fullData.startTime
       }
     });
   };
 
+  // View session details and fetch related students
   const handleShowSession = async (session, event) => {
     // Prevent row click when show button is clicked
     event.stopPropagation();
     
-    // רישום פעולה ב-adminLogs
+    // log action to adminLogs
     await logTrainerAction(
       'view-session',
       `Viewed session details for class "${session.className}" from ${session.date}`,
@@ -301,7 +303,7 @@ const TrainerSessions = () => {
     
     setSelectedSession(session);
     
-    // Fetch students for this session
+    // Fetch students of the class if classId exists
     if (session.fullData.classId) {
       try {
         const classDoc = await getDoc(doc(db, 'classes', session.fullData.classId));
@@ -332,12 +334,14 @@ const TrainerSessions = () => {
     setShowSessionModal(true);
   };
 
+  // Close the session detail modal and reset related state
   const closeModal = () => {
     setShowSessionModal(false);
     setSelectedSession(null);
     setStudents([]);
   };
 
+  // Render table for upcoming sessions
   const renderUpcomingTable = (sessions) => (
     <table className="sessions-table">
       <thead>
@@ -375,6 +379,7 @@ const TrainerSessions = () => {
     </table>
   );
 
+  // Render table for past sessions with additional action buttons
   const renderPastTable = (sessions) => (
     <table className="sessions-table">
       <thead>
@@ -421,11 +426,12 @@ const TrainerSessions = () => {
     </table>
   );
 
+  // Display loading indicator while sessions are being fetched
   if (loading) return <p className="loading">{t('trainerSessions.loadingSessions')}</p>;
 
   return (
     <div className="sessions-page">
-      {/* Search Section - Simplified */}
+      {/* Show auto-search info if prefilled from URL */}
       {autoSearchClass && (
         <div className="auto-search-info">
           <span>🔍 {t('trainerSessions.showingSessions')} <strong>{autoSearchClass}</strong></span>
@@ -435,6 +441,7 @@ const TrainerSessions = () => {
         </div>
       )}
       
+      {/* Search input area */}
       <div className="search-input-wrapper">
         <input
           type="text"
@@ -450,13 +457,14 @@ const TrainerSessions = () => {
         )}
       </div>
       
+      {/* Summary of search results */}
       {searchTerm && (
         <div className="search-results-info">
           {t('trainerSessions.foundSessions')} {filteredPast.length + filteredUpcoming.length} {t('trainerSessions.sessionMatching')} "{searchTerm}"
         </div>
       )}
 
-      {/* Upcoming Sessions appear first */}
+      {/* Upcoming Sessions Section */}
       <section className="session-section">
         <h2 className="section-title-sessions">{t('trainerSessions.upcomingSessions')}</h2>
         {filteredUpcoming.length === 0 ? (
@@ -468,7 +476,7 @@ const TrainerSessions = () => {
         )}
       </section>
 
-      {/* Past Sessions appear second */}
+      {/* Past Sessions Section */}
       <section className="session-section">
         <h2 className="section-title-sessions">{t('trainerSessions.pastSessions')}</h2>
         {filteredPast.length === 0 ? (
@@ -480,7 +488,7 @@ const TrainerSessions = () => {
         )}
       </section>
 
-      {/* Session Details Modal */}
+      {/* Session Detail Modal */}
       {showSessionModal && selectedSession && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="session-modal" onClick={(e) => e.stopPropagation()}>
@@ -528,6 +536,7 @@ const TrainerSessions = () => {
                 </div>
               </div>
 
+              {/* Attendance section if students exist */}
               {students.length > 0 && (
                 <div className="attendance-info">
                   <h4>{t('trainerSessions.attendance')}</h4>
@@ -544,6 +553,7 @@ const TrainerSessions = () => {
                 </div>
               )}
 
+              {/* Ratings display */}
               <div className="ratings-info">
                 <h4>{t('trainerSessions.ratings')}</h4>
                 <div className="ratings-grid">
@@ -570,6 +580,7 @@ const TrainerSessions = () => {
                 </div>
               </div>
 
+              {/* Notes if present */}
               {selectedSession.fullData.notes && (
                 <div className="notes-info">
                   <h4>{t('trainerSessions.notes')}</h4>
