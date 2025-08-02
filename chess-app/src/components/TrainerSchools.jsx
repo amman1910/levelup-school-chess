@@ -1,85 +1,89 @@
+// Import necessary React hooks and Firebase functions
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; // Import translation hook for internationalization
 import { collection, getDocs, query, where, doc, getDoc, setDoc, updateDoc, arrayUnion, serverTimestamp, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../firebase';
-import './TrainerSchools.css';
+import { db } from '../firebase'; // Import Firebase database instance
+import './TrainerSchools.css'; // Import component-specific styles
 import {
   School, Users, BookOpen, Clock,
   BarChart, ChevronDown, ChevronUp, ArrowLeft, Phone, User, Hash, Plus, X, Search, FileText
-} from 'lucide-react';
+} from 'lucide-react'; // Import icons from Lucide React
 import {
   CircularProgressbar,
   buildStyles
-} from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
+} from 'react-circular-progressbar'; // Import circular progress bar component
+import 'react-circular-progressbar/dist/styles.css'; // Import progress bar styles
 
+// Define the main TrainerSchools component
 const TrainerSchools = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
-  const [schoolsData, setSchoolsData] = useState([]);
-  const [expandedSchool, setExpandedSchool] = useState(null);
-  const [viewMode, setViewMode] = useState('schools'); // 'schools', 'classes', 'students'
-  const [selectedSchool, setSelectedSchool] = useState(null);
-  const [selectedClass, setSelectedClass] = useState(null);
-  const [students, setStudents] = useState([]);
-  const [loadingStudents, setLoadingStudents] = useState(false);
-  const [showAddStudentForm, setShowAddStudentForm] = useState(false);
-  const [addingStudent, setAddingStudent] = useState(false);
+  const { t } = useTranslation(); // Initialize translation hook
+  const [schoolsData, setSchoolsData] = useState([]); // State for storing school data
+  const [expandedSchool, setExpandedSchool] = useState(null); // State for tracking expanded school
+  const [viewMode, setViewMode] = useState('schools'); // State for current view mode (schools, classes, students)
+  const [selectedSchool, setSelectedSchool] = useState(null); // State for selected school
+  const [selectedClass, setSelectedClass] = useState(null); // State for selected class
+  const [students, setStudents] = useState([]); // State for storing student data
+  const [loadingStudents, setLoadingStudents] = useState(false); // State for student loading status
+  const [showAddStudentForm, setShowAddStudentForm] = useState(false); // State for showing add student form
+  const [addingStudent, setAddingStudent] = useState(false); // State for adding student status
   const [newStudent, setNewStudent] = useState({
     id: '',
     fullName: '',
     grade: '',
     contact_number: ''
-  });
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filteredStudents, setFilteredStudents] = useState([]);
-  const [loadingSyllabus, setLoadingSyllabus] = useState(false);
-  const [showSchoolDetails, setShowSchoolDetails] = useState(false);
-  const [selectedSchoolDetails, setSelectedSchoolDetails] = useState(null);
-  const [loadingSchoolDetails, setLoadingSchoolDetails] = useState(false);
-  const navigate = useNavigate();
+  }); // State for new student form data
+  const [searchTerm, setSearchTerm] = useState(''); // State for search term
+  const [filteredStudents, setFilteredStudents] = useState([]); // State for filtered student list
+  const [loadingSyllabus, setLoadingSyllabus] = useState(false); // State for syllabus loading status
+  const [showSchoolDetails, setShowSchoolDetails] = useState(false); // State for showing school details modal
+  const [selectedSchoolDetails, setSelectedSchoolDetails] = useState(null); // State for selected school details
+  const [loadingSchoolDetails, setLoadingSchoolDetails] = useState(false); // State for school details loading status
+  const navigate = useNavigate(); // Hook for programmatic navigation
 
-  // Grade options A-L
+  // Array of grade options (A-L)
   const gradeOptions = [
     'Grade A', 'Grade B', 'Grade C', 'Grade D', 'Grade E', 'Grade F',
     'Grade G', 'Grade H', 'Grade I', 'Grade J', 'Grade K', 'Grade L'
   ];
 
-  // פונקציה לרישום פעולות ב-adminLogs
+  // Function to log trainer actions in adminLogs collection
   const logTrainerAction = async (actionType, description, targetId = null) => {
     try {
-      // קבלת פרטי המשתמש הנוכחי
+      // Retrieve current user from localStorage
       const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
       const trainerName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'Unknown Trainer';
 
       const logEntry = {
         actionType,
-        adminName: trainerName, // משתמשים באותו שדה כמו באדמין
+        adminName: trainerName, // Use same field as admin
         description,
-        targetType: 'student', // עבור הוספת תלמיד
+        targetType: 'student', // For student-related actions
         timestamp: new Date(),
         targetId: targetId || null,
         adminId: currentUser.uid || currentUser.id || null
       };
 
-      await addDoc(collection(db, 'adminLogs'), logEntry);
+      await addDoc(collection(db, 'adminLogs'), logEntry); // Add log entry to Firestore
       console.log('Trainer action logged:', logEntry);
     } catch (err) {
       console.error('Error logging trainer action:', err);
-      // אל תעצור את הפעולה אם הלוג נכשל
+      // Continue execution even if logging fails
     }
   };
 
+  // Fetch schools and classes data on component mount
   useEffect(() => {
     const fetchSchoolsData = async () => {
       const user = JSON.parse(localStorage.getItem('user'));
-      if (!user?.uid) return;
+      if (!user?.uid) return; // Exit if no user ID
 
       const q = query(collection(db, 'classes'), where('assignedTrainer', '==', user.uid));
-      const snapshot = await getDocs(q);
+      const snapshot = await getDocs(q); // Fetch classes assigned to the trainer
 
       const schoolMap = {};
 
+      // Process each class document
       for (const docSnap of snapshot.docs) {
         const data = docSnap.data();
         const schoolName = data.school || 'Unknown School';
@@ -94,6 +98,7 @@ const TrainerSchools = () => {
           };
         }
 
+        // Fetch session count for the class
         const sessionQuery = query(collection(db, 'sessions'), where('classesId', '==', classId));
         const sessionSnapshot = await getDocs(sessionQuery);
         const sessionCount = sessionSnapshot.size;
@@ -103,7 +108,7 @@ const TrainerSchools = () => {
           classId,
           studentCount,
           sessionCount,
-          progress: sessionCount * 10,
+          progress: sessionCount * 10, // Calculate progress (10% per session)
         };
 
         schoolMap[schoolName].classes.push(classObj);
@@ -111,21 +116,24 @@ const TrainerSchools = () => {
       }
 
       const schoolsArray = Object.values(schoolMap);
-      setSchoolsData(schoolsArray);
+      setSchoolsData(schoolsArray); // Update state with processed school data
     };
 
     fetchSchoolsData();
   }, []);
 
+  // Toggle expansion of a school's details
   const toggleExpand = (schoolName) => {
     setExpandedSchool(prev => (prev === schoolName ? null : schoolName));
   };
 
+  // Handle clicking on a school to view its classes
   const handleSchoolClick = (school) => {
     setSelectedSchool(school);
     setViewMode('classes');
   };
 
+  // Navigate back to schools view
   const handleBackToSchools = () => {
     setViewMode('schools');
     setSelectedSchool(null);
@@ -135,6 +143,7 @@ const TrainerSchools = () => {
     setFilteredStudents([]);
   };
 
+  // Navigate back to classes view
   const handleBackToClasses = () => {
     setViewMode('classes');
     setSelectedClass(null);
@@ -145,12 +154,13 @@ const TrainerSchools = () => {
     setFilteredStudents([]);
   };
 
+  // Fetch and display students for a selected class
   const handleViewStudents = async (classData) => {
     setLoadingStudents(true);
     setSelectedClass(classData);
     
     try {
-      // Get class document to retrieve studentsId array
+      // Fetch class document to get student IDs
       const classQuery = query(collection(db, 'classes'), where('className', '==', classData.className));
       const classSnapshot = await getDocs(classQuery);
       
@@ -174,12 +184,12 @@ const TrainerSchools = () => {
           }
         }
         
-        // Count total sessions for this class
+        // Fetch total sessions for the class
         const sessionsQuery = query(collection(db, 'sessions'), where('classId', '==', classData.classId));
         const sessionsSnapshot = await getDocs(sessionsQuery);
         const totalSessions = sessionsSnapshot.size;
         
-        // Add totalSessions to each student data
+        // Add totalSessions to each student
         const studentsWithSessionData = studentsData.map(student => ({
           ...student,
           totalSessions
@@ -196,9 +206,11 @@ const TrainerSchools = () => {
     }
   };
 
+  // Handle adding a new student
   const handleAddNewStudent = async (e) => {
     e.preventDefault();
     
+    // Validate required fields
     if (!newStudent.id || !newStudent.fullName || !newStudent.contact_number) {
       alert(t('trainerSchools.fillRequiredFields'));
       return;
@@ -215,7 +227,7 @@ const TrainerSchools = () => {
         return;
       }
 
-      // Create the student document
+      // Prepare student data
       const studentData = {
         fullName: newStudent.fullName,
         grade: newStudent.grade,
@@ -226,10 +238,10 @@ const TrainerSchools = () => {
         createdAt: serverTimestamp()
       };
 
-      // Add student to students collection with custom ID
+      // Add student to Firestore with custom ID
       await setDoc(doc(db, 'students', newStudent.id), studentData);
 
-      // Update the class document to add student ID to studentsId array
+      // Update class document to include new student ID
       const classQuery = query(collection(db, 'classes'), where('className', '==', selectedClass.className));
       const classSnapshot = await getDocs(classQuery);
       
@@ -240,18 +252,18 @@ const TrainerSchools = () => {
         });
       }
 
-      // רישום פעולה ב-adminLogs
+      // Log the action
       await logTrainerAction(
         'add-student',
         `added student ${newStudent.fullName} to class ${selectedClass.className}`,
         newStudent.id
       );
 
-      // Add the new student to the local state
+      // Update local state with new student
       const newStudentData = {
         id: newStudent.id,
         ...studentData,
-        totalSessions: 0 // Initialize with 0 total sessions for new students
+        totalSessions: 0
       };
       
       setStudents(prev => [...prev, newStudentData]);
@@ -271,6 +283,7 @@ const TrainerSchools = () => {
     }
   };
 
+  // Update new student form fields
   const handleInputChange = (field, value) => {
     setNewStudent(prev => ({
       ...prev,
@@ -278,6 +291,7 @@ const TrainerSchools = () => {
     }));
   };
 
+  // Handle student search
   const handleSearch = () => {
     if (!searchTerm.trim()) {
       setFilteredStudents(students);
@@ -290,12 +304,13 @@ const TrainerSchools = () => {
     setFilteredStudents(filtered);
   };
 
+  // Clear search term and reset filtered students
   const handleClearSearch = () => {
     setSearchTerm('');
     setFilteredStudents(students);
   };
 
-  // Auto-search when search term changes
+  // Auto-update filtered students when search term changes
   useEffect(() => {
     if (!searchTerm.trim()) {
       setFilteredStudents(students);
@@ -307,11 +322,12 @@ const TrainerSchools = () => {
     }
   }, [searchTerm, students]);
 
+  // Open class syllabus in a new tab
   const handleViewSyllabus = async (classData) => {
     setLoadingSyllabus(true);
     
     try {
-      // Get the class document to find the syllabus URL
+      // Fetch class document to get syllabus URL
       const classQuery = query(collection(db, 'classes'), where('className', '==', classData.className));
       const classSnapshot = await getDocs(classQuery);
       
@@ -325,8 +341,7 @@ const TrainerSchools = () => {
           return;
         }
 
-        // Open the syllabus URL directly in a new tab
-        window.open(syllabusUrl, '_blank');
+        window.open(syllabusUrl, '_blank'); // Open syllabus in new tab
       } else {
         alert(t('trainerSchools.classNotFound'));
       }
@@ -338,7 +353,7 @@ const TrainerSchools = () => {
     }
   };
 
-  // פונקציה לטעינת פרטי בית ספר
+  // Fetch and display school details
   const handleViewSchoolDetails = async (schoolName) => {
     setLoadingSchoolDetails(true);
     setShowSchoolDetails(true);
@@ -377,13 +392,13 @@ const TrainerSchools = () => {
     }
   };
 
-  // פונקציה לסגירת חלונית פרטי בית הספר
+  // Close school details modal
   const handleCloseSchoolDetails = () => {
     setShowSchoolDetails(false);
     setSelectedSchoolDetails(null);
   };
 
-  // Schools View
+  // Render Schools View
   if (viewMode === 'schools') {
     return (
       <div className="schools-page">
@@ -396,7 +411,7 @@ const TrainerSchools = () => {
           {schoolsData.map(school => {
             const totalProgress = Math.floor(
               school.classes.reduce((sum, c) => sum + c.progress, 0) / (school.classes.length || 1)
-            );
+            ); // Calculate average progress
 
             const isExpanded = expandedSchool === school.schoolName;
 
@@ -564,7 +579,7 @@ const TrainerSchools = () => {
     );
   }
 
-  // Students View
+  // Render Students View
   if (viewMode === 'students') {
     return (
       <div className="schools-page">
@@ -786,7 +801,7 @@ const TrainerSchools = () => {
     );
   }
 
-  // Classes View
+  // Render Classes View
   return (
     <div className="schools-page">
       <div className="page-header with-back">
