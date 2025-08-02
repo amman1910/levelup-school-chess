@@ -1,31 +1,33 @@
 /* TrainerSchools.css - Fixed Layout */
+
+/* Main container for the schools page */
 .schools-page {
   padding: 25px;
-  background-color: #faf8f1;
-  min-height: 100vh;
+  background-color: #faf8f1; /* Light beige background */
+  min-height: 100vh; /* Ensure full viewport height */
 }
 
 /* Page Header */
 .page-header {
   margin-bottom: 25px;
-  background: linear-gradient(135deg, #5e3c8f 0%, #432c64 100%);
+  background: linear-gradient(135deg, #5e3c8f 0%, #432c64 100%); /* Purple gradient background */
   border-radius: 12px;
   padding: 20px 25px;
   color: white;
-  box-shadow: 0 6px 22px rgba(94, 60, 143, 0.15);
+  box-shadow: 0 6px 22px rgba(94, 60, 143, 0.15); /* Subtle shadow for depth */
 }
 
 .page-header h2 {
-  color: #e9c44c;
+  color: #e9c44c; /* Gold text color */
   font-size: 20px;
   margin-bottom: 4px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 8px; /* Space between icon and text */
 }
 
 .page-header p {
-  color: #f7eac5;
+  color: #f7eac5; /* Light beige text */
   opacity: 0.9;
   margin: 0;
   font-size: 14px;
@@ -36,33 +38,33 @@
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 .add-student-btn {
-  background: linear-gradient(135deg, #e9c44c, #d4b43c);
+  background: linear-gradient(135deg, #e9c44c, #d4b43c); /* Gold gradient */
   border: 2px solid #d4b43c;
-  color: #432c64;
+  color: #432c64; /* Dark purple text */
   padding: 10px 16px;
   border-radius: 7px;
   display: flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s; /* Smooth transition for hover effects */
   font-weight: 700;
   font-size: 14px;
   white-space: nowrap;
 }
 
 .add-student-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #d4b43c, #c4a338);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 14px rgba(233, 196, 76, 0.4);
+  background: linear-gradient(135deg, #d4b43c, #c4a338); /* Lighter gold gradient on hover */
+  transform: translateY(-2px); /* Slight lift effect */
+  box-shadow: 0 5px 14px rgba(233, 196, 76, 0.4); /* Gold shadow */
 }
 
 .add-student-btn:disabled {
-  background: #cccccc;
+  background: #cccccc; /* Grey background when disabled */
   color: #666;
   cursor: not-allowed;
   transform: none;
@@ -77,11 +79,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1000; /* High z-index for modal */
   padding: 18px;
 }
 
@@ -90,10 +92,10 @@
   border-radius: 12px;
   padding: 25px;
   width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
+  max-width: 600px; /* Limit form width */
+  max-height: 90vh; /* Limit height with scroll */
   overflow-y: auto;
-  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.3); /* Strong shadow for modal */
 }
 
 .form-header {
@@ -102,20 +104,20 @@
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid #f0f0f0; /* Light grey border */
 }
 
 .form-header h3 {
-  color: #5e3c8f;
+  color: #5e3c8f; /* Purple text */
   font-size: 20px;
   font-weight: 700;
   margin: 0;
 }
 
 .close-form-btn {
-  background: rgba(231, 76, 60, 0.1);
-  border: 2px solid #e74c3c;
-  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.1); /* Light red background */
+  border: 2px solid #e74c3c; /* Red border */
+  color: #e74c3c; /* Red icon */
   padding: 6px;
   border-radius: 50%;
   cursor: pointer;
@@ -128,13 +130,13 @@
 }
 
 .close-form-btn:hover {
-  background: #e74c3c;
+  background: #e74c3c; /* Solid red on hover */
   color: white;
 }
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
   gap: 16px;
   margin-bottom: 20px;
 }
@@ -146,7 +148,7 @@
 }
 
 .form-group label {
-  color: #5e3c8f;
+  color: #5e3c8f; /* Purple text */
   font-weight: 600;
   font-size: 13px;
   display: flex;
@@ -155,29 +157,29 @@
 }
 
 .form-group label svg {
-  color: #8260b3;
+  color: #8260b3; /* Lighter purple for icons */
 }
 
 .form-group input, .form-group select {
   padding: 10px 14px;
-  border: 2px solid #e6e6e6;
+  border: 2px solid #e6e6e6; /* Light grey border */
   border-radius: 7px;
   font-size: 13px;
   transition: all 0.3s;
-  background: #fafafa;
+  background: #fafafa; /* Light grey background */
   color: #333;
 }
 
 .form-group input:focus, .form-group select:focus {
   outline: none;
-  border-color: #e9c44c;
+  border-color: #e9c44c; /* Gold border on focus */
   background: white;
-  box-shadow: 0 0 0 3px rgba(233, 196, 76, 0.1);
+  box-shadow: 0 0 0 3px rgba(233, 196, 76, 0.1); /* Subtle gold glow */
 }
 
 .form-group select {
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='5'><path fill='%236c3fa2' d='M0 0l5 5 5-5z'/></svg>");
+  background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='5'><path fill='%236c3fa2' d='M0 0l5 5 5-5z'/></svg>"); /* Custom dropdown arrow */
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 9px;
@@ -208,11 +210,11 @@
   gap: 12px;
   justify-content: flex-end;
   padding-top: 16px;
-  border-top: 2px solid #f0f0f0;
+  border-top: 2px solid #f0f0f0; /* Light grey border */
 }
 
 .cancel-btn {
-  background: #f5f5f5;
+  background: #f5f5f5; /* Light grey background */
   border: 2px solid #cccccc;
   color: #666;
   padding: 10px 20px;
@@ -224,12 +226,12 @@
 }
 
 .cancel-btn:hover:not(:disabled) {
-  background: #e6e6e6;
+  background: #e6e6e6; /* Darker grey on hover */
   color: #333;
 }
 
 .submit-btn {
-  background: linear-gradient(135deg, #5e3c8f, #432c64);
+  background: linear-gradient(135deg, #5e3c8f, #432c64); /* Purple gradient */
   border: 2px solid #5e3c8f;
   color: white;
   padding: 10px 20px;
@@ -241,9 +243,9 @@
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #432c64, #5e3c8f);
+  background: linear-gradient(135deg, #432c64, #5e3c8f); /* Reverse gradient on hover */
   transform: translateY(-2px);
-  box-shadow: 0 5px 18px rgba(94, 60, 143, 0.3);
+  box-shadow: 0 5px 18px rgba(94, 60, 143, 0.3); /* Purple shadow */
 }
 
 .submit-btn:disabled,
@@ -255,9 +257,9 @@
 }
 
 .back-btn {
-  background: #e9c44c !important;
+  background: #e9c44c !important; /* Gold background */
   border: 2px solid #d4b43c !important;
-  color: #432c64 !important;
+  color: #432c64 !important; /* Dark purple text */
   padding: 10px 16px !important;
   border-radius: 7px;
   display: flex;
@@ -266,14 +268,14 @@
   cursor: pointer;
   transition: all 0.3s;
   font-weight: 700 !important;
-  box-shadow: 0 3px 10px rgba(233, 196, 76, 0.5) !important;
+  box-shadow: 0 3px 10px rgba(233, 196, 76, 0.5) !important; /* Gold shadow */
   font-size: 14px !important;
   text-decoration: none !important;
 }
 
 .back-btn:hover {
-  background: #f7eac5 !important;
-  color: #5e3c8f !important;
+  background: #f7eac5 !important; /* Light beige on hover */
+  color: #5e3c8f !important; /* Purple text */
   transform: translateX(-3px);
   box-shadow: 0 5px 14px rgba(233, 196, 76, 0.6) !important;
   border-color: #e9c44c !important;
@@ -291,23 +293,23 @@
 /* School Cards Grid */
 .school-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Responsive grid */
   gap: 20px;
 }
 
 .school-card {
   background: white;
   border-radius: 12px;
-  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08); /* Subtle shadow */
   transition: all 0.3s ease;
   border: 2px solid transparent;
   overflow: hidden;
 }
 
 .school-card.clickable:hover {
-  transform: translateY(-6px);
+  transform: translateY(-6px); /* Lift effect */
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.15);
-  border-color: #e9c44c;
+  border-color: #e9c44c; /* Gold border */
 }
 
 .school-inner {
@@ -326,7 +328,7 @@
 }
 
 .header-top h3 {
-  color: #5e3c8f;
+  color: #5e3c8f; /* Purple text */
   font-size: 18px;
   font-weight: 700;
   display: flex;
@@ -341,7 +343,7 @@
 }
 
 .expand-btn {
-  background: rgba(94, 60, 143, 0.1);
+  background: rgba(94, 60, 143, 0.1); /* Light purple background */
   border: 2px solid #5e3c8f;
   color: #5e3c8f;
   padding: 6px;
@@ -356,7 +358,7 @@
 }
 
 .expand-btn:hover {
-  background: #5e3c8f;
+  background: #5e3c8f; /* Solid purple on hover */
   color: white;
 }
 
@@ -386,13 +388,13 @@
 .school-preview {
   margin: 16px 0;
   padding: 12px;
-  background: #f7eac5;
+  background: #f7eac5; /* Light beige background */
   border-radius: 8px;
-  border-left: 3px solid #e9c44c;
+  border-left: 3px solid #e9c44c; /* Gold border */
 }
 
 .school-preview h4 {
-  color: #5e3c8f;
+  color: #5e3c8f; /* Purple text */
   font-size: 15px;
   margin-bottom: 8px;
 }
@@ -414,7 +416,7 @@
 }
 
 .class-name {
-  color: #5e3c8f;
+  color: #5e3c8f; /* Purple text */
   font-weight: 600;
 }
 
@@ -425,7 +427,7 @@
 
 .more-classes {
   text-align: center;
-  color: #8260b3;
+  color: #8260b3; /* Light purple */
   font-style: italic;
   font-size: 12px;
   padding: 4px;
@@ -440,8 +442,8 @@
 }
 
 .view-details-btn {
-  background: linear-gradient(135deg, #e9c44c, #d4b43c);
-  color: #432c64;
+  background: linear-gradient(135deg, #e9c44c, #d4b43c); /* Gold gradient */
+  color: #432c64; /* Dark purple text */
   border: none;
   padding: 10px 20px;
   border-radius: 22px;
@@ -453,13 +455,13 @@
 }
 
 .view-details-btn:hover {
-  background: linear-gradient(135deg, #d4b43c, #c4a338);
+  background: linear-gradient(135deg, #d4b43c, #c4a338); /* Lighter gold on hover */
   transform: translateY(-2px);
   box-shadow: 0 5px 18px rgba(212, 180, 60, 0.3);
 }
 
 .view-school-details-btn {
-  background: linear-gradient(135deg, #5e3c8f, #432c64);
+  background: linear-gradient(135deg, #5e3c8f, #432c64); /* Purple gradient */
   color: white;
   border: none;
   padding: 10px 20px;
@@ -472,7 +474,7 @@
 }
 
 .view-school-details-btn:hover {
-  background: linear-gradient(135deg, #432c64, #5e3c8f);
+  background: linear-gradient(135deg, #432c64, #5e3c8f); /* Reverse gradient on hover */
   transform: translateY(-2px);
   box-shadow: 0 5px 18px rgba(94, 60, 143, 0.3);
 }
@@ -480,7 +482,7 @@
 /* Classes Grid */
 .classes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive grid */
   gap: 16px;
 }
 
@@ -490,11 +492,11 @@
   padding: 16px;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  border-left: 3px solid #e9c44c;
+  border-left: 3px solid #e9c44c; /* Gold border */
 }
 
 .class-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-4px); /* Lift effect */
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
@@ -506,7 +508,7 @@
 }
 
 .class-header h3 {
-  color: #5e3c8f;
+  color: #5e3c8f; /* Purple text */
   font-size: 16px;
   font-weight: 700;
   display: flex;
@@ -537,7 +539,7 @@
 }
 
 .stat-item svg {
-  color: #8260b3;
+  color: #8260b3; /* Light purple */
 }
 
 .class-actions {
@@ -547,7 +549,7 @@
 }
 
 .view-sessions-btn {
-  background: linear-gradient(135deg, #5e3c8f, #432c64);
+  background: linear-gradient(135deg, #5e3c8f, #432c64); /* Purple gradient */
   color: white;
   border: none;
   padding: 8px 16px;
@@ -559,14 +561,14 @@
 }
 
 .view-sessions-btn:hover {
-  background: linear-gradient(135deg, #432c64, #5e3c8f);
+  background: linear-gradient(135deg, #432c64, #5e3c8f); /* Reverse gradient */
   transform: translateY(-2px);
   box-shadow: 0 5px 18px rgba(94, 60, 143, 0.3);
 }
 
 .view-students-btn {
-  background: linear-gradient(135deg, #e9c44c, #d4b43c);
-  color: #432c64;
+  background: linear-gradient(135deg, #e9c44c, #d4b43c); /* Gold gradient */
+  color: #432c64; /* Dark purple text */
   border: none;
   padding: 8px 16px;
   border-radius: 18px;
@@ -577,7 +579,7 @@
 }
 
 .view-students-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #d4b43c, #c4a338);
+  background: linear-gradient(135deg, #d4b43c, #c4a338); /* Lighter gold */
   transform: translateY(-2px);
   box-shadow: 0 5px 18px rgba(212, 180, 60, 0.3);
 }
@@ -591,7 +593,7 @@
 }
 
 .view-syllabus-btn {
-  background: linear-gradient(135deg, #27ae60, #229954);
+  background: linear-gradient(135deg, #27ae60, #229954); /* Green gradient */
   color: white;
   border: none;
   padding: 8px 16px;
@@ -607,7 +609,7 @@
 }
 
 .view-syllabus-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #229954, #1e8449);
+  background: linear-gradient(135deg, #229954, #1e8449); /* Darker green */
   transform: translateY(-2px);
   box-shadow: 0 5px 18px rgba(39, 174, 96, 0.3);
 }
@@ -645,7 +647,7 @@
 .search-input {
   width: 100%;
   padding: 12px 40px 12px 14px;
-  border: 2px solid #e9c44c;
+  border: 2px solid #e9c44c; /* Gold border */
   border-radius: 22px;
   font-size: 14px;
   background: white;
@@ -655,7 +657,7 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #5e3c8f;
+  border-color: #5e3c8f; /* Purple border on focus */
   box-shadow: 0 0 0 3px rgba(94, 60, 143, 0.1);
 }
 
@@ -669,7 +671,7 @@
   right: 45px;
   top: 50%;
   transform: translateY(-50%);
-  color: #8260b3;
+  color: #8260b3; /* Light purple */
   pointer-events: none;
   z-index: 1;
 }
@@ -679,7 +681,7 @@
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(231, 76, 60, 0.1);
+  background: rgba(231, 76, 60, 0.1); /* Light red */
   color: #e74c3c;
   border: none;
   border-radius: 50%;
@@ -693,24 +695,24 @@
 }
 
 .clear-search-icon-btn:hover {
-  background: #e74c3c;
+  background: #e74c3c; /* Solid red on hover */
   color: white;
 }
 
 .search-results-info {
   margin-top: 12px;
   padding: 8px 12px;
-  background: linear-gradient(135deg, #f7eac5, #e9c44c);
+  background: linear-gradient(135deg, #f7eac5, #e9c44c); /* Beige to gold gradient */
   border-radius: 7px;
-  color: #5e3c8f;
+  color: #5e3c8f; /* Purple text */
   font-weight: 600;
   font-size: 13px;
   text-align: center;
 }
 
 .clear-search-action-btn {
-  background: linear-gradient(135deg, #e9c44c, #d4b43c);
-  color: #432c64;
+  background: linear-gradient(135deg, #e9c44c, #d4b43c); /* Gold gradient */
+  color: #432c64; /* Dark purple text */
   border: none;
   padding: 10px 20px;
   border-radius: 22px;
@@ -722,7 +724,7 @@
 }
 
 .clear-search-action-btn:hover {
-  background: linear-gradient(135deg, #d4b43c, #c4a338);
+  background: linear-gradient(135deg, #d4b43c, #c4a338); /* Lighter gold */
   transform: translateY(-2px);
   box-shadow: 0 5px 18px rgba(212, 180, 60, 0.3);
 }
@@ -736,7 +738,7 @@
 
 .loading-spinner {
   font-size: 16px;
-  color: #5e3c8f;
+  color: #5e3c8f; /* Purple text */
   font-weight: 600;
 }
 
@@ -754,7 +756,7 @@
 }
 
 .no-students h3 {
-  color: #5e3c8f;
+  color: #5e3c8f; /* Purple text */
   font-size: 20px;
   margin-bottom: 8px;
   font-weight: 600;
@@ -778,19 +780,19 @@
   padding: 16px;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  border-left: 3px solid #e9c44c;
+  border-left: 3px solid #e9c44c; /* Gold border */
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
 .student-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px); /* Subtle lift */
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
 .student-number {
-  background: linear-gradient(135deg, #5e3c8f, #432c64);
+  background: linear-gradient(135deg, #5e3c8f, #432c64); /* Purple gradient */
   color: white;
   width: 44px;
   height: 44px;
@@ -815,7 +817,7 @@
 }
 
 .student-header h3 {
-  color: #5e3c8f;
+  color: #5e3c8f; /* Purple text */
   font-size: 18px;
   font-weight: 700;
   display: flex;
@@ -825,8 +827,8 @@
 }
 
 .student-age {
-  background: #f7eac5;
-  color: #5e3c8f;
+  background: #f7eac5; /* Light beige */
+  color: #5e3c8f; /* Purple text */
   padding: 3px 10px;
   border-radius: 12px;
   font-size: 13px;
@@ -847,7 +849,7 @@
 }
 
 .detail-item svg {
-  color: #8260b3;
+  color: #8260b3; /* Light purple */
   flex-shrink: 0;
 }
 
@@ -860,7 +862,7 @@
 .detail-value {
   color: #333;
   font-weight: 500;
-  background: #f7eac5;
+  background: #f7eac5; /* Light beige */
   padding: 2px 6px;
   border-radius: 4px;
   font-family: monospace;
