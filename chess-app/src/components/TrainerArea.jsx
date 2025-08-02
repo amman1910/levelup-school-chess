@@ -6,11 +6,11 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import TrainerSessions from './TrainerSessions';
 import TrainerMeetingForm from './TrainerMeetingForm';
 import TrainerSchools from './TrainerSchools';
-import NotificationsMessages from './TrainerNotifications'; // השתמש בקובץ שלנו
+import NotificationsMessages from './TrainerNotifications'; // use our file 
 import TrainerDashboard from './TrainerDashboard';
 import TrainerMaterialsLibary from './TrainerMaterialsLibary';
-import TrainerProfile from './TrainerProfile'; // הוספת הקומפננטה החדשה
-import LanguageSwitcher from './LanguageSwitcher'; // הוספת מתג השפות
+import TrainerProfile from './TrainerProfile'; // Adding the new component
+import LanguageSwitcher from './LanguageSwitcher'; // Added the language switch
 
 import './TrainerArea.css';
 import chessLogo from './chessLogo.png'; // ייבוא התמונה החדשה
