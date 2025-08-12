@@ -1,4 +1,3 @@
-/* Admin Area CSS with gold-purple theme */
 :root {
   --primary-purple: #5e3c8f;
   --secondary-gold: #e9c44c;
@@ -34,9 +33,11 @@ body, html {
 .admin-area {
   display: flex;
   height: 100vh;
-  width: 100vw; /* שינוי ל-100vw במקום 100% */
+  width: 100vw; 
   background-color: var(--background-light);
-  overflow-x: hidden; /* מניעת גלילה אופקית */
+    max-width: 100%;
+
+  overflow-x: hidden; 
 }
 
 /* Sidebar styling */
@@ -105,7 +106,7 @@ body, html {
   flex-grow: 1;
 }
 
-/* Updated NavLink styling */
+
 .admin-link {
   display: flex;
   align-items: center;
@@ -157,7 +158,7 @@ body, html {
   animation: pulse 2s infinite;
 }
 
-/* אנימציה עדינה לbadge */
+
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -170,7 +171,7 @@ body, html {
   }
 }
 
-/* ווידוא שה-notifications link מציג את ה-badge נכון */
+
 .admin-nav .notifications-link {
   display: flex;
   align-items: center;
@@ -244,15 +245,14 @@ body, html {
   cursor: not-allowed;
 }
 
-/* Main content area */
 .admin-content {
-  flex: 1; /* זה יגרום לו לתפוס את כל המקום הנותר */
-  margin-left: 260px; /* עודכן מ-220px ל-260px */
+  flex: 1; 
+  margin-left: 260px;
 
   padding: 0;
   height: 100vh;
   overflow-y: auto;
-  min-width: 0; /* מאפשר לו להתכווץ אם צריך */
+  min-width: 0; 
 }
 
 .admin-header {
@@ -262,8 +262,8 @@ body, html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%; /* תופס את כל הרוחב הזמין */
-  box-sizing: border-box; /* כולל padding בחישוב הרוחב */
+  width: 100%; 
+  box-sizing: border-box; 
 }
 
 .admin-header h1, 
@@ -275,12 +275,11 @@ body, html {
 
 .admin-main {
   padding: 30px;
-  width: 100%; /* תופס את כל הרוחב הזמין */
-  max-width: none; /* מסיר כל הגבלת רוחב */
-  box-sizing: border-box; /* כולל padding בחישוב הרוחב */
+  width: 100%; 
+  max-width: none; 
+  box-sizing: border-box; 
 }
 
-/* Dashboard styling */
 .dashboard-content {
   display: grid;
   grid-template-columns: 1fr;
@@ -396,7 +395,6 @@ body, html {
   border-left: 4px solid var(--success-color);
 }
 
-/* Status badges for lessons */
 .status-badge {
   display: inline-block;
   padding: 0.25rem 0.5rem;
@@ -421,7 +419,7 @@ body, html {
   color: white;
 }
 
-/* Loading and error states for lessons */
+
 .loading-message {
   padding: 2rem;
   text-align: center;
@@ -444,7 +442,7 @@ body, html {
 /* Responsive adjustments */
 @media (max-width: 1200px) {
   .admin-content {
-    /* הסרנו את width: calc... כי flex: 1 כבר מטפל בזה */
+    
   }
   
   .admin-main {
@@ -459,100 +457,43 @@ body, html {
 
 @media (max-width: 768px) {
   .admin-sidebar {
-    width: 70px;
-    overflow: hidden;
+    width: 220px;
+    position: fixed;
+    top: 0;
+    inset-inline-start: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
   }
-  
-  .logo-wrapper {
-    padding: 20px 5px;
+
+  html[dir="rtl"] .admin-sidebar.closed {
+    transform: translateX(100%);
   }
-  
-  .logo-wrapper h2 {
-    font-size: 16px;
+
+  html[dir="ltr"] .admin-sidebar.closed {
+    transform: translateX(-100%);
   }
-  
-  .subtitle {
-    display: none;
+
+  .admin-sidebar.open {
+    transform: translateX(0);
   }
-  
-  /* הסתר את הלוגו במובייל */
-  .logo-container {
-    display: none;
-  }
-  
-  .admin-link {
-display: flex;
-  align-items: center;
-  justify-content: flex-start;
-    padding: 15px 5px;
-    text-align: center;
-    overflow: hidden;
-    white-space: nowrap;
-    font-size: 12px;
-    justify-content: center;
-  }
-  
-  /* הסתר את ה-badge במובייל */
-  .notification-badge {
-    display: none;
-  }
-  
-  /* הסתר את הלוגו בניווט במובייל */
-  .nav-logo-container {
-    display: none;
-  }
-  
-  .user-info {
-    display: none;
-  }
-  
+
   .admin-content {
-    margin-left: 70px;
-    /* הסרנו את width: calc... */
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
-  
-  .admin-header {
-    padding: 15px;
-    flex-direction: column;
-    gap: 10px;
+
+  html[dir="rtl"] .admin-area .admin-sidebar.open ~ .admin-content {
+    margin-right: 220px;
   }
-  
-  .admin-main {
-    padding: 15px;
+
+  html[dir="ltr"] .admin-area .admin-sidebar.open ~ .admin-content {
+    margin-left: 220px;
   }
 }
 
-@media (max-width: 480px) {
-  .admin-header {
-    padding: 10px;
-  }
-  
-  .admin-main {
-    padding: 10px;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-  }
-  
-  .action-button {
-    width: 100%;
-    text-align: center;
-  }
-  
-  .admin-sidebar {
-    width: 60px;
-  }
-  
-  .admin-content {
-    margin-left: 60px;
-    /* הסרנו את width: calc... */
-  }
-  .admin-link {
-    font-size: 10px;
-    padding: 12px 2px;
-  }
-}
+
+
 
 html[dir="rtl"] .admin-nav .admin-link {
   text-align: right !important;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { User, Mail, Calendar, Hash, Shield, Phone, Edit, X, Lock } from 'lucide-react';
 import { 
   collection, 
@@ -16,7 +16,7 @@ import { db } from '../firebase';
 import './AdminProfile.css';
 
 const AdminProfile = ({ currentUser }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
   
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -43,7 +43,6 @@ const AdminProfile = ({ currentUser }) => {
 
         console.log('Current user from props:', currentUser);
         
-        // שלוף את הנתונים המלאים מהדטה בייס
         const userDocRef = doc(db, 'users', currentUser.uid);
         const userDoc = await getDoc(userDocRef);
         
@@ -51,11 +50,10 @@ const AdminProfile = ({ currentUser }) => {
           const fullUserData = userDoc.data();
           console.log('Full user data from database:', fullUserData);
           
-          // שלב את הנתונים מה-localStorage עם הנתונים מהדטה בייס
           const completeUserProfile = {
             ...currentUser,
             ...fullUserData,
-            uid: currentUser.uid // וודא שה-uid נשמר
+            uid: currentUser.uid 
           };
           
           console.log('Complete user profile:', completeUserProfile);
@@ -64,12 +62,10 @@ const AdminProfile = ({ currentUser }) => {
         setEmailError('Email verification is required. Please check your Firebase settings or contact support.');
       } else {
           console.error('User document not found in database');
-          // אם אין מסמך, השתמש בנתונים מה-localStorage
           setUserProfile(currentUser);
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);
-        // במקרה של שגיאה, השתמש בנתונים מה-localStorage
         setUserProfile(currentUser);
       } finally {
         setLoading(false);
@@ -98,17 +94,14 @@ const AdminProfile = ({ currentUser }) => {
     );
   }
 
-  // Debug: הדפס את הנתונים כדי לראות מה יש
   console.log('Final user profile data:', userProfile);
   console.log('firstName:', userProfile.firstName);
   console.log('lastName:', userProfile.lastName);
   console.log('age:', userProfile.age);
   console.log('mobileNumber:', userProfile.mobileNumber);
 
-  // Construct full name
   const fullName = `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() || t('trainerProfile.notSpecified');
   
-  // Get user initials for avatar
   const getInitials = (firstName, lastName) => {
     const first = firstName ? firstName.charAt(0).toUpperCase() : '';
     const last = lastName ? lastName.charAt(0).toUpperCase() : '';
@@ -117,7 +110,6 @@ const AdminProfile = ({ currentUser }) => {
 
   const initials = getInitials(userProfile.firstName, userProfile.lastName);
 
-  // פונקציה לשינוי האימייל
   const handleEmailChange = async (e) => {
     e.preventDefault();
     setEmailError('');
@@ -159,7 +151,6 @@ const AdminProfile = ({ currentUser }) => {
         return;
       }
 
-      // בדוק אם האימייל החדש כבר קיים במערכת
       console.log('Checking if new email already exists...');
       const usersRef = collection(db, "users");
       const q = query(usersRef, where("email", "==", newEmail));
@@ -171,18 +162,15 @@ const AdminProfile = ({ currentUser }) => {
       }
       console.log('New email is available');
 
-      // אימות מחדש של המשתמש עם הסיסמה הנוכחית
       console.log('Re-authenticating user...');
       const credential = EmailAuthProvider.credential(userProfile.email, currentPassword);
       await reauthenticateWithCredential(user, credential);
       console.log('Re-authentication successful');
 
-      // עדכון האימייל ב-Firebase Authentication עם אימות
       console.log('Sending verification email for new email...');
       await verifyBeforeUpdateEmail(user, newEmail);
       console.log('Verification email sent successfully');
 
-      // הודעה למשתמש על צורך באימות
       setShowEmailModal(false);
       setNewEmail('');
       setConfirmEmail('');
@@ -190,7 +178,6 @@ const AdminProfile = ({ currentUser }) => {
       
       alert('A verification email has been sent to ' + newEmail + '. Please verify your new email address. Your email will be updated automatically after verification.');
       
-      // לא נעדכן את הדטה בייס כאן - זה יקרה אוטומטית אחרי האימות
       
     } catch (error) {
       console.error('Detailed error changing email:', error);
@@ -278,18 +265,15 @@ const AdminProfile = ({ currentUser }) => {
         return;
       }
 
-      // אימות מחדש של המשתמש עם הסיסמה הנוכחית
       console.log('Re-authenticating user...');
       const credential = EmailAuthProvider.credential(userProfile.email, currentPassword);
       await reauthenticateWithCredential(user, credential);
       console.log('Re-authentication successful');
 
-      // עדכון הסיסמה ב-Firebase Authentication
       console.log('Updating password...');
       await updatePassword(user, newPassword);
       console.log('Password updated successfully');
 
-      // סגירת המודל וניקוי השדות
       setShowPasswordModal(false);
       setCurrentPassword('');
       setNewPassword('');

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { db } from '../firebase';
 import { collection, getDocs, query, where, onSnapshot } from 'firebase/firestore';
 import Dashboard from './AdminDashboard';
@@ -20,14 +20,14 @@ import AdminGroupAnalytics from './AdminGroupAnalytics';
 import AdminAttendanceTrends from './AdminAttendanceTrends';
 import AdminActivityLog from './AdminActivityLog';
 import AdminProfile from './AdminProfile';
-import LanguageSwitcher from './LanguageSwitcher'; // הוספת מתג השפות
+import LanguageSwitcher from './LanguageSwitcher'; 
 import chessLogo from './chessLogo.png';
 import chessLogo3 from './chessLogo3.png'; 
 
 import './AdminArea.css';
 
 const AdminArea = () => {
-  const { t, i18n } = useTranslation(); // הוספת i18n לשליטה בשפה
+  const { t, i18n } = useTranslation(); 
   const [user, setUser] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [pendingRegistrationsCount, setPendingRegistrationsCount] = useState(0);
@@ -39,12 +39,12 @@ const AdminArea = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // הגדרת ערבית כשפת ברירת מחדל
+  
   useEffect(() => {
-    // בדוק אם לא נשמרה העדפת שפה בlocal storage
     const savedLanguage = localStorage.getItem('i18nextLng');
     if (!savedLanguage || savedLanguage === 'en-US' || savedLanguage === 'en') {
       i18n.changeLanguage('ar');
@@ -56,7 +56,7 @@ const AdminArea = () => {
 }, [i18n.language]);
 
 
-  // ניקוי הודעות כשמשנים route - הפתרון העיקרי!
+  
   useEffect(() => {
     setError('');
     setSuccess('');
@@ -64,24 +64,24 @@ const AdminArea = () => {
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
-    console.log('Raw user from localStorage:', loggedInUser);
+    
     
     if (!loggedInUser) {
-      console.log('No user in localStorage, redirecting to login');
+      
       navigate('/login');
       return;
     }
 
     const userData = JSON.parse(loggedInUser);
-    console.log('Parsed user data:', userData);
+    
     
     if (userData.role !== 'admin') {
-      console.log('User is not admin, redirecting to login');
+      
       navigate('/login');
       return;
     }
 
-    console.log('Setting user in AdminArea:', userData);
+    
     setUser(userData);
   }, [navigate]);
   
@@ -153,15 +153,15 @@ const AdminArea = () => {
     }
   }, [user]);
 
-  // Fetch unread notifications count in real-time
+  
   useEffect(() => {
     if (!user?.uid) {
-      console.log('No user uid found for notifications:', user);
+      
       return;
     }
 
     const userId = user.uid;
-    console.log('Setting up unread notifications listener for admin ID:', userId);
+    
 
     const q = query(
       collection(db, 'notifications'),
@@ -171,26 +171,26 @@ const AdminArea = () => {
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const unreadCount = querySnapshot.size;
-      console.log('Unread notifications count:', unreadCount);
+      
       setUnreadCount(unreadCount);
     }, (error) => {
       console.error('Error in unread notifications listener:', error);
     });
 
     return () => {
-      console.log('Cleaning up unread notifications listener');
+      
       unsubscribe();
     };
   }, [user]);
 
-  // Fetch pending registration forms count in real-time
+  
   useEffect(() => {
     if (!user?.uid) {
-      console.log('No user uid found for registration forms:', user);
+      
       return;
     }
 
-    console.log('Setting up pending registration forms listener');
+    
 
     const q = query(collection(db, 'registrationForm'));
 
@@ -207,14 +207,14 @@ const AdminArea = () => {
         }
       });
       
-      console.log('Pending registration forms count:', pendingCount);
+      
       setPendingRegistrationsCount(pendingCount);
     }, (error) => {
       console.error('Error in pending registration forms listener:', error);
     });
 
     return () => {
-      console.log('Cleaning up pending registration forms listener');
+      
       unsubscribe();
     };
   }, [user]);
@@ -244,7 +244,7 @@ const AdminArea = () => {
     setError('');
     setSuccess('');
     await fetchAllData();
-    setSuccess(t('admin.dataRefreshed')); // שימוש בתרגום
+    setSuccess(t('admin.dataRefreshed')); 
     setTimeout(() => setSuccess(''), 3000);
   };
 
@@ -256,7 +256,7 @@ const AdminArea = () => {
 
   return (
     <div className={`admin-area ${direction}`}>
-      <div className="admin-sidebar">
+      <div className={`admin-sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
         <div className="logo-wrapper">
           <h2>LEVEL UP</h2>
           <div className="subtitle">Chess Club Management</div>
@@ -315,10 +315,10 @@ const AdminArea = () => {
             {t('admin.myProfile')}
           </NavLink>
           
-          {/* הוספת מתג השפות */}
+          
           <LanguageSwitcher />
           
-          {/* הוספת הלוגו מתחת לProfile */}
+          
           <div className="nav-logo-container">
             <img src={chessLogo3} alt="Chess Logo" className="nav-chess-logo" />
           </div>

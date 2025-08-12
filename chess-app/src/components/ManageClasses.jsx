@@ -1,28 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { db, storage } from '../firebase';
 import { doc, setDoc, deleteDoc, updateDoc, collection, getDocs, query, where, addDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { logAdminAction } from '../utils/adminLogger';
-import './ManageUsers.css'; // Import your CSS styles
+import './ManageUsers.css';
 
-/**
- * ManageClasses Component
- * 
- * Props:
- * - classes: Array of class objects
- * - users: Array of user objects (for trainer selection)
- * - setClasses: Function to update classes state
- * - loading: Boolean loading state
- * - setLoading: Function to set loading state
- * - error: Function to set error messages
- * - success: Function to set success messages
- * - fetchClasses: Optional function to refresh classes from database
- */
 const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error, success, fetchClasses }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
   
-  // Debug logs
+  
   console.log('ManageClasses props:', { 
     classes: Array.isArray(classes) ? `Array(${classes.length})` : classes,
     users: Array.isArray(users) ? `Array(${users.length})` : users,
@@ -56,10 +43,10 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
   const [searchFilter, setSearchFilter] = useState('all');
   const [editingClass, setEditingClass] = useState(null);
 
-  // פונקציה לרישום פעולות ב-adminLogs
+  
   const logAdminActionLocal = async (actionType, description, targetType, targetId = null) => {
     try {
-      // קבלת פרטי המשתמש הנוכחי
+      
       const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
       const adminName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'Unknown Admin';
 
@@ -77,11 +64,11 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       console.log('Admin action logged:', logEntry);
     } catch (err) {
       console.error('Error logging admin action:', err);
-      // אל תעצור את הפעולה אם הלוג נכשל
+      
     }
   };
 
-  // Fetch schools from database
+  
   const fetchSchools = async () => {
     setSchoolsLoading(true);
     try {
@@ -111,16 +98,16 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     }
   };
 
-  // פונקציה למחיקת sessions כשמוחקים כיתה
+  
   const deleteSessionsOnClassDelete = async (classId) => {
     try {
       console.log(`Deleting sessions for class deletion: ${classId}`);
       
-      // שליפת כל המסמכים מ-sessions שיש להם את ה-classId
+      
       const sessionsQuery = query(collection(db, 'sessions'), where('classId', '==', classId));
       const sessionsSnapshot = await getDocs(sessionsQuery);
       
-      // מחיקת כל המסמכים
+     
       const deletePromises = sessionsSnapshot.docs.map(docRef => 
         deleteDoc(docRef.ref)
       );
@@ -152,13 +139,13 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     
     let date;
     if (timestamp.toDate) {
-      // Firestore Timestamp
+      
       date = timestamp.toDate();
     } else if (timestamp instanceof Date) {
-      // JavaScript Date
+      
       date = timestamp;
     } else {
-      // String or other format
+      
       date = new Date(timestamp);
     }
     
@@ -179,15 +166,12 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     }
   };
 
-  // Students modal handlers - FIXED
   const openStudentsModal = () => {
-    // שמירת המצב הנוכחי לפני פתיחת המודל
     setPreviousSelectedStudents([...selectedStudents]);
     setShowStudentsModal(true);
   };
 
   const closeStudentsModal = () => {
-    // החזרת המצב הקודם בביטול
     setSelectedStudents([...previousSelectedStudents]);
     setShowStudentsModal(false);
   };
@@ -205,12 +189,10 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
   const saveSelectedStudents = () => {
     const studentsArray = selectedStudents.length > 0 ? selectedStudents : [''];
     setNewClass({ ...newClass, studentsId: studentsArray });
-    // עדכון המצב הקודם למצב הנוכחי כי שמרנו את השינויים
     setPreviousSelectedStudents([...selectedStudents]);
     setShowStudentsModal(false);
   };
 
-  // Upload file to Firebase Storage
   const uploadSyllabusFile = async (file, classId) => {
     if (!file) return null;
     
@@ -233,7 +215,6 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     }
   };
 
-  // Delete file from Firebase Storage
   const deleteSyllabusFile = async (syllabusUrl) => {
     if (!syllabusUrl) return;
     
@@ -242,7 +223,6 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       await deleteObject(storageRef);
     } catch (error) {
       console.error('Error deleting file:', error);
-      // Don't throw error as this is cleanup
     }
   };
 
@@ -253,14 +233,12 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     if (typeof success === 'function') success('');
     
     try {
-      // בדיקת שדות חובה
       if (!newClass.className || !newClass.school || !newClass.assignedTrainer) {
         if (typeof error === 'function') error(t('adminClasses.fillRequiredFields'));
         setLoading(false);
         return;
       }
 
-      // בדיקה שהקומבינציה של בית ספר + שם כיתה לא קיימת כבר
       const existingClass = (classes || []).find(cls => 
         cls.school === newClass.school && cls.className === newClass.className
       );
@@ -271,17 +249,15 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
         return;
       }
 
-      // Generate random document ID
       const randomId = doc(collection(db, "classes")).id;
       
       let syllabusUrl = '';
       
-      // Upload syllabus file if selected
       if (selectedFile) {
         syllabusUrl = await uploadSyllabusFile(selectedFile, randomId);
         if (!syllabusUrl) {
           setLoading(false);
-          return; // Error message already shown in uploadSyllabusFile
+          return; 
         }
       }
 
@@ -306,7 +282,6 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
 
       if (typeof success === 'function') success(t('adminClasses.classAddedSuccessfully'));
       
-      // עדכון מקומי של הרשימה
       if (setClasses && Array.isArray(classes)) {
         setClasses([...classes, { ...classData, id: randomId }]);
       }
@@ -321,13 +296,12 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       });
       setSelectedFile(null);
       setSelectedStudents([]);
-      setPreviousSelectedStudents([]); // איפוס גם המצב הקודם
+      setPreviousSelectedStudents([]); 
       
       // Reset file input
       const fileInput = document.querySelector('input[type="file"]');
       if (fileInput) fileInput.value = '';
       
-      // קריאה ל-fetchClasses רק אם היא קיימת
       if (typeof fetchClasses === 'function') {
         fetchClasses();
       }
@@ -339,7 +313,6 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
   };
 
   const handleDeleteClass = async (classId) => {
-    // מציאת הכיתה לפני המחיקה כדי לקחת את שמה לרישום
     const classToDelete = (classes || []).find(cls => cls.id === classId);
     let classDescription = `Deleted class with ID ${classId}`;
     
@@ -353,11 +326,9 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     if (typeof success === 'function') success('');
     
     try {
-      // מחיקת כל הסשנים הקשורים לכיתה לפני מחיקת הכיתה עצמה
       console.log("Class deletion initiated, deleting related sessions first...");
       await deleteSessionsOnClassDelete(classId);
       
-      // מחיקת הכיתה עצמה
       await deleteDoc(doc(db, "classes", classId));
 
       await logAdminActionLocal(
@@ -369,12 +340,10 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       
       if (typeof success === 'function') success(t('adminClasses.classDeletedSuccessfully'));
       
-      // עדכון מקומי של הרשימה
       if (setClasses && Array.isArray(classes)) {
         setClasses(classes.filter(cls => cls.id !== classId));
       }
       
-      // קריאה ל-fetchClasses רק אם היא קיימת
       if (typeof fetchClasses === 'function') {
         fetchClasses();
       }
@@ -404,14 +373,11 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) fileInput.value = '';
     
-    // גלילה חלקה לראש הדף - פתרון מקיף
     setTimeout(() => {
-      // נסה כל הדרכים הפופולריות לגלילה לראש
-      document.body.scrollTop = 0; // Safari
-      document.documentElement.scrollTop = 0; // Chrome, Firefox, IE, Opera
+      document.body.scrollTop = 0; 
+      document.documentElement.scrollTop = 0; 
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       
-      // גם זה לכל מקרה
       const container = document.querySelector('.admin-content') || document.querySelector('.user-management-container');
       if (container) {
         container.scrollTop = 0;
@@ -426,18 +392,16 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     if (typeof success === 'function') success('');
     
     try {
-      // בדיקת שדות חובה
       if (!newClass.className || !newClass.school || !newClass.assignedTrainer) {
         if (typeof error === 'function') error(t('adminClasses.fillRequiredFields'));
         setLoading(false);
         return;
       }
 
-      // בדיקה שהקומבינציה של בית ספר + שם כיתה לא קיימת כבר (מלבד הכיתה הנוכחית שנערכת)
       const existingClass = (classes || []).find(cls => 
         cls.school === newClass.school && 
         cls.className === newClass.className && 
-        cls.id !== editingClass // התעלמות מהכיתה הנוכחית שנערכת
+        cls.id !== editingClass 
       );
       
       if (existingClass) {
@@ -446,21 +410,18 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
         return;
       }
 
-      let syllabusUrl = newClass.syllabus; // Keep existing URL by default
+      let syllabusUrl = newClass.syllabus; 
       
-      // If new file selected, upload it and delete old one
       if (selectedFile) {
-        // Upload new file
         const newSyllabusUrl = await uploadSyllabusFile(selectedFile, editingClass);
         if (newSyllabusUrl) {
-          // Delete old file if exists
           if (syllabusUrl) {
             await deleteSyllabusFile(syllabusUrl);
           }
           syllabusUrl = newSyllabusUrl;
         } else {
           setLoading(false);
-          return; // Error message already shown in uploadSyllabusFile
+          return; 
         }
       }
 
@@ -485,7 +446,6 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
 
       if (typeof success === 'function') success(t('adminClasses.classUpdatedSuccessfully'));
       
-      // עדכון מקומי של הרשימה
       if (setClasses && Array.isArray(classes)) {
         setClasses(classes.map(cls => 
           cls.id === editingClass 
@@ -505,13 +465,11 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
       });
       setSelectedFile(null);
       setSelectedStudents([]);
-      setPreviousSelectedStudents([]); // איפוס גם המצב הקודם
+      setPreviousSelectedStudents([]); 
       
-      // Reset file input
       const fileInput = document.querySelector('input[type="file"]');
       if (fileInput) fileInput.value = '';
       
-      // קריאה ל-fetchClasses רק אם היא קיימת
       if (typeof fetchClasses === 'function') {
         fetchClasses();
       }
@@ -534,13 +492,13 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     });
     setSelectedFile(null);
     setSelectedStudents([]);
-    setPreviousSelectedStudents([]); // איפוס גם המצב הקודם
+    setPreviousSelectedStudents([]); 
     
-    // Reset file input
+    
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) fileInput.value = '';
     
-    // ניקוי הודעות שגיאה והצלחה
+    
     if (typeof error === 'function') error('');
     if (typeof success === 'function') success('');
   };
@@ -550,7 +508,6 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
     setSearchFilter('all');
   };
 
-  // Filter and sort classes based on search query and filter with error handling
   const filteredClasses = (classes || [])
     .filter(cls => {
       try {
@@ -607,7 +564,7 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
         } else if (a.createdAt) {
           dateA = new Date(a.createdAt);
         } else {
-          dateA = new Date(0); // Default to epoch if no date
+          dateA = new Date(0); 
         }
         
         if (b.createdAt && b.createdAt.toDate) {
@@ -617,10 +574,10 @@ const ManageClasses = ({ classes, users, setClasses, loading, setLoading, error,
         } else if (b.createdAt) {
           dateB = new Date(b.createdAt);
         } else {
-          dateB = new Date(0); // Default to epoch if no date
+          dateB = new Date(0); 
         }
         
-        return dateB.getTime() - dateA.getTime(); // Descending order (newest first)
+        return dateB.getTime() - dateA.getTime(); 
       } catch (err) {
         console.error('Error sorting classes:', err);
         return 0;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { db, auth, functions } from '../firebase';
 import { doc, setDoc, updateDoc, deleteDoc, collection, query, where, getDocs, arrayRemove } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -8,7 +8,7 @@ import './ManageUsers.css';
 import { logAdminAction } from '../utils/adminLogger';
 
 const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fetchUsers }) => {
-  const { t , i18n } = useTranslation();
+  const { t , i18n } = useTranslation(); 
   
   const [isEditing, setIsEditing] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -59,7 +59,6 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
       });
         success(t('adminUsers.userUpdatedSuccessfully'));
       } else {
-        // בדיקה אם יוזר עם ID זה כבר קיים
         const existingUser = (users || []).find(user => user.id === newUser.id);
         if (existingUser) {
           error(t('adminUsers.userIdExists', { id: newUser.id }));
@@ -67,7 +66,6 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
           return;
         }
 
-        // בדיקה אם יוזר עם אימייל זה כבר קיים
         const existingEmailUser = (users || []).find(user => user.email === newUser.email);
         if (existingEmailUser) {
           error(t('adminUsers.userEmailExists', { email: newUser.email }));
@@ -75,18 +73,16 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
           return;
         }
 
-        // יצירת משתמש ב-Authentication
         const userCredential = await createUserWithEmailAndPassword(auth, newUser.email, newUser.password);
-        const uid = userCredential.user.uid; // שמירת ה-UID
+        const uid = userCredential.user.uid; 
         
-        // יצירת מסמך ב-Firestore עם ה-UID
         await setDoc(doc(db, "users", newUser.id), {
           firstName: newUser.firstName,
           lastName: newUser.lastName,
           email: newUser.email,
           age: Number(newUser.age) || 0,
           role: newUser.role,
-          uid: uid, // שמירת ה-UID מ-Authentication
+          uid: uid, 
           createdAt: new Date(),
           firstLogin: true
         });
@@ -119,16 +115,13 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
     setLoading(false);
   };
 
-  // פונקציה לעדכון classes כשמוחקים trainer
   const updateClassesOnTrainerDelete = async (trainerId) => {
     try {
       console.log(`Updating classes for trainer deletion: ${trainerId}`);
       
-      // שליפת כל המסמכים מ-classes שיש להם את ה-trainer ID ב-assignedTrainer
       const classesQuery = query(collection(db, 'classes'), where('assignedTrainer', '==', trainerId));
       const classesSnapshot = await getDocs(classesQuery);
       
-      // עדכון כל המסמכים - הגדרת assignedTrainer ל-null
       const updatePromises = classesSnapshot.docs.map(docRef => 
         updateDoc(docRef.ref, { assignedTrainer: null })
       );
@@ -148,16 +141,13 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
     }
   };
 
-  // פונקציה לעדכון learningMaterials כשמוחקים trainer
   const updateLearningMaterialsOnTrainerDelete = async (trainerId) => {
     try {
       console.log(`Updating learningMaterials for trainer deletion: ${trainerId}`);
       
-      // שליפת כל המסמכים מ-learningMaterials שיש להם את ה-trainer ID ב-trainerIdAccess array
       const learningMaterialsQuery = query(collection(db, 'learningMaterials'), where('trainerIdAccess', 'array-contains', trainerId));
       const learningMaterialsSnapshot = await getDocs(learningMaterialsQuery);
       
-      // עדכון כל המסמכים - הסרת trainerId מהמערך trainerIdAccess
       const updatePromises = learningMaterialsSnapshot.docs.map(docRef => 
         updateDoc(docRef.ref, {
           trainerIdAccess: arrayRemove(trainerId)
@@ -179,16 +169,13 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
     }
   };
 
-  // פונקציה למחיקת notifications כשמוחקים trainer
   const deleteNotificationsOnTrainerDelete = async (trainerId) => {
     try {
       console.log(`Deleting notifications for trainer deletion: ${trainerId}`);
       
-      // שליפת כל המסמכים מ-notifications שיש להם את ה-trainer ID ב-recieverId
       const notificationsQuery = query(collection(db, 'notifications'), where('recieverId', '==', trainerId));
       const notificationsSnapshot = await getDocs(notificationsQuery);
       
-      // מחיקת כל המסמכים
       const deletePromises = notificationsSnapshot.docs.map(docRef => 
         deleteDoc(docRef.ref)
       );
@@ -208,16 +195,13 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
     }
   };
 
-  // פונקציה למחיקת adminLogs כשמוחקים יוזר
   const deleteAdminLogsOnUserDelete = async (userName) => {
     try {
       console.log(`Deleting adminLogs for user deletion: ${userName}`);
       
-      // שליפת כל המסמכים מ-adminLogs שיש להם את שם היוזר ב-adminName
       const adminLogsQuery = query(collection(db, 'adminLogs'), where('adminName', '==', userName));
       const adminLogsSnapshot = await getDocs(adminLogsQuery);
       
-      // מחיקת כל המסמכים
       const deletePromises = adminLogsSnapshot.docs.map(docRef => 
         deleteDoc(docRef.ref)
       );
@@ -244,7 +228,6 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
 
     
     try {
-      // מציאת המשתמש במטרה לקבל את האימייל והרול שלו
       const userToDelete = users.find(user => user.id === userId);
       if (!userToDelete) {
         error(t('adminUsers.userNotFound'));
@@ -252,34 +235,25 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
         return;
       }
 
-      // בניית השם המלא של היוזר
       const userFullName = `${userToDelete.firstName} ${userToDelete.lastName}`.trim();
 
-      // מחיקת כל הlogs של היוזר מקולקשן adminLogs
       await deleteAdminLogsOnUserDelete(userFullName);
 
-      // אם זה trainer, עדכן את כל ה-collections קודם
       if (userToDelete.role === 'trainer') {
         console.log("User is a trainer, updating all related collections...");
         
-        // עדכון classes
         await updateClassesOnTrainerDelete(userId);
         
-        // עדכון learningMaterials
         await updateLearningMaterialsOnTrainerDelete(userId);
         
-        // מחיקת notifications
         await deleteNotificationsOnTrainerDelete(userId);
       }
 
-      // קריאה ל-Cloud Function למחיקת המשתמש מ-Authentication
       const deleteUserFromAuth = httpsCallable(functions, 'deleteUserFromAuth');
       await deleteUserFromAuth({ email: userToDelete.email });
 
-      // מחיקת המסמך מ-Firestore
       await deleteDoc(doc(db, "users", userId));
       
-      // הודעת הצלחה פשוטה
       await logAdminAction({
   admin: currentAdmin,
   actionType: 'delete-user',
@@ -309,14 +283,11 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
     });
     setIsEditing(true);
 
-    // גלילה חלקה לראש הדף - פתרון מקיף
     setTimeout(() => {
-      // נסה כל הדרכים הפופולריות לגלילה לראש
-      document.body.scrollTop = 0; // Safari
-      document.documentElement.scrollTop = 0; // Chrome, Firefox, IE, Opera
+      document.body.scrollTop = 0; 
+      document.documentElement.scrollTop = 0; 
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       
-      // גם זה לכל מקרה
       const container = document.querySelector('.admin-content') || document.querySelector('.user-management-container');
       if (container) {
         container.scrollTop = 0;
@@ -337,18 +308,16 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
     setIsEditing(false);
   };
 
-  // פונקציה לפורמט התאריך
   const formatDate = (timestamp) => {
     if (!timestamp) return '-';
     try {
       const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-      return date.toLocaleDateString('en-GB'); // DD/MM/YYYY
+      return date.toLocaleDateString('en-GB'); 
     } catch (err) {
       return '-';
     }
   };
 
-  // Enhanced filter function with category-specific search
   const filteredUsers = (users || []).filter(user => {
     try {
       if (!searchQuery.trim()) return true;
@@ -381,13 +350,11 @@ const ManageUsers = ({ users, setUsers, loading, setLoading, error, success, fet
       return false;
     }
   }).sort((a, b) => {
-    // מיון לפי תאריך יצירה - החדש ביותר ראשון
     const dateA = a.createdAt ? (a.createdAt.toDate ? a.createdAt.toDate() : new Date(a.createdAt)) : new Date(0);
     const dateB = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt)) : new Date(0);
     return dateB - dateA;
   });
 
-  // Clear search function
   const handleClearSearch = () => {
     setSearchQuery('');
     setSearchFilter('all');

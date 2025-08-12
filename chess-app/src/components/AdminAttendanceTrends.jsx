@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, LabelList
 } from 'recharts';
 import './AdminAnalyticsOverview.css';
 
 const AdminAttendanceTrends = ({ sessions, classes }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
   
   const [chartData, setChartData] = useState([]);
   const [selectedSchool, setSelectedSchool] = useState('');

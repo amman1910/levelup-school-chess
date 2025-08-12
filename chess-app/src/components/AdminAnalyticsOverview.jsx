@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { useNavigate } from 'react-router-dom';
 import './AdminAnalyticsOverview.css';
 
@@ -16,7 +16,7 @@ const AdminAnalyticsOverview = ({
   fetchClasses,
   fetchStudents
 }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
   const navigate = useNavigate();
 
   return (

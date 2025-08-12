@@ -1,24 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { db } from '../firebase';
 import { doc, setDoc, deleteDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
 import { logAdminAction } from '../utils/adminLogger';
-import './ManageUsers.css'; // Import your CSS styles
+import './ManageUsers.css'; 
 
-/**
- * ManageLessons Component (renamed to Sessions)
- * 
- * Props:
- * - classes: Array of class objects
- * - loading: Boolean loading state
- * - setLoading: Function to set loading state
- * - error: Function to set error messages
- * - success: Function to set success messages
- */
 const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation();
   
-  // Debug logs
   console.log('ManageLessons props:', { 
     classes: Array.isArray(classes) ? `Array(${classes.length})` : classes,
     loading,
@@ -39,13 +28,12 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
     classId: '',
     topic: '',
     duration: 60,
-    status: false // false = planned, true = completed
+    status: false 
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [searchFilter, setSearchFilter] = useState('all');
   const [editingSession, setEditingSession] = useState(null);
 
-  // Fetch sessions from database
   const fetchSessions = async () => {
     setSessionsLoading(true);
     try {
@@ -142,14 +130,12 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
     if (typeof success === 'function') success('');
     
     try {
-      // בדיקת שדות חובה
       if (!newSession.date || !newSession.schoolId || !newSession.classId || !newSession.topic) {
         if (typeof error === 'function') error(t('adminSessions.fillAllRequiredFields'));
         setLoading(false);
         return;
       }
 
-      // בדיקת sessions כפולים - הוולידציה החדשה!
       const sessionDate = new Date(newSession.date);
       const existingSession = sessions.find(session => {
         let existingDate;
@@ -163,12 +149,11 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
           return false;
         }
 
-        // השוואת כל הפרמטרים
         return (
-          existingDate.toDateString() === sessionDate.toDateString() && // אותו תאריך
-          session.schoolId === newSession.schoolId && // אותו בית ספר
-          session.classId === newSession.classId && // אותה כיתה
-          session.startTime === newSession.startTime // אותה שעת התחלה
+          existingDate.toDateString() === sessionDate.toDateString() && 
+          session.schoolId === newSession.schoolId && 
+          session.classId === newSession.classId && 
+          session.startTime === newSession.startTime 
         );
       });
 
@@ -211,7 +196,6 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
 
       await setDoc(doc(db, "sessions", randomId), sessionData);
       
-      // מציאת שם הכיתה לרישום האדמין
       const classInfo = classes && Array.isArray(classes)
         ? classes.find(c => c.id === newSession.classId)
         : null;
@@ -228,7 +212,6 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
 
       if (typeof success === 'function') success(t('adminSessions.sessionAddedSuccessfully'));
       
-      // עדכון מקומי של הרשימה
       setSessions([...sessions, { ...sessionData, id: randomId }]);
       
       setNewSession({
@@ -250,7 +233,6 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
   };
 
   const handleDeleteSession = async (sessionId) => {
-    // מציאת השיעור לפני המחיקה כדי לקחת את פרטיו לרישום
     const sessionToDelete = sessions.find(session => session.id === sessionId);
     let sessionDescription = `Deleted session with ID ${sessionId}`;
     
@@ -281,7 +263,6 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
       
       if (typeof success === 'function') success(t('adminSessions.sessionDeletedSuccessfully'));
       
-      // עדכון מקומי של הרשימה
       setSessions(sessions.filter(session => session.id !== sessionId));
       
       fetchSessions();
@@ -312,10 +293,9 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
       status: sessionToEdit.status === true || sessionToEdit.status === 'completed' ? true : false // Handle both boolean and string
     });
     
-    // גלילה חלקה לראש הדף
     setTimeout(() => {
-      document.body.scrollTop = 0; // Safari
-      document.documentElement.scrollTop = 0; // Chrome, Firefox, IE, Opera
+      document.body.scrollTop = 0; 
+      document.documentElement.scrollTop = 0; 
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       
       const container = document.querySelector('.admin-content') || document.querySelector('.user-management-container');
@@ -332,17 +312,14 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
     if (typeof success === 'function') success('');
     
     try {
-      // בדיקת שדות חובה
       if (!newSession.date || !newSession.schoolId || !newSession.classId || !newSession.topic) {
         if (typeof error === 'function') error(t('adminSessions.fillAllRequiredFields'));
         setLoading(false);
         return;
       }
 
-      // בדיקת sessions כפולים (מלבד הsession הנוכחי שנערך) - הוולידציה החדשה!
       const sessionDate = new Date(newSession.date);
       const existingSession = sessions.find(session => {
-        // התעלמות מהsession הנוכחי שנערך
         if (session.id === editingSession) return false;
 
         let existingDate;
@@ -356,12 +333,11 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
           return false;
         }
 
-        // השוואת כל הפרמטרים
         return (
-          existingDate.toDateString() === sessionDate.toDateString() && // אותו תאריך
-          session.schoolId === newSession.schoolId && // אותו בית ספר
-          session.classId === newSession.classId && // אותה כיתה
-          session.startTime === newSession.startTime // אותה שעת התחלה
+          existingDate.toDateString() === sessionDate.toDateString() && 
+          session.schoolId === newSession.schoolId && 
+          session.classId === newSession.classId && 
+          session.startTime === newSession.startTime 
         );
       });
 
@@ -401,7 +377,6 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
 
       await updateDoc(doc(db, "sessions", editingSession), updatedData);
       
-      // מציאת שם הכיתה לרישום האדמין
       const classInfo = classes && Array.isArray(classes)
         ? classes.find(c => c.id === newSession.classId)
         : null;
@@ -418,7 +393,6 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
 
       if (typeof success === 'function') success(t('adminSessions.sessionUpdatedSuccessfully'));
       
-      // עדכון מקומי של הרשימה
       setSessions(sessions.map(session => 
         session.id === editingSession 
           ? { ...session, ...updatedData }
@@ -456,7 +430,6 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
       status: false
     });
     
-    // ניקוי הודעות שגיאה והצלחה
     if (typeof error === 'function') error('');
     if (typeof success === 'function') success('');
   };
@@ -466,7 +439,6 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
     setSearchFilter('all');
   };
 
-  // Filter and sort sessions based on search query and filter with error handling
   const filteredSessions = (sessions || [])
     .filter(session => {
       try {
@@ -519,7 +491,6 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
       }
     })
     .sort((a, b) => {
-      // Sort by createdAt descending (newest first) - CHANGED FROM date TO createdAt
       try {
         let createdAtA, createdAtB;
         
@@ -530,7 +501,7 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
         } else if (a.createdAt) {
           createdAtA = new Date(a.createdAt);
         } else {
-          createdAtA = new Date(0); // Default to epoch if no date
+          createdAtA = new Date(0); 
         }
         
         if (b.createdAt && b.createdAt.toDate) {
@@ -540,10 +511,10 @@ const ManageLessons = ({ classes, loading, setLoading, error, success }) => {
         } else if (b.createdAt) {
           createdAtB = new Date(b.createdAt);
         } else {
-          createdAtB = new Date(0); // Default to epoch if no date
+          createdAtB = new Date(0); 
         }
         
-        return createdAtB.getTime() - createdAtA.getTime(); // Descending order (newest first)
+        return createdAtB.getTime() - createdAtA.getTime(); 
       } catch (err) {
         console.error('Error sorting sessions:', err);
         return 0;

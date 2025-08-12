@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { useTranslation } from 'react-i18next'; 
+import pdfMake from "pdfmake/build/pdfmake";
+import "../fonts/cairo-font";
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logos/shahtranj_logo_gold.png';
 
 import './AdminAnalyticsOverview.css'; 
 
 const AdminTrainerAnalytics = ({ users, sessions }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
   
   const [filteredStats, setFilteredStats] = useState([]);
   const [selectedTrainer, setSelectedTrainer] = useState('');
@@ -62,66 +62,94 @@ const AdminTrainerAnalytics = ({ users, sessions }) => {
 
     setFilteredStats(filtered);
   }, [users, sessions, selectedTrainer, fromDate, toDate]);
+  
 
   
 const handleExportPDF = () => {
-  const doc = new jsPDF();
-  const img = new Image();
-  img.src = logo;
+  const body = [
+    [
+    { text: t('adminTrainerAnalytics.lastSession'), style: 'tableHeader', alignment: 'right', direction: 'rtl' },
+    { text: t('adminTrainerAnalytics.completionPercent'), style: 'tableHeader', alignment: 'right', direction: 'rtl' },
+    { text: t('adminTrainerAnalytics.completed'), style: 'tableHeader', alignment: 'right', direction: 'rtl' },
+    { text: t('adminTrainerAnalytics.totalSessions'), style: 'tableHeader', alignment: 'right', direction: 'rtl' },
+    { text: t('adminTrainerAnalytics.email'), style: 'tableHeader', alignment: 'right', direction: 'rtl' },
+    { text: t('adminTrainerAnalytics.trainerName'), style: 'tableHeader', alignment: 'right', direction: 'rtl' }
+  ],
 
-  img.onload = () => {
-   doc.addImage(img, 'PNG', 14, 10, 24, 24);
+    ...filteredStats.map(trainer => [
+  trainer.lastDate,
+  `${trainer.percent}%`,
+  trainer.completed.toString(),
+  trainer.total.toString(),
+  trainer.email,
+  trainer.name
+])
 
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(18);
-  doc.setTextColor(40);
-  doc.text(t('adminTrainerAnalytics.trainerAnalyticsReport'), 50, 20);
+  ];
 
-  doc.setDrawColor(94, 60, 143);
-  doc.setLineWidth(0.5);
-  doc.line(14, 32, 195, 32);
+  const docDefinition = {
+    pageOrientation: 'landscape',
 
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.setTextColor(100);
-  doc.text(`${t('adminTrainerAnalytics.generatedOn')} ${new Date().toLocaleDateString()}`, 50, 28);
+    content: [
+      {
+        text: t('adminTrainerAnalytics.trainerAnalyticsReport'),
+        style: 'header',
+        alignment: 'right',
+      },
+      {
+        text: `${t('adminTrainerAnalytics.generatedOn')} ${new Date().toLocaleDateString()}`,
+        style: 'subheader',
+        alignment: 'right',
+        margin: [0, 0, 0, 20]
+      },
+      {
+       table: {
+  headerRows: 1,
+  widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+  body: body
+},
+layout: {
+  fillColor: (rowIndex) => (rowIndex === 0 ? '#5e3c8f' : null),
+  paddingLeft: () => 6,
+  paddingRight: () => 6,
+  paddingTop: () => 4,
+  paddingBottom: () => 4,
+  hLineWidth: () => 0.5,
+  vLineWidth: () => 0.5,
+  hLineColor: () => '#ccc',
+  vLineColor: () => '#ccc',
+},
 
-    const body = filteredStats.map(trainer => [
-      trainer.name,
-      trainer.email,
-      trainer.total,
-      trainer.completed,
-      `${trainer.percent}%`,
-      trainer.lastDate
-    ]);
-
-    autoTable(doc, {
-      startY: 38,
-      head: [[
-        t('adminTrainerAnalytics.trainerName'), 
-        t('adminTrainerAnalytics.email'), 
-        t('adminTrainerAnalytics.totalSessions'), 
-        t('adminTrainerAnalytics.completed'), 
-        t('adminTrainerAnalytics.completionPercent'), 
-        t('adminTrainerAnalytics.lastSession')
-      ]],
-      body,
-      styles: { fontSize: 9, font: 'helvetica' },
-      headStyles: { fillColor: [94, 60, 143], textColor: 255 },
-      alternateRowStyles: { fillColor: [248, 248, 255] }
-    });
-
-    const pageCount = doc.internal.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-      doc.setPage(i);
-      doc.setFontSize(9);
-      doc.setTextColor(130);
-      doc.text(t('adminTrainerAnalytics.pageOf', { current: i, total: pageCount }), 200, 290, { align: 'right' });
+      }
+    ],
+    defaultStyle: {
+      font: 'Cairo', 
+      alignment: 'right',
+      direction: 'rtl'
+    },
+    styles: {
+      header: {
+        fontSize: 18,
+        bold: true,
+        margin: [0, 0, 0, 10]
+      },
+      subheader: {
+        fontSize: 11,
+        color: 'gray'
+      },
+      tableHeader: {
+        bold: true,
+        fontSize: 12,
+        color: 'white',
+        fillColor: '#5e3c8f',
+      }
     }
-
-    doc.save("Trainer_Analytics_Report.pdf");
   };
+
+  pdfMake.createPdf(docDefinition).download("Trainer_Analytics_Report.pdf");
 };
+
+
 
   const resetFilters = () => {
     setSelectedTrainer('');

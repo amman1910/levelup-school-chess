@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { db } from '../firebase';
 import { doc, addDoc, deleteDoc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { logAdminAction } from '../utils/adminLogger';
 
 const ManageSchools = ({ schools, setSchools, loading, setLoading, error, success, setError, setSuccess, fetchSchools }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
   
   // Debug logs
   console.log('ManageSchools props:', { 
@@ -153,8 +153,7 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
               : school
           ));
         } else {
-          // For new schools, we'll refresh the data instead of trying to update local state
-          // since we don't have the ID immediately
+       
         }
       }
 
@@ -167,7 +166,6 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
       setIsEditing(false);
       setEditingSchool(null);
       
-      // קריאה ל-fetchSchools רק אם היא קיימת
       if (typeof fetchSchools === 'function') {
         fetchSchools();
       }
@@ -180,7 +178,6 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
   };
 
   const handleDeleteSchool = async (schoolId) => {
-    // קבלת פרטי בית הספר לפני המחיקה
     const schoolToDelete = schools.find(school => school.id === schoolId);
     if (!schoolToDelete) {
       errorFunction(t('adminSchools.schoolNotFound'));
@@ -204,7 +201,6 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
     try {
       console.log(`Starting cascade delete for school: ${schoolName}`);
       
-      // שלב 1: מחיקת כל הכיתות הקשורות לבית ספר זה
       console.log('Step 1: Deleting classes...');
       const classesQuery = query(
         collection(db, 'classes'),
@@ -220,7 +216,6 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
       );
       await Promise.all(classDeletePromises);
       
-      // שלב 2: מחיקת כל הsessions הקשורים לבית ספר זה
       console.log('Step 2: Deleting sessions...');
       const sessionsQuery = query(
         collection(db, 'sessions'),
@@ -230,17 +225,14 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
       
       console.log(`Found ${sessionsSnapshot.size} sessions to delete`);
       
-      // מחיקת כל הsessions
       const sessionDeletePromises = sessionsSnapshot.docs.map(sessionDoc => 
         deleteDoc(doc(db, 'sessions', sessionDoc.id))
       );
       await Promise.all(sessionDeletePromises);
       
-      // שלב 3: מחיקת בית הספר עצמו
       console.log('Step 3: Deleting school...');
       await deleteDoc(doc(db, "schools", schoolId));
       
-      // רישום פעילות אדמין - הודעה פשוטה
       const currentAdmin = JSON.parse(localStorage.getItem('user'));
       await logAdminAction({
         admin: currentAdmin,
@@ -251,7 +243,6 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
       });
 
       console.log('School deleted successfully - calling success function');
-      // הודעת הצלחה פשוטה
       successFunction(t('adminSchools.schoolDeletedSuccessfully', { name: schoolName }));
       
       // Update local state
@@ -259,7 +250,6 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
         setSchools(schools.filter(school => school.id !== schoolId));
       }
       
-      // קריאה ל-fetchSchools רק אם היא קיימת
       if (typeof fetchSchools === 'function') {
         fetchSchools();
       }
@@ -282,10 +272,9 @@ const ManageSchools = ({ schools, setSchools, loading, setLoading, error, succes
     setIsEditing(true);
     setEditingSchool(schoolData.id);
 
-    // Scroll to top smoothly
     setTimeout(() => {
-      document.body.scrollTop = 0; // Safari
-      document.documentElement.scrollTop = 0; // Chrome, Firefox, IE, Opera
+      document.body.scrollTop = 0; 
+      document.documentElement.scrollTop = 0; 
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       
       const container = document.querySelector('.admin-content') || document.querySelector('.user-management-container');

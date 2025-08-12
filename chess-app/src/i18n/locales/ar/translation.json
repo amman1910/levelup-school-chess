@@ -1065,7 +1065,7 @@
     "email": "البريد الإلكتروني",
     "totalSessionsColumn": "إجمالي الجلسات",
     "completed": "مكتمل",
-    "percentCompletion": "% الإنجاز",
+    "completionPercent": "نسبة الإنجاز",
     "lastSession": "آخر جلسة",
     "details": "التفاصيل",
     "viewSessions": "عرض الجلسات",

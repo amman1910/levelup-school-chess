@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import './AdminDashboard.css';
@@ -13,7 +13,8 @@ import {
 } from 'recharts';
 
 const Dashboard = ({ users, classes, students }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
+  const currentLang = localStorage.getItem('i18nextLng') || 'en';
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalClasses: 0,
@@ -33,18 +34,18 @@ const Dashboard = ({ users, classes, students }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get admin name from localStorage
+        
         const user = JSON.parse(localStorage.getItem('user'));
         if (user?.firstName || user?.lastName) {
           const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
           setAdminName(fullName || 'Administrator');
         }
 
-        // Fetch schools
+        
         const schoolsSnapshot = await getDocs(collection(db, 'schools'));
         const schools = schoolsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // Fetch sessions for activity data
+        
         const sessionsSnapshot = await getDocs(collection(db, 'sessions'));
         const sessions = sessionsSnapshot.docs.map(doc => {
           const data = doc.data();
@@ -52,15 +53,6 @@ const Dashboard = ({ users, classes, students }) => {
           return { ...data, date, id: doc.id };
         });
 
-        console.log('All sessions from database:');
-        sessions.forEach(session => {
-          console.log(`Session ID: ${session.id}, trainerId: ${session.trainerId}, status: ${session.status}, topic: ${session.topic}`);
-        });
-
-        console.log('All users (trainers):');
-        users.filter(user => user.role === 'trainer').forEach(trainer => {
-          console.log(`Trainer: ${trainer.firstName} ${trainer.lastName}, uid: ${trainer.uid}, id: ${trainer.id}`);
-        });
 
         // Calculate role distribution
         const trainers = users.filter(user => user.role === 'trainer').length;
@@ -77,8 +69,7 @@ const Dashboard = ({ users, classes, students }) => {
           .map(trainer => {
             const trainerClasses = classes.filter(cls => cls.assignedTrainer === trainer.uid);
             
-            // Debug: print trainer info
-            console.log(`Trainer: ${trainer.firstName} ${trainer.lastName} (ID: ${trainer.uid})`);
+            
             
             // Filter sessions by trainerId and status
             const trainerSessions = sessions.filter(s => {
@@ -90,16 +81,14 @@ const Dashboard = ({ users, classes, students }) => {
               const matchesId = sessionTrainerId === trainerId;
               const matchesTrainer = matchesUid || matchesId;
               
-              if (matchesTrainer) {
-                console.log(`✓ Match found: Session ${s.id} (trainerId: ${sessionTrainerId}) matches trainer ${trainer.firstName} (uid: ${trainerUid})`);
-              }
+              
               
               return matchesTrainer;
             });
             
             const completedSessionsCount = trainerSessions.filter(s => s.status === true).length;
             
-            console.log(`${trainer.firstName} - Total sessions: ${trainerSessions.length}, Completed: ${completedSessionsCount}`);
+            
             
             return {
               name: `${trainer.firstName || ''} ${trainer.lastName || ''}`.trim() || 'Unknown',
@@ -108,23 +97,18 @@ const Dashboard = ({ users, classes, students }) => {
               students: trainerClasses.reduce((acc, cls) => acc + (cls.studentsId?.length || 0), 0)
             };
           })
-          // .filter(trainer => trainer.sessions > 0 || trainer.classes > 0) // Temporarily commented out for debugging
           .sort((a, b) => b.sessions - a.sessions)
-          .slice(0, 5); // Top 5 trainers
+          .slice(0, 5); 
 
-        console.log('Final trainer performance data:');
-        trainerPerformance.forEach(trainer => {
-          console.log(`${trainer.name}: ${trainer.sessions} sessions, ${trainer.classes} classes`);
-        });
 
-        // Prepare role distribution for pie chart
+        
         const roleData = [
           { name: t('adminDashboard.trainersRole'), value: trainers, color: '#5e3c8f' },
           { name: t('adminDashboard.adminsRole'), value: admins, color: '#e9c44c' },
           { name: t('adminDashboard.othersRole'), value: others, color: '#8260b3' }
         ].filter(item => item.value > 0);
 
-        // Generate recent activity (mock data based on real data)
+        
         const recentActivities = [
           { type: 'session', desc: `${completedSessions} ${t('adminDashboard.sessionsCompletedThisMonth')}`, time: t('adminDashboard.today') },
           { type: 'user', desc: `${users.length} ${t('adminDashboard.totalUsersInSystem')}`, time: t('adminDashboard.current') },
@@ -132,7 +116,7 @@ const Dashboard = ({ users, classes, students }) => {
           { type: 'student', desc: `${students.length} ${t('adminDashboard.studentsEnrolled')}`, time: t('adminDashboard.current') }
         ];
 
-        // Update all state
+        
         setStats({
           totalUsers: users.length,
           totalClasses: classes.length,
@@ -159,6 +143,8 @@ const Dashboard = ({ users, classes, students }) => {
   }, [users, classes, students, t]);
 
   const COLORS = ['#5e3c8f', '#e9c44c', '#8260b3', '#d4b43c'];
+  const isArabic = currentLang === 'ar';
+
 
   return (
     <div className="admin-dashboard-page">
@@ -241,7 +227,7 @@ const Dashboard = ({ users, classes, students }) => {
           <h3>{t('adminDashboard.topTrainersPerformance')}</h3>
           <p className="chart-description">{t('adminDashboard.completedSessionsByTrainer')}</p>
           {trainerData.length > 0 ? (
-
+            
             <ResponsiveContainer width="100%" height={300}>
               <BarChart 
   data={trainerData}
@@ -257,12 +243,12 @@ const Dashboard = ({ users, classes, students }) => {
 >
 
                 <XAxis 
-                  dataKey="name" 
-                  stroke="#5e3c8f" 
-                  fontSize={12}
-                  angle={-35}
-                  textAnchor="middle"
-                  height={120}
+  dataKey="name" 
+  stroke="#5e3c8f" 
+  fontSize={12}
+  angle={-35}
+  textAnchor="middle"
+  height={120}
 
   dy={20}
   reversed={isArabic}

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import './AdminAnalyticsOverview.css';
 
 const AdminActivityLog = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
   
   const [logs, setLogs] = useState([]);
   const [users, setUsers] = useState([]);
@@ -14,11 +14,11 @@ const AdminActivityLog = () => {
   const [dateFilter, setDateFilter] = useState('');
   const [filteredLogs, setFilteredLogs] = useState([]);
 
-  // פונקציה לקבלת התפקיד של המשתמש לפי השם
+  
   const getUserRole = (adminName) => {
     if (!adminName || adminName === 'Unknown Admin') return 'Unknown';
     
-    // נחפש משתמש לפי השם המלא
+    
     const user = users.find(user => {
       const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
       return fullName === adminName || user.email === adminName;
@@ -27,7 +27,7 @@ const AdminActivityLog = () => {
     return user?.role || 'Unknown';
   };
 
-  // פונקציה לעיצוב התפקיד
+  
   const formatRole = (role) => {
     switch(role) {
       case 'admin':
@@ -39,23 +39,23 @@ const AdminActivityLog = () => {
     }
   };
 
-  // פונקציה לקבלת צבע לפי תפקיד
+  
   const getRoleColor = (role) => {
     switch(role) {
       case 'admin':
-        return '#5e3c8f'; // סגול כהה
+        return '#5e3c8f'; 
       case 'trainer':
-        return '#e9c44c'; // צהוב זהב
+        return '#e9c44c'; 
       default:
-        return '#666666'; // אפור
+        return '#666666'; 
     }
   };
 
-  // פונקציה לסינון הלוגים
+  
   const filterLogs = () => {
     let filtered = [...logs];
 
-    // סינון לפי שם משתמש
+    
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(log => {
@@ -71,7 +71,7 @@ const AdminActivityLog = () => {
       });
     }
 
-    // סינון לפי תאריך
+    
     if (dateFilter) {
       const selectedDate = new Date(dateFilter);
       selectedDate.setHours(0, 0, 0, 0);
@@ -97,7 +97,7 @@ const AdminActivityLog = () => {
     setFilteredLogs(filtered);
   };
 
-  // עדכון הסינון כאשר משתנים החיפוש או התאריך
+  
   useEffect(() => {
     filterLogs();
   }, [logs, searchQuery, dateFilter]);
@@ -107,19 +107,17 @@ const AdminActivityLog = () => {
       try {
         setLoading(true);
         
-        // שליפת כל המשתמשים
+        
         const usersSnapshot = await getDocs(collection(db, 'users'));
         const usersData = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setUsers(usersData);
         
-        // שליפת הלוגים
+        
         const logsQuery = query(collection(db, 'adminLogs'), orderBy('timestamp', 'desc'));
         const logsSnapshot = await getDocs(logsQuery);
         const logsData = logsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setLogs(logsData);
         
-      } catch (error) {
-        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
@@ -133,13 +131,13 @@ const AdminActivityLog = () => {
     
     let date;
     if (timestamp.seconds) {
-      // Firestore Timestamp
+      
       date = new Date(timestamp.seconds * 1000);
     } else if (timestamp instanceof Date) {
-      // JavaScript Date
+      
       date = timestamp;
     } else {
-      // Try to parse as string
+      
       date = new Date(timestamp);
     }
     
@@ -167,7 +165,7 @@ const AdminActivityLog = () => {
       <h2>{t('adminActivityLog.activityLog')}</h2>
       <p className="subtitle">{t('adminActivityLog.viewAllUserActions', { count: logs.length })}</p>
 
-      {/* Search and Filter Section */}
+      
       <div className="filters">
         <label>
           {t('adminActivityLog.searchUsersActions')}
@@ -196,7 +194,7 @@ const AdminActivityLog = () => {
         )}
       </div>
 
-      {/* Results Info */}
+      
       {(searchQuery || dateFilter) && (
         <div style={{ 
           marginBottom: '1rem', 
@@ -286,7 +284,7 @@ const AdminActivityLog = () => {
         </table>
       </div>
       
-      {/* סטטיסטיקות מהירות */}
+      
       <div className="log-stats" style={{ marginTop: '20px', display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
         <div style={{ 
           backgroundColor: '#f8f9fa', 

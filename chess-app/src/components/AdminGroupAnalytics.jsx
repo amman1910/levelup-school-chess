@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import jsPDF from 'jspdf';
@@ -8,7 +8,7 @@ import './AdminAnalyticsOverview.css';
 import logo from '../assets/logos/shahtranj_logo_gold.png';
 
 const AdminGroupAnalytics = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
   
   const [groups, setGroups] = useState([]);
   const [selectedSchool, setSelectedSchool] = useState('');

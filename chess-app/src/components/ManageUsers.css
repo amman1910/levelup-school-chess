@@ -1,4 +1,3 @@
-/* ManageUsers CSS with gold-purple theme - Enhanced Mobile Responsive */
 :root {
   --primary-purple: #5e3c8f;
   --secondary-gold: #e9c44c;
@@ -21,7 +20,7 @@
 .user-management-container {
   display: flex;
   flex-direction: column;
-  gap: 12px; /* הקטנה מ-18px */
+  gap: 12px; 
   max-width: 100%;
   padding: 0 8px;
   width: 100%;
@@ -31,9 +30,9 @@
 .add-user-section, 
 .user-list-section {
   background-color: var(--white);
-  border-radius: 8px; /* הקטנה מ-10px */
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08); /* הקטנה */
-  padding: 14px; /* הקטנה מ-20px */
+  border-radius: 8px; 
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  padding: 14px; 
   overflow: hidden;
   width: 100%;
   box-sizing: border-box;
@@ -48,8 +47,8 @@
 
 .add-user-section h2 {
   color: var(--primary-purple);
-  margin-bottom: 12px; /* הקטנה מ-18px */
-  font-size: 16px; /* הקטנה מ-18px */
+  margin-bottom: 12px; 
+  font-size: 16px; 
   font-weight: 600;
   position: relative;
   letter-spacing: 0.5px;
@@ -58,49 +57,49 @@
 .add-user-section h2:after {
   content: "";
   position: absolute;
-  bottom: -6px; /* הקטנה מ-8px */
+  bottom: -6px; 
   left: 0;
-  width: 50px; /* הקטנה מ-60px */
+  width: 50px;
   height: 3px;
   background: linear-gradient(to right, var(--secondary-gold), var(--dark-gold));
   border-radius: 2px;
 }
 
 .add-user-form {
-  margin-top: 10px; /* הקטנה מ-15px */
+  margin-top: 10px; 
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px; /* הקטנה מ-12px */
-  margin-bottom: 8px; /* הקטנה מ-12px */
+  gap: 10px; 
+  margin-bottom: 8px; 
 }
 
 .form-group {
-  margin-bottom: 3px; /* הקטנה מ-5px */
+  margin-bottom: 3px; 
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 4px; /* הקטנה מ-6px */
+  margin-bottom: 4px; 
   font-weight: 600;
   color: var(--primary-purple);
-  font-size: 12px; /* הקטנה מ-13px */
+  font-size: 12px; 
   letter-spacing: 0.3px;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 6px 8px; /* הקטנה מ-8px 10px */
+  padding: 6px 8px; 
   border: 1px solid var(--light-border);
-  border-radius: 5px; /* הקטנה מ-6px */
-  font-size: 12px; /* הקטנה מ-13px */
+  border-radius: 5px; 
+  font-size: 12px;
   background-color: var(--white);
   color: var(--text-color);
   box-sizing: border-box;
-  height: 32px; /* הקטנה מ-38px */
+  height: 32px; 
   transition: all 0.2s ease;
 }
 
@@ -221,14 +220,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px; /* הקטנה מ-15px */
+  margin-bottom: 10px; 
   flex-wrap: wrap;
-  gap: 8px; /* הקטנה מ-12px */
+  gap: 8px;
 }
 
 .users-list-header h3 {
   color: var(--primary-purple);
-  font-size: 16px; /* הקטנה מ-16px */
+  font-size: 16px; 
   font-weight: 600;
   position: relative;
   letter-spacing: 0.5px;
@@ -237,9 +236,9 @@
 .users-list-header h3:after {
   content: "";
   position: absolute;
-  bottom: -6px; /* הקטנה מ-8px */
+  bottom: -6px; 
   left: 0;
-  width: 35px; /* הקטנה מ-45px */
+  width: 35px;
   height: 3px;
   background: linear-gradient(to right, var(--secondary-gold), var(--dark-gold));
   border-radius: 2px;
@@ -376,23 +375,23 @@
 .users-table-wrapper {
   width: 100%;
   overflow-x: auto;
-  margin-top: 12px; /* הקטנה מ-18px */
-  border-radius: 6px; /* הקטנה מ-8px */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* הקטנה */
+  margin-top: 12px; 
+  border-radius: 6px; 
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); 
 }
 
 .users-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 700px; /* הקטנה מ-750px */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* הקטנה */
-  border-radius: 6px; /* הקטנה מ-8px */
+  min-width: 700px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); 
+  border-radius: 6px; 
   overflow: hidden;
 }
 
 .users-table th,
 .users-table td {
-  padding: 8px 10px; /* הקטנה מ-12px 14px */
+  padding: 8px 10px; 
   text-align: left;
   border-bottom: 1px solid var(--light-border);
   color: var(--text-color);
@@ -402,7 +401,7 @@
   background-color: var(--light-gold);
   color: var(--primary-purple);
   font-weight: 600;
-  font-size: 12px; /* הקטנה מ-13px */
+  font-size: 12px; 
   white-space: nowrap;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -436,20 +435,20 @@
 
 /* Role badges for users */
 .role-badge.admin {
-  background: var(--primary-purple); /* סגול */
-  color: #ffffff !important; /* לבן */
+  background: var(--primary-purple); 
+  color: #ffffff !important; 
   border: 1px solid #432c64;
 }
 
 .role-badge.trainer {
-  background: var(--dark-gold); /* זהב */
-  color: #ffffff !important; /* לבן */
+  background: var(--dark-gold); 
+  color: #ffffff !important; 
   border: 1px solid #d4b43c;
 }
 
 /* Level badges for classes */
 .role-badge.beginner {
-  background: var(--dark-gold); /* ירוק */
+  background: var(--dark-gold); 
   color: #ffffff !important;
   border: 1px solid var(--dark-gold);
 }
@@ -461,12 +460,12 @@
 }
 
 .role-badge.advanced {
-  background: var(--primary-purple); /* אדום */
+  background: var(--primary-purple); 
   color: #ffffff !important;
   border: 1px solid var(--primary-purple);
 }
 
-/* Status badges for sessions */
+
 .role-badge.planned {
   background: var(--dark-gold); 
   color: #ffffff !important;
@@ -541,9 +540,7 @@
   font-size: 14px;
 }
 
-/* Enhanced Responsive Design */
 
-/* מסכים בינוניים - התחלה להקטנת גדלים */
 @media (max-width: 1400px) {
   .user-management-container {
     max-width: 95%;
@@ -581,7 +578,6 @@
   }
 }
 
-/* טאבלט גדול */
 @media (max-width: 1200px) {
   .user-management-container {
     gap: 16px;
@@ -594,7 +590,6 @@
   }
 }
 
-/* טאבלט */
 @media (max-width: 1024px) {
   .form-row {
     grid-template-columns: 1fr;
@@ -655,7 +650,6 @@
   }
 }
 
-/* נייד גדול */
 @media (max-width: 768px) {
   .user-management-container {
     gap: 12px;
@@ -732,7 +726,7 @@
   }
   
   .users-table {
-    min-width: 650px; /* הגדלה בגלל העמודה החדשה */
+    min-width: 650px; 
   }
   
   .users-table th,
@@ -742,7 +736,6 @@
   }
 }
 
-/* נייד קטן */
 @media (max-width: 480px) {
   .user-management-container {
     gap: 10px;
@@ -807,7 +800,7 @@
   }
 
   .users-table {
-    min-width: 500px; /* הגדלה בגלל העמודה החדשה */
+    min-width: 500px; 
   }
 
   .users-table th,
@@ -866,7 +859,6 @@
   }
 }
 
-/* נייד קטן מאוד */
 @media (max-width: 360px) {
   .user-management-container {
     padding: 0;
@@ -885,7 +877,7 @@
   }
   
   .users-table {
-    min-width: 420px; /* הגדלה בגלל העמודה החדשה */
+    min-width: 420px; 
   }
   
   .users-table th,
@@ -918,9 +910,7 @@
     padding: 6px !important;
     font-size: 9px !important;
   }
-  /* Syllabus File Input Styles - Add these to your ManageUsers.css */
 
-/* Syllabus file input styling - Specific class to avoid conflicts */
 .form-group .syllabus-file-input {
   width: 100% !important;
   padding: 10px 12px !important;
@@ -950,7 +940,6 @@
   background-color: var(--white) !important;
 }
 
-/* File info styles for syllabus */
 .current-file-info,
 .selected-file-info {
   margin-top: 4px !important;
@@ -976,7 +965,6 @@
   border-left-color: #28a745 !important;
 }
 
-/* Responsive adjustments for syllabus file input */
 @media (max-width: 768px) {
   .form-group .syllabus-file-input {
     padding: 8px 10px !important;
@@ -1023,7 +1011,6 @@
   text-align: right;
 }
 
-/* حذف شكل السهم الأصلي من المتصفح */
 .form-group select,
 .users-filter-select {
   appearance: none;
@@ -1034,7 +1021,6 @@
   background-position: right 10px center;
 }
 
-/* اتجاه السهم حسب اللغة */
 .rtl .form-group select,
 .rtl .users-filter-select {
   background-position: left 10px center;
@@ -1046,7 +1032,6 @@
   background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg fill='%235e3c8f' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
 }
 
-/* English mode */
 .ltr .form-group select,
 .ltr .users-filter-select {
   background-position: right 10px center;

@@ -1125,7 +1125,7 @@
     "email": "Email",
     "totalSessionsColumn": "Total Sessions",
     "completed": "Completed",
-    "percentCompletion": "% Completion",
+    "completionPercent": "Completion Rate",
     "lastSession": "Last Session",
     "details": "Details",
     "viewSessions": "View Sessions",

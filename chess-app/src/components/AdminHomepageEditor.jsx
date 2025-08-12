@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { db, storage } from '../firebase';
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import './AdminHomepageEditor.css';
 
 const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
-  // State for all collections
+  const { t } = useTranslation();
   const [newsList, setNewsList] = useState([]);
   const [eventsList, setEventsList] = useState([]);
   const [galleryList, setGalleryList] = useState([]);
   
-  // Active section state
   const [activeSection, setActiveSection] = useState('news');
   
-  // Form states
   const [newsForm, setNewsForm] = useState({ title: '', description: '' });
   const [eventsForm, setEventsForm] = useState({ title: '', description: '', date: '', location: '',  type: '' });
   const [galleryForm, setGalleryForm] = useState({ title: '' });
@@ -59,10 +56,8 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
   // Image viewer modal
   const [viewingImage, setViewingImage] = useState(null);
 
-  // פונקציה לרישום פעולות ב-adminLogs
   const logAdminAction = async (actionType, description, targetType, targetId = null) => {
     try {
-      // קבלת פרטי המשתמש הנוכחי
       const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
       const adminName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'Unknown Admin';
 
@@ -80,11 +75,9 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
       console.log('Admin action logged:', logEntry);
     } catch (err) {
       console.error('Error logging admin action:', err);
-      // אל תעצור את הפעולה אם הלוג נכשל
     }
   };
 
-  // Fetch functions
   const fetchNews = async () => {
     try {
       const snapshot = await getDocs(collection(db, 'news'));
@@ -142,7 +135,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     fetchAllData();
   }, []);
 
-  // Image handling
   const handleImageChange = (section, file) => {
     if (file) {
       if (!file.type.startsWith('image/')) {
@@ -154,14 +146,12 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     }
   };
 
-  // Upload image to storage
   const uploadImage = async (file, path) => {
     const storageRef = ref(storage, path);
     const snapshot = await uploadBytes(storageRef, file);
     return await getDownloadURL(snapshot.ref);
   };
 
-  // News functions
   const handleNewsSubmit = async (e) => {
     e.preventDefault();
     if (!newsForm.title.trim() || !newsForm.description.trim()) {
@@ -173,7 +163,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     try {
       let imageUrl = null;
       
-      // Upload image only if one is selected
       if (selectedImages.news) {
         imageUrl = await uploadImage(selectedImages.news, `news/${Date.now()}_${selectedImages.news.name}`);
       }
@@ -185,7 +174,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
         uploadedAt: new Date(),
       });
 
-      // רישום פעולה ב-adminLogs
       await logAdminAction(
         'add-news',
         `Added a new news item with the title "${newsForm.title.trim()}"`,
@@ -227,7 +215,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     try {
       let imageUrl = null;
       
-      // Upload image only if one is selected
       if (selectedImages.events) {
         imageUrl = await uploadImage(selectedImages.events, `events/${Date.now()}_${selectedImages.events.name}`);
       }
@@ -238,7 +225,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
         date: new Date(eventsForm.date),
         location: eventsForm.location.trim(),
           type: eventsForm.type,
-        imageURL: imageUrl, // ✅ صِرنا نخزّن بالرسمية imageURL
+        imageURL: imageUrl, 
         uploadedAt: new Date(),
       });
 
@@ -275,7 +262,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     }
   };
 
-  // Gallery functions (image still required for gallery)
   const handleGallerySubmit = async (e) => {
     e.preventDefault();
     if (!selectedImages.gallery || !galleryForm.title.trim()) {
@@ -293,7 +279,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
         uploadedAt: new Date(),
       });
 
-      // רישום פעולה ב-adminLogs
       await logAdminAction(
         'add-gallery',
         `Added a new gallery image with the title "${galleryForm.title.trim()}"`,
@@ -322,9 +307,7 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     }
   };
 
-  // Delete functions
   const handleDelete = async (section, id, imageUrl) => {
-    // קבלת פרטי הפריט לפני המחיקה
     let itemToDelete = null;
     if (section === 'news') {
       itemToDelete = newsList.find(item => item.id === id);
@@ -345,7 +328,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     try {
       await deleteDoc(doc(db, section, id));
       
-      // Try to delete image from storage
       if (imageUrl) {
         try {
           const imageRef = ref(storage, imageUrl);
@@ -355,7 +337,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
         }
       }
 
-      // רישום פעולה ב-adminLogs
       const actionType = `delete-${section === 'events' ? 'event' : section}`;
       const targetType = section === 'events' ? 'event' : section;
       await logAdminAction(
@@ -382,7 +363,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     }
   };
 
-  // Edit functions
   const startEditing = (section, item) => {
     setEditingItems(prev => ({ ...prev, [section]: item.id }));
     if (section === 'news') {
@@ -410,7 +390,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
       return;
     }
 
-    // קבלת פרטי הפריט לפני העדכון
     let itemToEdit = null;
     if (section === 'news') {
       itemToEdit = newsList.find(item => item.id === id);
@@ -447,7 +426,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
 
       await updateDoc(doc(db, section, id), updateData);
 
-      // רישום פעולה ב-adminLogs
       const actionType = `edit-${section === 'events' ? 'event' : section}`;
       const targetType = section === 'events' ? 'event' : section;
       await logAdminAction(
@@ -457,7 +435,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
         id
       );
 
-      // Update local state
       if (section === 'news') {
         setNewsList(prev => prev.map(item => 
           item.id === id ? { ...item, ...updateData } : item
@@ -482,7 +459,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     }
   };
 
-  // Sort and filter functions
   const getSortedItems = (items, sortOption) => {
     return [...items].sort((a, b) => {
       if (sortOption === 'alphabetical') {
@@ -521,7 +497,6 @@ const AdminHomepageEditor = ({ loading, setLoading, error, success }) => {
     });
   };
 
-  // Image viewer functions
   const openImageViewer = (image) => {
     setViewingImage(image);
   };

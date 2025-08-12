@@ -1,6 +1,4 @@
-/* AdminRegistrationForms.css */
 
-/* Main Container */
 .admin-registration-forms-container {
   width: 100%;
   height: 100%;
@@ -341,7 +339,6 @@
   }
 }
 
-/* Pending Indicator - עדין ויפה */
 .pending-indicator {
   position: absolute;
   top: 12px;

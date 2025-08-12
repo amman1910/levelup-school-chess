@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { 
   collection, 
   getDocs, 
@@ -14,19 +14,18 @@ import { db } from '../firebase';
 import './AdminRegistrationForms.css';
 
 const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
   const [registrationForms, setRegistrationForms] = useState([]);
   const [filteredForms, setFilteredForms] = useState([]);
   const [selectedForm, setSelectedForm] = useState(null);
   const [adminNote, setAdminNote] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all'); // all, pending, completed
+  const [filterStatus, setFilterStatus] = useState('all'); 
   const [searchQuery, setSearchQuery] = useState('');
   const [processingId, setProcessingId] = useState(null);
 
-  // פונקציה לרישום פעולות ב-adminLogs
+ 
   const logAdminAction = async (actionType, description, targetType, targetId = null) => {
     try {
-      // קבלת פרטי המשתמש הנוכחי
       const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
       const adminName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'Unknown Admin';
 
@@ -44,11 +43,9 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
       console.log('Admin action logged:', logEntry);
     } catch (err) {
       console.error('Error logging admin action:', err);
-      // אל תעצור את הפעולה אם הלוג נכשל
     }
   };
 
-  // Fetch registration forms from Firebase with smart sorting
   const fetchRegistrationForms = async () => {
     setLoading(true);
     try {
@@ -60,16 +57,13 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
         forms.push({ id: doc.id, ...doc.data() });
       });
       
-      // Sort with PENDING forms first, then by date (newest first within each status)
       const sortedForms = forms.sort((a, b) => {
         const aIsPending = isFormPending(a);
         const bIsPending = isFormPending(b);
         
-        // If one is pending and other is not, pending comes first
         if (aIsPending && !bIsPending) return -1;
         if (!aIsPending && bIsPending) return 1;
         
-        // If both have same status, sort by date (newest first)
         const dateA = a.submittedAt?.toDate() || new Date(0);
         const dateB = b.submittedAt?.toDate() || new Date(0);
         return dateB - dateA;
@@ -108,7 +102,6 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
       });
     }
 
-    // Filter by search query (student name or parent contact)
     if (searchQuery.trim()) {
       filtered = filtered.filter(form => 
         form.studentName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -139,7 +132,6 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
         processedBy: JSON.parse(localStorage.getItem('user'))?.email || 'Unknown Admin'
       });
 
-      // רישום פעולה ב-adminLogs
       const formToProcess = registrationForms.find(form => form.id === formId);
       if (formToProcess) {
         await logAdminAction(
@@ -150,7 +142,6 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
         );
       }
 
-      // Update local state
       setRegistrationForms(prev => 
         prev.map(form => 
           form.id === formId 
@@ -176,7 +167,6 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
     }
   };
 
-  // Format date for display
   const formatDate = (timestamp) => {
     if (!timestamp) return t('adminRegistration.unknownDate');
     
@@ -196,7 +186,6 @@ const AdminRegistrationForms = ({ loading, setLoading, error, success }) => {
     });
   };
 
-  // Get pending forms count (for local display only - count is now managed by AdminArea)
   const pendingFormsCount = registrationForms.filter(form => isFormPending(form)).length;
 
   const clearSearch = () => {

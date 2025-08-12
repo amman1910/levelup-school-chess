@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { db } from '../firebase';
 import { doc, setDoc, deleteDoc, updateDoc, collection, getDocs, getDoc } from 'firebase/firestore';
 import { logAdminAction } from '../utils/adminLogger';
 
 const ManageStudents = ({ students, classes, setStudents, loading, setLoading, error, success, setError, setSuccess, fetchStudents }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
   
-  // Debug logs
   console.log('ManageStudents props:', { 
     students: Array.isArray(students) ? `Array(${students.length})` : students,
     classes: Array.isArray(classes) ? `Array(${classes.length})` : classes,
@@ -21,7 +20,6 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
     fetchStudents: typeof fetchStudents
   });
 
-  // Use the correct error and success functions
   const errorFunction = typeof setError === 'function' ? setError : (typeof error === 'function' ? error : () => {});
   const successFunction = typeof setSuccess === 'function' ? setSuccess : (typeof success === 'function' ? success : () => {});
 
@@ -237,7 +235,6 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
       setIsEditing(false);
       setEditingStudent(null);
       
-      // קריאה ל-fetchStudents רק אם היא קיימת
       if (typeof fetchStudents === 'function') {
         fetchStudents();
       }
@@ -301,7 +298,6 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
         setStudents(students.filter(std => std.id !== studentId));
       }
       
-      // קריאה ל-fetchStudents רק אם היא קיימת
       if (typeof fetchStudents === 'function') {
         fetchStudents();
       }
@@ -326,10 +322,9 @@ const ManageStudents = ({ students, classes, setStudents, loading, setLoading, e
     setIsEditing(true);
     setEditingStudent(studentData.id);
 
-    // Scroll to top smoothly
     setTimeout(() => {
-      document.body.scrollTop = 0; // Safari
-      document.documentElement.scrollTop = 0; // Chrome, Firefox, IE, Opera
+      document.body.scrollTop = 0; 
+      document.documentElement.scrollTop = 0; 
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       
       const container = document.querySelector('.admin-content') || document.querySelector('.user-management-container');

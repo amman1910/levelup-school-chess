@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { db, storage } from '../firebase';
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import './ManageMaterialsAdmin.css';
 
 const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
   
   const [users, setUsers] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -35,10 +35,8 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
     trainerIdAccess: []
   });
 
-  // פונקציה לרישום פעולות ב-adminLogs
   const logAdminAction = async (actionType, description, targetId = null) => {
     try {
-      // קבלת פרטי המשתמש הנוכחי
       const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
       const adminName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email || 'Unknown Admin';
 
@@ -211,7 +209,6 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
           uploadedAt: new Date(),
         });
 
-        // רישום פעולה ב-adminLogs
         await logAdminAction(
           'add-material',
           `Added a new material with the title "${formData.title.trim()}"${formData.type ? ` of type ${formData.type}` : ''}`,
@@ -277,7 +274,6 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
       return;
     }
 
-    // קבלת פרטי החומר לפני העדכון
     const material = materialList.find(m => m.id === materialId);
     if (!material) return;
 
@@ -293,14 +289,12 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
       
       await updateDoc(materialRef, updateData);
 
-      // רישום פעולה ב-adminLogs
       await logAdminAction(
         'edit-material',
         `Updated material "${material.title}" to "${editData.title.trim()}" with access for ${editData.trainerIdAccess.length} trainer${editData.trainerIdAccess.length !== 1 ? 's' : ''}`,
         materialId
       );
 
-      // Update local state
       setMaterialList(prev => prev.map(m => 
         m.id === materialId ? { ...m, ...updateData } : m
       ));
@@ -323,7 +317,6 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
   };
 
   const handleDelete = async (id, fileUrl) => {
-    // קבלת פרטי החומר לפני המחיקה
     const material = materialList.find(m => m.id === id);
     if (!material) {
       error(t('adminMaterials.materialNotFound'));
@@ -347,7 +340,6 @@ const ManageMaterialsAdmin = ({ loading, setLoading, error, success }) => {
         }
       }
 
-      // רישום פעולה ב-adminLogs
       await logAdminAction(
         'delete-material',
         `Deleted material "${material.title}"${material.type ? ` of type ${material.type}` : ''}`,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; 
 import { 
   collection, 
   query, 
@@ -23,7 +23,7 @@ import { db, storage } from '../firebase';
 import './AdminNotifications.css';
 
 const AdminNotifications = ({ loading, setLoading, error, success }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); 
   const [currentUser, setCurrentUser] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [filteredConversations, setFilteredConversations] = useState([]);
@@ -39,14 +39,12 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
   const [newMessageText, setNewMessageText] = useState('');
   const [notificationsLoading, setNotificationsLoading] = useState(true);
   
-  // File handling states
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedNewMessageFile, setSelectedNewMessageFile] = useState(null);
   const [fileUploading, setFileUploading] = useState(false);
   
   const messagesEndRef = React.useRef(null);
 
-  // Auto scroll to bottom when new messages arrive
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -55,7 +53,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
     scrollToBottom();
   }, [messages]);
 
-  // Filter conversations based on search query
   useEffect(() => {
     if (!searchQuery.trim()) {
       setFilteredConversations(conversations);
@@ -68,7 +65,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
     }
   }, [conversations, searchQuery]);
 
-  // Filter users for new message modal based on search query
   useEffect(() => {
     if (!userSearchQuery.trim()) {
       setFilteredUsers(allUsers);
@@ -81,12 +77,11 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
     }
   }, [allUsers, userSearchQuery]);
 
-  // Get current user from localStorage
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
     if (loggedInUser) {
       const userData = JSON.parse(loggedInUser);
-      // Extract the document ID from uid for notifications
+      
       if (userData.uid && !userData.id) {
         userData.id = userData.uid;
       }
@@ -94,7 +89,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
     }
   }, []);
 
-  // Fetch all users (both admins and trainers)
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
@@ -102,12 +96,10 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
         const usersList = [];
         querySnapshot.forEach((doc) => {
           const userData = { id: doc.id, ...doc.data() };
-          // Don't include current user in the list
           if (currentUser && userData.id !== currentUser.id) {
             usersList.push(userData);
           }
         });
-        // Sort by role (admins first, then trainers) and then by name
         usersList.sort((a, b) => {
           if (a.role !== b.role) {
             return a.role === 'admin' ? -1 : 1;
@@ -127,23 +119,19 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
     }
   }, [currentUser]);
 
-  // Fetch conversations (grouped by user)
   useEffect(() => {
     if (!currentUser?.id) {
       console.log('No current user ID found');
-      // אל תכבה את הloading אם אין currentUser - תן לו זמן להטען
       return;
     }
 
     console.log('Setting up notifications listener for admin ID:', currentUser.id);
 
-    // Query for messages where admin is RECEIVER
     const qReceived = query(
       collection(db, 'notifications'),
       where('receiverId', '==', currentUser.id)
     );
 
-    // Query for messages where admin is SENDER
     const qSent = query(
       collection(db, 'notifications'),
       where('senderId', '==', currentUser.id)
@@ -156,7 +144,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
     const updateConversations = async () => {
       const messagesByUser = {};
 
-      // Process received messages
       for (const messageData of receivedMessages) {
         const userId = messageData.senderId;
         
@@ -185,7 +172,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
           
           messagesByUser[userKey].messages.push(messageData);
           
-          // Count unread messages only for received messages
           if (!messageData.read) {
             messagesByUser[userKey].unreadCount++;
           }
@@ -197,7 +183,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
         }
       }
 
-      // Process sent messages
       for (const messageData of sentMessages) {
         const userId = messageData.receiverId;
         
@@ -226,7 +211,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
           
           messagesByUser[userKey].messages.push(messageData);
           
-          // Don't count sent messages as unread
           
           if (!messagesByUser[userKey].lastMessage || 
               messageData.sentAt?.toDate() > messagesByUser[userKey].lastMessage.sentAt?.toDate()) {
@@ -235,7 +219,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
         }
       }
 
-      // Sort messages within each conversation
       Object.values(messagesByUser).forEach(conversation => {
         conversation.messages.sort((a, b) => {
           const timeA = a.sentAt?.toDate() || new Date(0);
@@ -255,7 +238,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
       setNotificationsLoading(false);
     };
 
-    // Listen to received messages
     const unsubscribe1 = onSnapshot(qReceived, (querySnapshot) => {
       receivedMessages = [];
       querySnapshot.forEach((docSnapshot) => {
@@ -266,7 +248,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
       console.log(`Found ${receivedMessages.length} received messages`);
       listenersReady++;
       
-      if (listenersReady >= 1) { // שנה מ-2 ל-1 כדי שיכבה את הloading מהר יותר
+      if (listenersReady >= 1) { 
         updateConversations();
       }
     }, (error) => {
@@ -274,7 +256,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
       setNotificationsLoading(false);
     });
 
-    // Listen to sent messages
     const unsubscribe2 = onSnapshot(qSent, (querySnapshot) => {
       sentMessages = [];
       querySnapshot.forEach((docSnapshot) => {
@@ -285,7 +266,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
       console.log(`Found ${sentMessages.length} sent messages`);
       listenersReady++;
       
-      if (listenersReady >= 1) { // שנה מ-2 ל-1 כדי שיכבה את הloading מהר יותר
+      if (listenersReady >= 1) { 
         updateConversations();
       }
     }, (error) => {
@@ -299,7 +280,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
     };
   }, [currentUser]);
 
-  // Fetch messages for selected conversation
   useEffect(() => {
     if (!selectedConversation || !currentUser?.id) return;
 
@@ -308,9 +288,7 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
 
     console.log('Setting up real-time chat listener between:', adminId, 'and', userId);
 
-    // Query messages where either:
-    // 1. Sender is user and receiver is admin
-    // 2. Sender is admin and receiver is user
+    
     const q1 = query(
       collection(db, 'notifications'),
       where('senderId', '==', userId),
@@ -328,7 +306,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
     let listenersReady = 0;
 
     const updateMessages = () => {
-      // Combine and sort all messages
       const allMessages = [...messagesList1, ...messagesList2].sort((a, b) => {
         const timeA = a.sentAt?.toDate() || new Date(0);
         const timeB = b.sentAt?.toDate() || new Date(0);
@@ -339,7 +316,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
       setMessages(allMessages);
     };
 
-    // Listen to messages from user to admin
     const unsubscribe1 = onSnapshot(q1, (querySnapshot) => {
       messagesList1 = [];
       querySnapshot.forEach((doc) => {
@@ -538,7 +514,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
       const urlParts = url.split('/');
       const fileName = urlParts[urlParts.length - 1];
       const decodedFileName = decodeURIComponent(fileName);
-      // Remove the timestamp and messageId prefix
       const parts = decodedFileName.split('_');
       if (parts.length >= 3) {
         return parts.slice(2).join('_').split('?')[0];
@@ -558,7 +533,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
     setUserSearchQuery('');
   };
 
-  // הוספת בדיקת loading בתחילת הקומפוננטה - זה התיקון העיקרי!
   if (notificationsLoading) {
     return <div className="loading">{t('trainerNotifications.loadingNotifications')}</div>;
   }
@@ -710,7 +684,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
                     </div>
                     
                    <div className="admin-user-checkboxes">
-                      {/* הוספת Select All checkbox */}
                       <label className="admin-checkbox-label select-all-label">
                         <input
                           type="checkbox"
@@ -835,7 +808,6 @@ const AdminNotifications = ({ loading, setLoading, error, success }) => {
 
           <div className="admin-messages-container">
             {messages.map((message) => {
-              // Determine if message was sent by current user (admin)
               const isSentByCurrentUser = message.senderId === currentUser.id;
               
               return (
