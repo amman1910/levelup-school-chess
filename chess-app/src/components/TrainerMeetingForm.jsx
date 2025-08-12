@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; // add useTranslation
 import { db } from '../firebase';
 import { collection, addDoc, getDoc, doc, query, where, getDocs, updateDoc, Timestamp, increment } from 'firebase/firestore';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './TrainerMeetingForm.css';
 
 const TrainerMeetingForm = () => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
+  const { t } = useTranslation(); // add hood for translate 
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [method, setMethod] = useState('In-Person');

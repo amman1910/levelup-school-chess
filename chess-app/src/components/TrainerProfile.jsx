@@ -1,6 +1,7 @@
+// Import necessary React hooks and libraries
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
-import { User, Mail, Calendar, Hash, Shield, Phone, Edit, X, Lock } from 'lucide-react';
+import { useTranslation } from 'react-i18next'; // Import translation hook for internationalization
+import { User, Mail, Calendar, Hash, Shield, Phone, Edit, X, Lock } from 'lucide-react'; // Import icons from Lucide React
 import { 
   collection, 
   query, 
@@ -9,29 +10,31 @@ import {
   doc,
   getDoc,
   updateDoc
-} from 'firebase/firestore';
-import { getAuth, updateEmail, reauthenticateWithCredential, EmailAuthProvider, verifyBeforeUpdateEmail, updatePassword } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import { db } from '../firebase';
-import './TrainerProfile.css';
+} from 'firebase/firestore'; // Import Firestore functions
+import { getAuth, updateEmail, reauthenticateWithCredential, EmailAuthProvider, verifyBeforeUpdateEmail, updatePassword } from 'firebase/auth'; // Import Firebase Authentication functions
+import { useNavigate } from 'react-router-dom'; // Import navigation hook
+import { db } from '../firebase'; // Import Firebase database instance
+import './TrainerProfile.css'; // Import component-specific styles
 
+// Define the TrainerProfile component, receiving currentUser as a prop
 const TrainerProfile = ({ currentUser }) => {
-  const { t } = useTranslation(); // הוספת hook לתרגום
-  const [userProfile, setUserProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [showEmailModal, setShowEmailModal] = useState(false);
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [newEmail, setNewEmail] = useState('');
-  const [confirmEmail, setConfirmEmail] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [emailLoading, setEmailLoading] = useState(false);
-  const [passwordLoading, setPasswordLoading] = useState(false);
-  const navigate = useNavigate();
+  const { t } = useTranslation(); // Initialize translation hook
+  const [userProfile, setUserProfile] = useState(null); // State for user profile data
+  const [loading, setLoading] = useState(true); // State for loading status
+  const [showEmailModal, setShowEmailModal] = useState(false); // State for email change modal visibility
+  const [showPasswordModal, setShowPasswordModal] = useState(false); // State for password change modal visibility
+  const [newEmail, setNewEmail] = useState(''); // State for new email input
+  const [confirmEmail, setConfirmEmail] = useState(''); // State for confirm email input
+  const [currentPassword, setCurrentPassword] = useState(''); // State for current password input
+  const [newPassword, setNewPassword] = useState(''); // State for new password input
+  const [confirmPassword, setConfirmPassword] = useState(''); // State for confirm password input
+  const [emailError, setEmailError] = useState(''); // State for email change error messages
+  const [passwordError, setPasswordError] = useState(''); // State for password change error messages
+  const [emailLoading, setEmailLoading] = useState(false); // State for email change loading status
+  const [passwordLoading, setPasswordLoading] = useState(false); // State for password change loading status
+  const navigate = useNavigate(); // Hook for programmatic navigation
 
+  // Fetch user profile data on component mount or when currentUser changes
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -42,7 +45,7 @@ const TrainerProfile = ({ currentUser }) => {
 
         console.log('Current user from props:', currentUser);
         
-        // שלוף את הנתונים המלאים מהדטה בייס
+        // Fetch user data from Firestore
         const userDocRef = doc(db, 'users', currentUser.uid);
         const userDoc = await getDoc(userDocRef);
         
@@ -50,23 +53,23 @@ const TrainerProfile = ({ currentUser }) => {
           const fullUserData = userDoc.data();
           console.log('Full user data from database:', fullUserData);
           
-          // שלב את הנתונים מה-localStorage עם הנתונים מהדטה בייס
+          // Merge localStorage data with Firestore data
           const completeUserProfile = {
             ...currentUser,
             ...fullUserData,
-            uid: currentUser.uid // וודא שה-uid נשמר
+            uid: currentUser.uid // Ensure UID is preserved
           };
           
           console.log('Complete user profile:', completeUserProfile);
           setUserProfile(completeUserProfile);
         } else {
           console.error('User document not found in database');
-          // אם אין מסמך, השתמש בנתונים מה-localStorage
+          // Fallback to localStorage data if no document exists
           setUserProfile(currentUser);
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);
-        // במקרה של שגיאה, השתמש בנתונים מה-localStorage
+        // Fallback to localStorage data on error
         setUserProfile(currentUser);
       } finally {
         setLoading(false);
@@ -76,6 +79,7 @@ const TrainerProfile = ({ currentUser }) => {
     fetchUserProfile();
   }, [currentUser]);
 
+  // Display loading state
   if (loading) {
     return (
       <div className="profile-loading">
@@ -84,6 +88,7 @@ const TrainerProfile = ({ currentUser }) => {
     );
   }
 
+  // Display error if no user profile is available
   if (!userProfile) {
     return (
       <div className="profile-error">
@@ -95,32 +100,33 @@ const TrainerProfile = ({ currentUser }) => {
     );
   }
 
-  // Debug: הדפס את הנתונים כדי לראות מה יש
+  // Debug logging for profile data
   console.log('Final user profile data:', userProfile);
   console.log('firstName:', userProfile.firstName);
   console.log('lastName:', userProfile.lastName);
   console.log('age:', userProfile.age);
   console.log('mobileNumber:', userProfile.mobileNumber);
 
-  // Construct full name
+  // Construct full name from first and last name
   const fullName = `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() || t('trainerProfile.notSpecified');
   
   // Get user initials for avatar
   const getInitials = (firstName, lastName) => {
     const first = firstName ? firstName.charAt(0).toUpperCase() : '';
     const last = lastName ? lastName.charAt(0).toUpperCase() : '';
-    return first + last || 'TR';
+    return first + last || 'TR'; // Default to 'TR' if no names available
   };
 
   const initials = getInitials(userProfile.firstName, userProfile.lastName);
 
-  // פונקציה לשינוי האימייל
+  // Handle email change submission
   const handleEmailChange = async (e) => {
     e.preventDefault();
     setEmailError('');
     
     console.log('Starting email change process...');
     
+    // Validate input fields
     if (!newEmail || !confirmEmail || !currentPassword) {
       setEmailError('Please fill in all fields');
       return;
@@ -156,7 +162,7 @@ const TrainerProfile = ({ currentUser }) => {
         return;
       }
 
-      // בדוק אם האימייל החדש כבר קיים במערכת
+      // Check if the new email is already registered
       console.log('Checking if new email already exists...');
       const usersRef = collection(db, "users");
       const q = query(usersRef, where("email", "==", newEmail));
@@ -168,18 +174,18 @@ const TrainerProfile = ({ currentUser }) => {
       }
       console.log('New email is available');
 
-      // אימות מחדש של המשתמש עם הסיסמה הנוכחית
+      // Re-authenticate user with current password
       console.log('Re-authenticating user...');
       const credential = EmailAuthProvider.credential(userProfile.email, currentPassword);
       await reauthenticateWithCredential(user, credential);
       console.log('Re-authentication successful');
 
-      // עדכון האימייל ב-Firebase Authentication עם אימות
+      // Send verification email for new email
       console.log('Sending verification email for new email...');
       await verifyBeforeUpdateEmail(user, newEmail);
       console.log('Verification email sent successfully');
 
-      // הודעה למשתמש על צורך באימות
+      // Close modal and clear fields
       setShowEmailModal(false);
       setNewEmail('');
       setConfirmEmail('');
@@ -187,13 +193,12 @@ const TrainerProfile = ({ currentUser }) => {
       
       alert('A verification email has been sent to ' + newEmail + '. Please verify your new email address. Your email will be updated automatically after verification.');
       
-      // לא נעדכן את הדטה בייס כאן - זה יקרה אוטומטית אחרי האימות
-      
     } catch (error) {
       console.error('Detailed error changing email:', error);
       console.error('Error code:', error.code);
       console.error('Error message:', error.message);
       
+      // Handle specific Firebase error cases
       if (error.code === 'auth/wrong-password') {
         setEmailError('Current password is incorrect');
       } else if (error.code === 'auth/email-already-in-use') {
@@ -216,6 +221,7 @@ const TrainerProfile = ({ currentUser }) => {
     }
   };
 
+  // Close email change modal and reset fields
   const closeEmailModal = () => {
     setShowEmailModal(false);
     setNewEmail('');
@@ -224,6 +230,7 @@ const TrainerProfile = ({ currentUser }) => {
     setEmailError('');
   };
 
+  // Close password change modal and reset fields
   const closePasswordModal = () => {
     setShowPasswordModal(false);
     setCurrentPassword('');
@@ -232,17 +239,19 @@ const TrainerProfile = ({ currentUser }) => {
     setPasswordError('');
   };
 
+  // Open password change modal
   const handleChangePassword = () => {
     setShowPasswordModal(true);
   };
 
-  // פונקציה לשינוי הסיסמה
+  // Handle password change submission
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     setPasswordError('');
     
     console.log('Starting password change process...');
     
+    // Validate input fields
     if (!currentPassword || !newPassword || !confirmPassword) {
       setPasswordError('Please fill in all fields');
       return;
@@ -275,18 +284,18 @@ const TrainerProfile = ({ currentUser }) => {
         return;
       }
 
-      // אימות מחדש של המשתמש עם הסיסמה הנוכחית
+      // Re-authenticate user with current password
       console.log('Re-authenticating user...');
       const credential = EmailAuthProvider.credential(userProfile.email, currentPassword);
       await reauthenticateWithCredential(user, credential);
       console.log('Re-authentication successful');
 
-      // עדכון הסיסמה ב-Firebase Authentication
+      // Update password in Firebase Authentication
       console.log('Updating password...');
       await updatePassword(user, newPassword);
       console.log('Password updated successfully');
 
-      // סגירת המודל וניקוי השדות
+      // Close modal and clear fields
       setShowPasswordModal(false);
       setCurrentPassword('');
       setNewPassword('');
@@ -299,6 +308,7 @@ const TrainerProfile = ({ currentUser }) => {
       console.error('Error code:', error.code);
       console.error('Error message:', error.message);
       
+      // Handle specific Firebase error cases
       if (error.code === 'auth/wrong-password') {
         setPasswordError('Current password is incorrect');
       } else if (error.code === 'auth/weak-password') {
@@ -319,6 +329,7 @@ const TrainerProfile = ({ currentUser }) => {
     }
   };
 
+  // Render the profile page
   return (
     <div className="profile-page">
       <div className="profile-container">

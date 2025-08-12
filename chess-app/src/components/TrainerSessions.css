@@ -1,11 +1,13 @@
-/* TrainerSessions.css */
+/* TrainerSessions.css - layout and styling for sessions page */
+
+/* Page wrapper: spacing and background for the sessions page */
 .sessions-page {
   padding: 25px;
   background-color: #faf8f1;
   min-height: 100vh;
 }
 
-/* Simplified Search Section - No containers */
+/* Search input area: centered, simplified, with relative positioning for clear button */
 .search-input-wrapper {
   position: relative;
   display: flex;
@@ -16,6 +18,7 @@
   margin-right: auto;
 }
 
+/* Primary search input styling */
 .search-input {
   width: 100%;
   padding: 12px 18px;
@@ -28,17 +31,20 @@
   padding-right: 50px;
 }
 
+/* Focus state to highlight search field */
 .search-input:focus {
   border-color: #e9c44c;
   background: white;
   box-shadow: 0 0 0 3px rgba(233, 196, 76, 0.1);
 }
 
+/* Placeholder styling inside search input */
 .search-input::placeholder {
   color: #999;
   font-style: italic;
 }
 
+/* Clear search (×) button inside input wrapper */
 .clear-search-btn {
   position: absolute;
   right: 15px;
@@ -57,11 +63,13 @@
   transition: all 0.3s ease;
 }
 
+/* Hover effect for clear button */
 .clear-search-btn:hover {
   background: #c0392b;
   transform: scale(1.1);
 }
 
+/* Info bar showing search result summary */
 .search-results-info {
   margin-top: 12px;
   margin-bottom: 20px;
@@ -77,7 +85,7 @@
   margin-right: auto;
 }
 
-/* Auto Search Info */
+/* Highlighted info when auto-search (from URL param) is active */
 .auto-search-info {
   margin-bottom: 20px;
   padding: 10px 15px;
@@ -96,6 +104,7 @@
   margin-right: auto;
 }
 
+/* Button to clear the auto-applied search */
 .clear-auto-search-btn {
   background: #5cb85c;
   color: white;
@@ -114,6 +123,7 @@
   transform: translateY(-1px);
 }
 
+/* Section wrapper for upcoming/past sessions: card style */
 .session-section {
   margin-bottom: 30px;
   background: white;
@@ -122,6 +132,7 @@
   overflow: hidden;
 }
 
+/* Title bar for each session section */
 .section-title-sessions {
   background: linear-gradient(135deg, #5e3c8f 0%, #432c64 100%);
   color: #e9c44c;
@@ -131,12 +142,14 @@
   font-weight: 700;
 }
 
+/* Table containing session rows */
 .sessions-table {
   width: 100%;
   border-collapse: collapse;
   background: white;
 }
 
+/* Header cells styling */
 .sessions-table thead th {
   background: #f7eac5;
   color: #5e3c8f;
@@ -147,6 +160,7 @@
   border-bottom: 2px solid #e9c44c;
 }
 
+/* Body cell styling */
 .sessions-table tbody td {
   padding: 12px 18px;
   border-bottom: 1px solid #f0f0f0;
@@ -155,15 +169,18 @@
   vertical-align: middle;
 }
 
+/* Hover state for rows to indicate interactivity */
 .sessions-table tbody tr:hover {
   background-color: #f9f9f9;
 }
 
+/* Special hover when row has cursor pointer style (clickable rows) */
 .sessions-table tbody tr[style*="cursor: pointer"]:hover {
   background-color: #f7eac5;
   cursor: pointer;
 }
 
+/* Status badge base styling */
 .status {
   padding: 5px 10px;
   border-radius: 15px;
@@ -172,18 +189,21 @@
   text-transform: capitalize;
 }
 
+/* Completed status appearance */
 .status.completed {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
+/* Upcoming status appearance */
 .status.upcoming {
   background-color: #fff3cd;
   color: #856404;
   border: 1px solid #ffeaa7;
 }
 
+/* Loading placeholder styling */
 .loading {
   text-align: center;
   padding: 50px 20px;
@@ -192,6 +212,7 @@
   font-weight: 600;
 }
 
+/* Empty state message when no sessions are found */
 .empty {
   text-align: center;
   padding: 35px 20px;
@@ -200,7 +221,7 @@
   font-style: italic;
 }
 
-/* Edit Button Styles */
+/* Edit button: gradient, padded, and interactive */
 .edit-btn {
   background: linear-gradient(135deg, #e9c44c, #d4b43c);
   color: #432c64;
@@ -230,7 +251,7 @@
   box-shadow: 0 2px 6px rgba(233, 196, 76, 0.3);
 }
 
-/* Show Button Styles */
+/* Show details button styling */
 .show-btn {
   background: linear-gradient(135deg, #3498db, #2980b9);
   color: white;
@@ -260,7 +281,7 @@
   box-shadow: 0 2px 6px rgba(52, 152, 219, 0.3);
 }
 
-/* Action buttons container */
+/* Container for action buttons (edit, show, record) */
 .action-buttons {
   display: flex;
   gap: 6px;
@@ -268,11 +289,11 @@
   align-items: center;
 }
 
-/* Record Button - Primary Purple */
+/* Record session button with primary styling */
 .record-btn {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
   padding: 7px 14px;
   border-radius: 18px;
   font-size: 11px;
@@ -298,14 +319,14 @@
   box-shadow: 0 2px 6px rgba(94, 60, 143, 0.3);
 }
 
-/* Actions column styling */
+/* Ensure actions column is centered and has a fixed width */
 .sessions-table thead th:last-child,
 .sessions-table tbody td:last-child {
   text-align: center;
   width: 170px;
 }
 
-/* Modal Styles */
+/* Modal overlay to dim background when session modal is open */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -320,6 +341,7 @@
   padding: 20px;
 }
 
+/* Session detail modal container */
 .session-modal {
   background: white;
   border-radius: 12px;
@@ -330,6 +352,7 @@
   box-shadow: 0 18px 36px rgba(0, 0, 0, 0.3);
 }
 
+/* Header inside modal with gradient background and title */
 .modal-header {
   background: linear-gradient(135deg, #5e3c8f 0%, #432c64 100%);
   color: #e9c44c;
@@ -346,6 +369,7 @@
   font-weight: 700;
 }
 
+/* Close button in modal header */
 .close-btn {
   background: none;
   border: none;
@@ -365,10 +389,12 @@
   background-color: rgba(233, 196, 76, 0.2);
 }
 
+/* Content area inside the session modal */
 .modal-content {
   padding: 25px;
 }
 
+/* Section headers inside modal (session info, attendance, ratings, notes) */
 .session-info h4,
 .attendance-info h4,
 .ratings-info h4,
@@ -382,6 +408,7 @@
   padding-bottom: 8px;
 }
 
+/* Grid for key session metadata */
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -389,18 +416,21 @@
   margin-bottom: 25px;
 }
 
+/* Individual info item layout */
 .info-item {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
+/* Label styling within info items */
 .info-item label {
   color: #5e3c8f;
   font-weight: 600;
   font-size: 13px;
 }
 
+/* Value display styling within info items */
 .info-item span {
   color: #333;
   font-size: 13px;
@@ -409,6 +439,7 @@
   border-radius: 6px;
 }
 
+/* Student attendance list layout */
 .student-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -416,6 +447,7 @@
   margin-bottom: 25px;
 }
 
+/* Individual student row */
 .student-item {
   display: flex;
   justify-content: space-between;
@@ -426,12 +458,14 @@
   border-left: 4px solid #e9c44c;
 }
 
+/* Student name styling */
 .student-name {
   color: #333;
   font-weight: 600;
   font-size: 13px;
 }
 
+/* Attendance badge base style */
 .attendance-status {
   padding: 3px 10px;
   border-radius: 12px;
@@ -439,18 +473,21 @@
   font-weight: 600;
 }
 
+/* Present status appearance */
 .attendance-status.present {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
+/* Absent status appearance */
 .attendance-status.absent {
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
+/* Ratings layout */
 .ratings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -458,6 +495,7 @@
   margin-bottom: 25px;
 }
 
+/* Individual rating block */
 .rating-item {
   display: flex;
   flex-direction: column;
@@ -470,24 +508,29 @@
   font-size: 13px;
 }
 
+/* Stars container for rating visualization */
 .stars {
   display: flex;
   gap: 4px;
 }
 
+/* Unfilled star */
 .star {
   font-size: 18px;
   color: #ddd;
 }
 
+/* Filled star to indicate rating */
 .star.filled {
   color: #e9c44c;
 }
 
+/* Notes section wrapper */
 .notes-info {
   margin-top: 18px;
 }
 
+/* Notes content styling */
 .notes-info p {
   color: #333;
   font-size: 13px;
@@ -499,81 +542,82 @@
   margin: 0;
 }
 
-/* Responsive Design */
+/* Responsive adjustments for medium screens */
 @media (max-width: 1024px) {
   .sessions-page {
     padding: 18px;
   }
-  
+
   .search-input {
     padding: 10px 16px;
     font-size: 14px;
   }
-  
+
   .sessions-table {
     font-size: 12px;
   }
-  
+
   .sessions-table thead th,
   .sessions-table tbody td {
     padding: 10px 14px;
   }
-  
+
   .section-title-sessions {
     padding: 14px 18px;
     font-size: 18px;
   }
 }
 
+/* Responsive adjustments for smaller tablets / large phones */
 @media (max-width: 768px) {
   .sessions-page {
     padding: 14px;
   }
-  
+
   .auto-search-info {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .auto-search-info span {
     margin-bottom: 4px;
   }
-  
+
   .clear-auto-search-btn {
     align-self: center;
   }
-  
+
   .search-input {
     padding: 9px 14px;
     font-size: 13px;
   }
-  
+
   .clear-search-btn {
     width: 22px;
     height: 22px;
     font-size: 14px;
   }
-  
+
   .sessions-table {
     font-size: 11px;
   }
-  
+
   .sessions-table thead th,
   .sessions-table tbody td {
     padding: 8px 12px;
   }
-  
+
   .section-title-sessions {
     padding: 12px 14px;
     font-size: 16px;
   }
-  
+
   .edit-btn {
     padding: 5px 10px;
     font-size: 10px;
   }
-  
+
   .record-btn {
     padding: 5px 10px;
     font-size: 10px;
@@ -588,8 +632,8 @@
     flex-direction: column;
     gap: 4px;
   }
-  
-  /* Hide some columns on mobile */
+
+  /* Hide less-critical columns on mobile to conserve space */
   .sessions-table thead th:nth-child(4),
   .sessions-table tbody td:nth-child(4),
   .sessions-table thead th:nth-child(6),
@@ -598,21 +642,22 @@
   }
 }
 
+/* Responsive tweaks for very small screens */
 @media (max-width: 480px) {
   .sessions-table {
     font-size: 10px;
   }
-  
+
   .sessions-table thead th,
   .sessions-table tbody td {
     padding: 6px 8px;
   }
-  
+
   .edit-btn {
     padding: 4px 8px;
     font-size: 9px;
   }
-  
+
   .record-btn {
     padding: 4px 8px;
     font-size: 9px;
@@ -643,25 +688,25 @@
   .ratings-grid {
     grid-template-columns: 1fr;
   }
-  
-  /* Hide more columns on very small screens */
+
+  /* Further hide columns to reduce clutter */
   .sessions-table thead th:nth-child(3),
   .sessions-table tbody td:nth-child(3) {
     display: none;
   }
 }
 
-/* Table scroll for very small screens */
+/* Table scrolling fix for very narrow viewports */
 @media (max-width: 600px) {
   .session-section {
     margin: 0 -14px 18px -14px;
     border-radius: 0;
   }
-  
+
   .sessions-table {
     min-width: 500px;
   }
-  
+
   .session-section {
     overflow-x: auto;
   }

@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Routes, Route, useNavigate, Navigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // הוספת useTranslation
+import { useTranslation } from 'react-i18next'; // added useTranslation
 import { db } from '../firebase';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import TrainerSessions from './TrainerSessions';
 import TrainerMeetingForm from './TrainerMeetingForm';
 import TrainerSchools from './TrainerSchools';
-import NotificationsMessages from './TrainerNotifications'; // השתמש בקובץ שלנו
+import NotificationsMessages from './TrainerNotifications'; // use our file 
 import TrainerDashboard from './TrainerDashboard';
 import TrainerMaterialsLibary from './TrainerMaterialsLibary';
-import TrainerProfile from './TrainerProfile'; // הוספת הקומפננטה החדשה
-import LanguageSwitcher from './LanguageSwitcher'; // הוספת מתג השפות
+import TrainerProfile from './TrainerProfile'; // Adding the new component
+import LanguageSwitcher from './LanguageSwitcher'; // Added the language switch
 
 import './TrainerArea.css';
-import chessLogo from './chessLogo.png'; // ייבוא התמונה החדשה
-import chessLogo3 from './chessLogo3.png'; // ייבוא התמונה הקיימת
+import chessLogo from './chessLogo.png'; // Import the new image
+import chessLogo3 from './chessLogo3.png'; // Import the existing image
 
 const TrainerArea = () => {
-  const { t, i18n } = useTranslation(); // הוספת i18n לשליטה בשפה
+  const { t, i18n } = useTranslation(); // added i18n for language control
   const [user, setUser] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // הגדרת ערבית כשפת ברירת מחדל
+  // set Arabic as the default language
   useEffect(() => {
-    // בדוק אם לא נשמרה העדפת שפה בlocal storage
+    // check if language preference not saved in local storage
     const savedLanguage = localStorage.getItem('i18nextLng');
     if (!savedLanguage || savedLanguage === 'en-US' || savedLanguage === 'en') {
       i18n.changeLanguage('ar');
@@ -108,7 +108,7 @@ const TrainerArea = () => {
     return t('trainer.area');
   };
 
-  // בדוק אם אנחנו בעמוד ההתראות
+  // check if we are on the notifications page
   const isNotificationsPage = location.pathname.includes('notifications');
 
   if (!user) {
@@ -152,10 +152,10 @@ const TrainerArea = () => {
             {t('trainer.profile')}
           </NavLink>
           
-          {/* הוספת מתג השפות */}
+          {/* added language switcher */}
           <LanguageSwitcher />
           
-          {/* הוספת הלוגו מתחת לProfile */}
+          {/* added logo below Profile */}
           <div className="nav-logo-container">
             <img src={chessLogo3} alt="Chess Logo" className="nav-chess-logo" />
           </div>

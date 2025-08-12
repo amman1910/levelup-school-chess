@@ -1,150 +1,150 @@
 /* Trainer Area CSS with gold-purple theme to match Admin Area */
 :root {
-    --primary-purple: #5e3c8f;
-    --secondary-gold: #e9c44c;
-    --light-gold: #f7eac5;
-    --dark-gold: #d4b43c;
-    --dark-purple: #432c64;
-    --light-purple: #8260b3;
-    --text-color: #333333;
-    --error-color: #e74c3c;
-    --success-color: #27ae60;
-    --background-light: #faf8f1;
-    --white: #ffffff;
-    --light-border: #e6e6e6;
-    --light-gray: #f5f5f5;
-    --medium-gray: #cccccc;
-  }
-  
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Rubik', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  body, html {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    font-size: 14px; /* הקטנת גודל הבסיס */
-  }
-  
-  .trainer-area {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-    background-color: var(--background-light);
-  }
-  
-  /* Sidebar styling */
-  .trainer-sidebar {
-    width: 220px; /* הקטנה מ-260px */
-    background: linear-gradient(to bottom, var(--primary-purple), var(--dark-purple));
-    color: var(--white);
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 100;
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .logo-wrapper {
-    padding: 20px 15px; /* הקטנה מ-30px 20px */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    text-align: center;
-  }
-  
-  .logo-wrapper h2 {
-    color: var(--secondary-gold);
-    font-size: 20px; /* הקטנה מ-24px */
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .subtitle {
-    color: var(--light-gold);
-    font-size: 12px; /* הקטנה מ-14px */
-    opacity: 0.9;
-    margin-bottom: 15px;
-  }
+  --primary-purple: #5e3c8f;
+  --secondary-gold: #e9c44c;
+  --light-gold: #f7eac5;
+  --dark-gold: #d4b43c;
+  --dark-purple: #432c64;
+  --light-purple: #8260b3;
+  --text-color: #333333;
+  --error-color: #e74c3c;
+  --success-color: #27ae60;
+  --background-light: #faf8f1;
+  --white: #ffffff;
+  --light-border: #e6e6e6;
+  --light-gray: #f5f5f5;
+  --medium-gray: #cccccc;
+}
 
-  /* Logo Container and Chess Logo in Header */
-  .logo-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-  }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Rubik', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-  .header-chess-logo {
-    width: 90px;
-    height: 100px;
-    object-fit: contain;
-    border-radius: 6px;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 6px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
+body, html {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-size: 14px; /* reduced base font size */
+}
 
-  .header-chess-logo:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-  
-  .trainer-nav {
-    padding: 15px 8px; /* הקטנה מ-20px 10px */
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-  }
+.trainer-area {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--background-light);
+}
 
-  /* Chess Logo Container */
-  .nav-logo-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 15px; /* הקטנה מ-20px */
-    padding: 10px; /* הקטנה מ-15px */
-  }
+/* Sidebar styling */
+.trainer-sidebar {
+  width: 220px; /* reduced from 260px */
+  background: linear-gradient(to bottom, var(--primary-purple), var(--dark-purple));
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+}
 
-  .nav-chess-logo {
-    width: 90px; /* הקטנה מ-140px */
-    height: 90px; /* הקטנה מ-140px */
-    object-fit: contain;
-    border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 6px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
+.logo-wrapper {
+  padding: 20px 15px; /* reduced from 30px 20px */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
 
-  .nav-chess-logo:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-  
+.logo-wrapper h2 {
+  color: var(--secondary-gold);
+  font-size: 20px; /* reduced from 24px */
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  color: var(--light-gold);
+  font-size: 12px; /* reduced from 14px */
+  opacity: 0.9;
+  margin-bottom: 15px;
+}
+
+/* Logo Container and Chess Logo in Header */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.header-chess-logo {
+  width: 90px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 6px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.header-chess-logo:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.trainer-nav {
+  padding: 15px 8px; /* reduced from 20px 10px */
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Chess Logo Container */
+.nav-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px; /* reduced from 20px */
+  padding: 10px; /* reduced from 15px */
+}
+
+.nav-chess-logo {
+  width: 90px; /* reduced from 140px */
+  height: 90px; /* reduced from 140px */
+  object-fit: contain;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 6px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-chess-logo:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
 /* Trainer Navigation Links */
 .trainer-link {
   display: block;
   width: 100%;
   text-align: left;
-  padding: 10px 15px; /* הקטנה מ-12px 20px */
-  margin-bottom: 8px; /* הקטנה מ-10px */
+  padding: 10px 15px; /* reduced from 12px 20px */
+  margin-bottom: 8px; /* reduced from 10px */
   border: none;
   border-radius: 6px;
   background: transparent;
   color: var(--white);
-  font-size: 14px; /* הקטנה מ-16px */
+  font-size: 14px; /* reduced from 16px */
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
@@ -192,211 +192,211 @@
     box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
   }
 }
-  
-  .trainer-footer {
-    padding: 15px; /* הקטנה מ-20px */
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .user-info {
-    margin-bottom: 12px;
-  }
-  
-  .user-email {
-    font-size: 12px;
-    margin-bottom: 5px;
-    word-break: break-all;
-  }
-  
-  .user-role {
-    font-size: 11px;
-    color: var(--light-gold);
-  }
-  
-  .logout-button {
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--white);
-    border: none;
-    border-radius: 6px;
-    padding: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    font-size: 12px;
-  }
-  
-  .logout-button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-  
-  /* Main content area */
-  .trainer-content {
-    flex: 1;
-    margin-left: 220px; /* התאמה לרוחב החדש */
-    padding: 0;
-    height: 100vh;
-    overflow-y: auto;
-  }
-  
-  .trainer-header {
-    background-color: var(--secondary-gold);
-    padding: 15px 25px; /* הקטנה מ-20px 30px */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  }
-  
-  .trainer-header h1 {
-    color: var(--dark-purple);
-    font-size: 20px; /* הקטנה מ-24px */
-    font-weight: 600;
-  }
-  
-  .trainer-main {
-    padding: 0;
-    height: 100%;
-  }
-  
-  /* Dashboard styling */
-  .dashboard-content {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px; /* הקטנה מ-25px */
-  }
-  
-  .welcome-card {
-    background-color: var(--white);
-    border-radius: 8px;
-    padding: 20px; /* הקטנה מ-30px */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border-left: 5px solid var(--secondary-gold);
-  }
-  
-  .welcome-card h2 {
-    color: var(--primary-purple);
-    margin-bottom: 12px;
-    font-size: 18px; /* הקטנה מ-22px */
-  }
-  
-  .welcome-card p {
-    color: var(--text-color);
-    margin-bottom: 8px;
-    line-height: 1.5;
-    font-size: 14px;
-  }
-  
-  .stats-overview {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* הקטנה מ-240px */
-    gap: 15px; /* הקטנה מ-20px */
-    margin-bottom: 20px;
-  }
-  
-  .stat-card {
-    background-color: var(--white);
-    border-radius: 8px;
-    padding: 18px; /* הקטנה מ-25px */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  
-  .stat-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  .stat-card h3 {
-    color: var(--primary-purple);
-    font-size: 14px; /* הקטנה מ-16px */
-    margin-bottom: 12px;
-    font-weight: 600;
-  }
-  
-  .stat-value {
-    font-size: 28px; /* הקטנה מ-36px */
-    font-weight: 700;
-    color: var(--secondary-gold);
-    margin-bottom: 8px;
-  }
-  
-  .stat-desc {
-    color: var(--text-color);
-    font-size: 12px;
-  }
-  
-  .quick-actions {
-    background-color: var(--white);
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  }
-  
-  .quick-actions h3 {
-    color: var(--primary-purple);
-    margin-bottom: 15px;
-    font-size: 16px;
-    font-weight: 600;
-  }
-  
-  .action-buttons {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  
-  .action-button {
-    padding: 10px 16px;
-    background-color: var(--secondary-gold);
-    color: var(--dark-purple);
-    border: none;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  
-  .action-button:hover {
-    background-color: var(--dark-gold);
-    transform: translateY(-2px);
-  }
-  
-  /* Placeholder sections */
-  .students-placeholder,
-  .schedule-placeholder {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-  }
-  
-  .info-card {
-    background-color: var(--white);
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border-left: 5px solid var(--primary-purple);
-  }
-  
-  .info-card h2 {
-    color: var(--primary-purple);
-    margin-bottom: 12px;
-    font-size: 18px;
-  }
-  
-  .info-card p {
-    color: var(--text-color);
-    margin-bottom: 8px;
-    line-height: 1.5;
-    font-size: 14px;
-  }
-  
-  .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-size: 16px;
-    color: var(--primary-purple);
-  }
+
+.trainer-footer {
+  padding: 15px; /* reduced from 20px */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info {
+  margin-bottom: 12px;
+}
+
+.user-email {
+  font-size: 12px;
+  margin-bottom: 5px;
+  word-break: break-all;
+}
+
+.user-role {
+  font-size: 11px;
+  color: var(--light-gold);
+}
+
+.logout-button {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 12px;
+}
+
+.logout-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Main content area */
+.trainer-content {
+  flex: 1;
+  margin-left: 220px; /* adjusted for the new width */
+  padding: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.trainer-header {
+  background-color: var(--secondary-gold);
+  padding: 15px 25px; /* reduced from 20px 30px */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.trainer-header h1 {
+  color: var(--dark-purple);
+  font-size: 20px; /* reduced from 24px */
+  font-weight: 600;
+}
+
+.trainer-main {
+  padding: 0;
+  height: 100%;
+}
+
+/* Dashboard styling */
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px; /* reduced from 25px */
+}
+
+.welcome-card {
+  background-color: var(--white);
+  border-radius: 8px;
+  padding: 20px; /* reduced from 30px */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-left: 5px solid var(--secondary-gold);
+}
+
+.welcome-card h2 {
+  color: var(--primary-purple);
+  margin-bottom: 12px;
+  font-size: 18px; /* reduced from 22px */
+}
+
+.welcome-card p {
+  color: var(--text-color);
+  margin-bottom: 8px;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* reduced from 240px */
+  gap: 15px; /* reduced from 20px */
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background-color: var(--white);
+  border-radius: 8px;
+  padding: 18px; /* reduced from 25px */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h3 {
+  color: var(--primary-purple);
+  font-size: 14px; /* reduced from 16px */
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 28px; /* reduced from 36px */
+  font-weight: 700;
+  color: var(--secondary-gold);
+  margin-bottom: 8px;
+}
+
+.stat-desc {
+  color: var(--text-color);
+  font-size: 12px;
+}
+
+.quick-actions {
+  background-color: var(--white);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.quick-actions h3 {
+  color: var(--primary-purple);
+  margin-bottom: 15px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  padding: 10px 16px;
+  background-color: var(--secondary-gold);
+  color: var(--dark-purple);
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.action-button:hover {
+  background-color: var(--dark-gold);
+  transform: translateY(-2px);
+}
+
+/* Placeholder sections */
+.students-placeholder,
+.schedule-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.info-card {
+  background-color: var(--white);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-left: 5px solid var(--primary-purple);
+}
+
+.info-card h2 {
+  color: var(--primary-purple);
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.info-card p {
+  color: var(--text-color);
+  margin-bottom: 8px;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 16px;
+  color: var(--primary-purple);
+}
 
 /* Notifications & Messages Styles */
 .notifications-container {
@@ -890,15 +890,15 @@
   .stats-overview {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   }
-  
+
   .trainer-sidebar {
     width: 200px;
   }
-  
+
   .trainer-content {
     margin-left: 200px;
   }
-  
+
   .nav-chess-logo {
     width: 70px;
     height: 70px;
@@ -909,7 +909,7 @@
   .stats-overview {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   }
-  
+
   .stat-value {
     font-size: 24px;
   }
@@ -920,24 +920,24 @@
     width: 70px;
     overflow: hidden;
   }
-  
+
   .logo-wrapper {
     padding: 15px 5px;
   }
-  
+
   .logo-wrapper h2 {
     font-size: 14px;
   }
-  
+
   .subtitle {
     display: none;
   }
 
-  /* הסתר את הלוגו במובייל */
+  /* hide the logo on mobile */
   .logo-container {
     display: none;
   }
-  
+
   .trainer-nav button {
     padding: 12px 0;
     text-align: center;
@@ -961,15 +961,15 @@
     font-size: 9px;
   }
 
-  /* הסתרת הלוגו במסכים קטנים */
+  /* hide the logo on small screens */
   .nav-logo-container {
     display: none;
   }
-  
+
   .user-info {
     display: none;
   }
-  
+
   .trainer-content {
     margin-left: 70px;
   }
@@ -990,11 +990,10 @@
     width: 250px;
     min-width: 250px;
   }
-  
+
   .action-buttons {
     flex-direction: column;
   }
-
 
   .notifications-header {
     padding: 12px 15px;
@@ -1022,15 +1021,15 @@
   .trainer-header {
     padding: 12px;
   }
-  
+
   .trainer-main {
     padding: 12px;
   }
-  
+
   .stat-card {
     padding: 12px;
   }
-  
+
   .welcome-card,
   .quick-actions,
   .info-card {

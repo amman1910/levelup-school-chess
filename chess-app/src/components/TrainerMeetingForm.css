@@ -1,5 +1,6 @@
 /* Trainer Meeting Form Redesigned Style */
 
+/* Container for the meeting form: layout, background, border, shadow, and entrance animation */
 .meeting-form {
   margin: 0;
   padding: 30px;
@@ -14,6 +15,7 @@
   animation: fadeIn 0.4s ease-in-out;
 }
 
+/* Heading style inside form */
 .meeting-form h2 {
   color: var(--primary-purple);
   text-align: center;
@@ -21,10 +23,12 @@
   margin-bottom: 24px;
 }
 
+/* Section spacing within the form */
 .meeting-form section {
   margin-bottom: 24px;
 }
 
+/* Subheading styling for form sections */
 .meeting-form section h3 {
   color: var(--dark-purple);
   font-size: 16px;
@@ -33,6 +37,7 @@
   padding-left: 8px;
 }
 
+/* Label layout and typography */
 .meeting-form label {
   display: flex;
   flex-direction: column;
@@ -42,6 +47,7 @@
   font-weight: 500;
 }
 
+/* Inputs, selects, and textarea base appearance */
 .meeting-form input,
 .meeting-form select,
 .meeting-form textarea {
@@ -55,6 +61,7 @@
   transition: box-shadow 0.2s ease;
 }
 
+/* Focus state for form fields */
 .meeting-form input:focus,
 .meeting-form select:focus,
 .meeting-form textarea:focus {
@@ -63,6 +70,7 @@
   box-shadow: 0 0 3px rgba(233, 196, 76, 0.4);
 }
 
+/* Custom dropdown arrow for select elements */
 .meeting-form select {
   appearance: none;
   background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='5'><path fill='%236c3fa2' d='M0 0l5 5 5-5z'/></svg>");
@@ -71,17 +79,20 @@
   background-size: 9px;
 }
 
+/* Textarea resizing and minimum height */
 .meeting-form textarea {
   resize: vertical;
   min-height: 75px;
 }
 
+/* Grid of student checkboxes or entries */
 .student-grid {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
+/* Styling individual student labels with hover feedback */
 .student-grid label {
   display: flex;
   align-items: center;
@@ -98,11 +109,13 @@
   background-color: #e9ecef;
 }
 
+/* Checkbox scaling and accent color */
 .meeting-form input[type="checkbox"] {
   transform: scale(1.1);
   accent-color: var(--secondary-gold);
 }
 
+/* Star rating layout and interactivity */
 .star-rating {
   display: flex;
   gap: 5px;
@@ -111,20 +124,24 @@
   cursor: pointer;
 }
 
+/* Default star color */
 .star {
   color: #ccc;
 }
 
+/* Filled star for rating */
 .star.filled {
   color: var(--secondary-gold);
 }
 
+/* File input appearance adjustments */
 .meeting-form input[type="file"] {
   padding: 3px;
   background-color: var(--light-gray);
   border-radius: 4px;
 }
 
+/* Submit button styling */
 .meeting-form button[type="submit"] {
   background-color: var(--secondary-gold);
   color: var(--dark-purple);
@@ -138,11 +155,13 @@
   margin-top: 8px;
 }
 
+/* Hover state for submit button */
 .meeting-form button[type="submit"]:hover {
   background-color: var(--dark-gold);
   cursor: pointer;
 }
 
+/* Page-level container for meeting form positioning */
 .meeting-page {
   padding-top: 100px;
   display: flex;
@@ -151,6 +170,7 @@
   min-height: 100vh;
 }
 
+/* Fade-in keyframe used for entrance animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
